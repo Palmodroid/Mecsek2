@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="digitalgarden.mecsek">
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <provider
+            android:name="digitalgarden.mecsek.database.DatabaseContentProvider"
+            android:authorities="digitalgarden.mecsek.contentprovider"
+            android:exported="false">
+        </provider>
+
+        <activity
+            android:name="digitalgarden.mecsek.MainChooserActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.authors.AuthorsControllActivity"
+            android:label="@string/authors_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.books.BooksControllActivity"
+            android:label="@string/books_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.pills.PillsControllActivity"
+            android:label="@string/pills_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.patients.PatientsControllActivity"
+            android:label="@string/patients_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.medications.MedicationsControllActivity"
+            android:label="@string/medications_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name="digitalgarden.mecsek.database.calendar.CalendarControllActivity"
+            android:label="@string/calendar_title" >
+        </activity>
+
+        <activity
+            android:name="digitalgarden.mecsek.selectfile.SelectFileActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".MecsekActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".ProbaActivity"
+            android:label="Proba"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".diary.DiaryActivity"
+            android:label="Monthly Viewer"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+    </application>
+
+</manifest>

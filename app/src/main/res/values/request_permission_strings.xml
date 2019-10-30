@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="text">#FFFFFFE0</color>
+    <color name="background">#FF3CB371</color>
+
+    <color name="colorEnabledGreenBorder">#bbff99</color>
+    <color name="colorEnabledGreen">#ccffb3</color>
+
+    <string name="permission_welcome">"Mielőtt elkezdjük…"</string>
+
+    <string name="permission_main_info">"Az adatbáziskezelő működéséhez a felhasználó engedélye szükséges."</string>
+
+    <string name="storage_permission_info">"Bár az adatbázis a program saját, belső tárhelyén helyezkedik el, "
+        "az exportálás és importálás a külső, szabadon hozzáférhető tárhelyen történik. "
+        "A program kizárólag a kiválasztott file-okat használja. "
+        "Kérlek, engedélyezd a hozzáférést a külső tárhelyhez!"</string>
+    <string name="storage_permission_ok">Tárhely hozzáférés engedélyezve</string>
+    <string name="storage_permission_button">Hozzáférés engedélyezése</string>
+    <string name="storage_permission_settings_button">Engedélyezések beállítása</string>
+
+    <string name="permission_help_info">"Help még nem készült el. "</string>
+    <string name="permission_help_button">Help!</string>
+
+    <string name="permission_goodbye">Jó munkát kívánunk!</string>
+
+    <string name="permission_ready">Tárhelyhozzáférés engedélyezve!</string>
+
+</resources>

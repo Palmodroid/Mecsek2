@@ -1,0 +1,106 @@
+@s7[Adatbázisok leírása]
+
+Megjegyzés: GIT integrálás új projektnél.
+Settings/Version Control/Github - beállítani a bejelentkezési adatokat
+VCS/Import into Version Control/Share Project on Github
+Lehet, h. előtte ki kell jelölni App/GIT/Add-dal az összes file-t
+Később Commit and Push (Commit alatt)
+
+Az @it[SQLite] adatbázis használatához el kell készítenünk az adatbázis szerkezetének tükörképét a program számára.
+
+A program akár több @bo[adatbázist], azokon belül @bo[táblát], azokban pedig @bo[mezőket] (vagy oszlopokat) tartalmazhat. Mindezeket egy singleton @bo[Sql] osztály fogja egybe.
+
+Az leíró rendszert úgy szeretném elkészíteni, hogy az egyes elemek a lehető legegyszerűbben előhívhatóak és felhasználhatóak legyenek.
+
+Az egyes @bo[MEZŐ]-k emiatt egyedi nevet kapnak, mégpedig úgy, hogy nevüket kiegészítjük az adott tábla azonosító id-jével. 
+
+Mivel minden egyes mező egyedi névvel rendelkezik, ezeket a neveket közösen tároljuk az @bo[Sql] szintjén, ahonnét a @it[field( index )] hívja elő. Az @bo[_ID] mező speciális, minden egyes osztály számára létezik, erre készítünk, egy kényelmi @it[field_id] utasítást.
+
+A @bo[tábla] szintjén készítjük el a @it[fullField( index )] és @it[fullField_id] utasítást, mely ugyan a fentieket hívja meg, de visszatérési értékként kiegészíti a tábla saját nevével.
+
+A @bo[TÁBLÁK] adatbázisok közötti egyedi nevének nincs ekkora jelentősége (és úgyis csak egy adatbázist szeretnénk használni)
+
+A könnyű visszakeresés lehetősége miatt az összes @bo[táblát] is hasonlóan, az @bo[Sql] szintjén tároljuk. Ezeket a @it[table(index)] utasítással kérhetjük el.
+
+Szükséges azonban egy tábla-listát az adatbázis szintjén is készíteni, hogy a minden táblára érvényes feladatokat könnyen végrehajthassuk. Egy adatbázis esetén ez természetesen azonos lesz az @bo[Sql] szintjén lévő listával. A lista allistáját a feldolgozás során az @bo[adatbázis] megkapja, és az @it[allTables()] lekérésre visszaadja.
+
+Mindezeket a metódusokat @bo[static]-ként készítjük el, melyek az @bo[Sql singleton]-ból kiindulva adják vissza az adatokat. Lényeges, hogy az egyes szinteken a visszaadott index-et tároljuk, mert az egyes adatokra a későbbiekben ezekkel tudunk hivatkozni.
+
+Fontos, hogy először minden táblát hozzá kell adnunk az adatbázishoz, majd utána mehetünk végig minden egyes táblán, és adhatjuk hozzá az egyes táblák mezőit. Az adatbázisoknál ez nem olyan lényeges, mert nem hivatkozhatnak egymásra.
+
+
+NEM JÓ AZ EGÉSZ, MERT A STATIC METÓDUS NEM TUDJA, HOGY MELYIK TÁBLÁBAN VAN!!!!
+
+Megvan. Tároljuk az id-t is vele, ill a fullField_id(TABLE INDEX) metódust készítjük el!!!
+
+Az allTables meg ugyanígy mehet a Database indexével
+
+
+@s7[EditFragment]
+
+Az @it[EditFragment] egy tábla egy sorát szerkeszti.
+
+A @bo[TÁBLÁT] a @it[defineTableIndex()] metódus adja meg.
+
+A @bo[TÁBLA SORÁT] a @it[getRowId] (long) érték adja meg. Ez az érték az argumentumokból származik, az @bo[EDITED_ITEM] azonosítja. Negatív érték (@bo[NEW_ITEM]) új, még nem létező értéket jelent.
+
+A @bo[FORM]-ot (melyet layoutként készítünk el) a @it[defineFormLayout()] metódus adja meg. Ezen helyezkednek el az egyes adatbázis elemeknek megfelelő mezők (@it[Field]). 
+
+A @it[setupFormLayout()] @it[add…] metódusokkal a mezőket hozzáadja a feldolgozást végző programkódhoz.
+
+Ezt a metódust az @it[onCreateView()] fogja meghívni, mely emellett elkészíti a gombokat is a beállításoknak megfelelően.
+
+Az adatok előkészítése az @it[onActivityCreated()] részben történik meg. Ha @it[isEdited()] értéke igaz vagy @it[savedInstanceState != null], akkor már megtörtént az adatok kitöltése. Ha nem így van, akkor először indult el a @bo[FORM], tehát le kell hívnunk az adatokat a @it[connectoion.pullData()] utasítással.
+
+Ezt követően a fieldeket szabadon szerkeszthetjük.
+
+A szerkesztést a gombokon vagy a menüben lévő @it[addItem()] vagy @it[updateItem] metódusokkal fejezzük be. Mindkettő a @it[connection.pushData()] metódust hívja meg, de az @bo[ADD] utasítás @bo[NEW_ITEM] sor azonosítóval új elemet hoz létre, míg az @bo[UPDATE] az aktuális sort frissíti. ((A @bo[DELETE] utasítás csak átmenetileg érhető el, a tényleges törlés nem lesz engedélyezve!))
+
+A szerkesztés megszakítására a @it[cancelEdit()] metódus szolgál. Ha @it[isEdited()] hamis, akkor egy @it[AlertDialog] segítségével rákérdez, hogy biztosan elvetjük-e a módosításokat, majd kilép. Fontos, hogy az @it[onDestroyView()] metódusban zárjuk be a nyitott dialog-ot!
+
+@s5[Az adatok visszaküldése]
+
+A hívó @it[activity]-vel az @it[OnFinishedListener] interface-n keresztül kommunikálunk. Ezt az @it[onAttach()] adja hozzá, míg at @it[onDetach()] törli. Jelenleg csak az @bo[ADD] tér vissza @it[rowId] értékével, hogy jelezze, kiválasztás során új elemet adtunk meg (és választottunk ki).
+
+@s5[Connection]
+
+Mivel egy adatsor és a field-ek összekötése több szinten is szükséges a más táblából hivatkozott adatmezők miatt, ezt a részt egy @it[Connection] osztályba külön választottuk. Az egyes field-ek megvalósítják a @it[Connectable] interface-t, így kerülnek ebbe az osztályba.
+
+A @it[connection] példányt már a definíciók között létrehozhatjuk.
+
+Feltöltése a különböző @it[add…] metódusokkal a @it[setupFormLayout()] részben történik. Ez az osztály végzi a kommunikációt az adatbázis elemek és a field-ek között (@it[pull- és pushData()] hívások). Erre azért van szükség, mert egy táblából az összes mezőt egyszerre kérjük le és egyszerre töltjük fel.
+
+@s5[EditField mezők]
+
+Az @it[EditField] leszármazottai közvetlen összeköttetést biztosítanak egy mező és egy adatbázis elem között. Hogy milyen típusú az elem és azt miként jelenik meg - ezt a leszármazottak határozzák meg.
+
+Létrehozásuk két lépésben történik: 
+- hagyományos módon kikeressük a layoutból (mint az @it[EditText]-et)
+- @it[connect()] metódussal összekötjük a @bo[FORM] és az @bo[TÁBLA-OSZLOP] értékekkel.
+
+Három ponton kötődnek a @it[Connection] osztályhoz:
+- @it[projection] elkészítéséhez a @it[getColumnIndex()] megadja az oszlop indexét.
+- az adatok lekérése után @it[pullData()] megkapja a teljes @it[cursor]-t, melyből kiválasztja a saját adatát és feltölti a hozzá tartozó mezőt
+- feltöltés előtt a saját mezőjének adatát @it[pushData()] beteszi a @it[contentvalues] közé, azonosítóként az oszlop nevét felhasználva.
+
+@s5[ForeignKey és mezői]
+
+A @it[ForeignKey] egy külső tábla (foreign table) egyik sorára mutat. Fontos, hogy maga a @it[Foreign Key] nem tartalmazza a @it[Foreign Table] megnevezését, azt csak az adatbázis felépítéséből tudjuk. 
+
+A @it[Foreign Key] nem jelenik meg a mezőkben, hanem az általa hivatkozott sor adatai jelennek meg a @bo[FORM] mezőiben. Amikor ezeket az adatokat "megváltoztatjuk", akkor viszont nem maguk az adatok változnak, hanem a @it[Foreign Key] értéke változik meg, és mutat egy másik adatsorra.
+
+@s5[ForeignKey megváltoztatása]
+
+Ha megérintünk egy @it[ForeignKey]-hez kötött mezőt, akkor meghívásra kerül a @it[Selector] activity. Ez voltakápp a @it[foreign table]-t kezelő aktivity, ill. annak @it[List Fragment]-je. Az itt kiválasztott tétel @it[row id]-t kapjuk vissza.
+
+Hogy ne keveredjünk össze, a @bo[FORM] ad egy ún. @it[selector code]-ot, melynek értéke minden hívással eggyel növekszik. A @it[ForeignKey] ezt az egyedi @it[selector code]-ot tárolja, és ezzel hívja meg a @it[selector activity]-t.
+
+Visszatéréskor az @it[onActivityResult()] végigkérdezi az összes @it[ForeignKey]-t. Amelyiknek a @it[selector code]-ja egyezik, annak értéke változott.
+
+Ez a @it[Foreign Key] ekkor végighívja az összes hozzá tartozó mezőt, melyek feltöltik magukat az új adattal.
+
+
+
+
+
+

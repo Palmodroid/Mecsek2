@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/fragment_monthly_viewer"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+app:layout_behavior="@string/appbar_scrolling_view_behavior"
+tools:context="digitalgarden.mecsek.diary.DiaryActivity"
+tools:showIn="@layout/activity_diary_new">
+
+<TextView
+    android:id="@+id/year_month_text_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="24sp"/>
+
+<digitalgarden.mecsek.diary.MonthlyHeaderLayout
+    android:id="@+id/diary_header"
+    android:layout_width="match_parent"
+    android:layout_weight="1"
+    android:layout_height="1dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="0dp"
+    app:columns="7"
+    app:rows="1"
+    android:verticalSpacing="4dp"
+    android:horizontalSpacing="4dp" />
+
+<digitalgarden.mecsek.diary.MonthlyLayout
+    android:id="@+id/diary_layout"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_weight="10"
+    android:padding="4dp"
+    app:columns="7"
+    app:rows="5"
+    android:verticalSpacing="4dp"
+    android:horizontalSpacing="4dp" />
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".database.books.BooksControllActivity"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" 
+	android:orientation="vertical" >
+	
+	<TextView
+        android:id="@+id/title_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_author"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/edittext_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        android:text="@string/hint_title"
+        
+        android:textAppearance="?android:attr/textAppearanceMedium" 
+        android:background="@drawable/border"
+        android:layout_margin="2dp"/>
+
+    <TextView
+        android:id="@+id/title_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_title"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/edittext_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_title" />
+    
+</LinearLayout>		   

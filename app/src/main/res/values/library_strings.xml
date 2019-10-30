@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mecsek</string>
+
+    <string name="books_title">Books</string>
+    <string name="authors_title">Authors</string>
+    <string name="patients_title">Patients</string>
+    <string name="pills_title">Pills</string>
+    <string name="medications_title">Medications</string>
+    <string name="calendar_title">Calendar</string>
+
+	<string name="select_author">"Select author for "</string>
+	<string name="books_of">"Books of "</string>
+    
+    <string name="hint_filter">Filter</string>
+    <string name="list_empty"> - nothing found - </string>
+    
+    <string name="title_author">Author:</string>
+    <string name="title_title">Title:</string>
+    <string name="hint_author">author\'s name</string>
+    <string name="hint_title">book\'s title</string>
+    
+    <string name="title_name">Name:</string>
+    <string name="hint_name">author\'s name</string>
+
+    <string name="title_patient_name">Name:</string>
+    <string name="title_patient_dob">DOB:</string>
+    <string name="title_patient_taj">TAJ:</string>
+    <string name="title_patient_phone">Phone:</string>
+    <string name="title_patient_note">Note:</string>
+
+    <string name="hint_patient_name">Name:</string>
+    <string name="hint_patient_dob">DOB:</string>
+    <string name="hint_patient_taj">TAJ:</string>
+    <string name="hint_patient_phone">Phone:</string>
+    <string name="hint_patient_note">Note:</string>
+
+    <string name="select_pill">"Select pill for "</string>
+    <string name="title_pill_name">Name:</string>
+    <string name="hint_pill_name">pill\'s name</string>
+
+    <string name="select_patient">"Select patient for "</string>
+    <string name="title_pill">Pill:</string>
+    <string name="hint_pill">pill\'s name</string>
+    <string name="title_patient">Patient:</string>
+    <string name="hint_patient">patient\'s name</string>
+    <string name="title_medication_name">Medication:</string>
+    <string name="hint_medication_name">medication\'s name</string>
+    <string name="title_medication_date">Date:</string>
+    <string name="hint_medication_date">medication\'s date</string>
+    <string name="title_medication_note">Note:</string>
+    <string name="hint_medication_note">medication\'s note</string>
+
+    <string name="medications_with">"Medications with "</string>
+    <string name="button_medication_list">Medic.s</string>
+
+    <string name="title_calendar_date">Date:</string>
+    <string name="hint_calendar_date">date</string>
+    <string name="title_calendar_note">Note:</string>
+    <string name="hint_calendar_note">note</string>
+
+    <string name="button_add">Add</string>
+    <string name="button_update">Update</string>
+    <string name="button_list">List</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_books_list">Books</string>
+    
+    <string name="menu_add">New</string>
+    <string name="menu_delete_all">Delete all</string>
+    <string name="menu_example">Insert example</string>
+    
+    <string name="menu_add_as_new">Add as new</string>
+    <string name="menu_delete">Delete</string>
+    
+    <string name="menu_export">Export database</string>
+    <string name="menu_import">Import records</string>
+
+</resources>

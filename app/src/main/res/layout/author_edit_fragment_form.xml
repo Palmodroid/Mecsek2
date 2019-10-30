@@ -1,0 +1,22 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".database.authors.AuthorsControllActivity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/edittext_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_name" />
+
+</LinearLayout>		   

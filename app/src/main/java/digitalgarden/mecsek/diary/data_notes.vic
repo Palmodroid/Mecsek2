@@ -1,0 +1,47 @@
+Data osztályok
+
+DiaryActivityNew - R.layout.activity_diary_new
+
+(DataStore itt kerül létrehozásra) 
+
+ViewPagerMonthly
+ennek adaptere MonthlyViewAdapter - MonthlyViewer fragmentet ad vissza - az adott pozícióra
+
+MonthlyViewerFragment -
+adatait a DataStore-ból veszi.
+Ehhez viszont az Activity-n keresztül (vagyis az OnInputReadyListeneren) keresztül fér hozzá.
+
+
+DailyAdapter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hogyan áll össze ez az egész?
+
+- DataMonthlyView - aki a betöltést végzi.
+- DataDay
+- DataEntry
+
+DataMonthlyView
+
+Egy komplett hónap adatait tartalmazza, (megelőző és követő napokkal együtt, úgy, hogy hétfőtől-vasárnapig ki tudja tölteni az adatokat)
+A megjelenítéshez minden egyes nap adatára szükség van, ezért érdemes az összeset letölteni, nem naponként, hanem egyben.
+
+Minden egyes hónapnak van egy azonosító sorszáma, ami az "alaptól" indul. A sorszám alapján kiszámítható, hogy melyik napokra van szüksége.
+
+Minden napnak is van egy hasonló sorszáma. A sorszám alapján tudja elkérni az egyes napokhoz tartozó adatokat.
+
+Ehhez kell egy háttérben álló adattár, amelyik a hiányzó adatokat letölti.
+
+NEM JÓ!! MINDEN EGYES HÓNAPHOZ KÜLÖN LOADER JÁR!! HOGY FOGNAK A NPOK ÁTMENNI EGYMÁSBA?

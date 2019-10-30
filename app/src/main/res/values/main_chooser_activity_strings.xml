@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="main_chooser_message">Select an option!</string>
+    
+    <string name="button_books_table">Books</string>
+    <string name="button_authors_table">Authors</string>
+    <string name="button_patients_table">Patients</string>
+    <string name="button_pills_table">Pills</string>
+    <string name="button_medications_table">Medications</string>
+    <string name="button_calendar_table">Calendar</string>
+    <string name="button_export">Export</string>
+    <string name="button_import">Import</string>
+    <string name="button_drop">Drop database</string>
+
+</resources>

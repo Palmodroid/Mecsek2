@@ -1,0 +1,74 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".database.patients.PatientsControllActivity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:orientation="vertical" >
+
+	<TextView
+		android:id="@+id/title_patient_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/title_patient_name"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<digitalgarden.mecsek.formtypes.EditFieldText
+		android:id="@+id/edittext_patient_name"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/hint_patient_name" />
+
+	<TextView
+		android:id="@+id/title_patient_dob"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/title_patient_dob"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<digitalgarden.mecsek.formtypes.EditFieldText
+		android:id="@+id/edittext_patient_dob"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/hint_patient_dob" />
+
+	<TextView
+		android:id="@+id/title_patient_taj"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/title_patient_taj"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<digitalgarden.mecsek.formtypes.EditFieldText
+		android:id="@+id/edittext_patient_taj"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/hint_patient_taj" />
+
+	<TextView
+		android:id="@+id/title_patient_phone"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/title_patient_phone"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<digitalgarden.mecsek.formtypes.EditFieldText
+		android:id="@+id/edittext_patient_phone"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/hint_patient_phone" />
+
+	<TextView
+		android:id="@+id/title_patient_note"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/title_patient_note"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<digitalgarden.mecsek.formtypes.EditFieldText
+		android:id="@+id/edittext_patient_note"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/hint_patient_note" />
+
+</LinearLayout>

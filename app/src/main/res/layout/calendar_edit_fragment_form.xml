@@ -1,0 +1,54 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context=".database.medications.MedicationsControllActivity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/title_calendar_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_calendar_date"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldDate
+        android:id="@+id/editdatefield_calendar_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_calendar_date" />
+
+    <TextView
+        android:id="@+id/title_calendar_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_calendar_note"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/edittextfield_calendar_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_calendar_note" />
+
+    <!--digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/calendar_source_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" /-->
+
+    <!--digitalgarden.mecsek.formtypes.EditFieldText
+        android:id="@+id/calendar_source_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" /-->
+
+    <digitalgarden.mecsek.formtypes.SourceFieldButton
+        android:id="@+id/calendar_source_button"
+        android:text="SOURCE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</LinearLayout>

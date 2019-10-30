@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!--Button
+        android:id="@+id/refresh_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="REFRESH" /-->
+
+    <EditText
+        android:id="@+id/filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:hint="@string/filter_hint" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Date"
+        android:textSize="24sp"/>
+
+    <!-- or android:layout_alignBaseline="@id/add_button" -->
+
+    <!--ProgressBar
+        android:id="@+id/loader_progress_bar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="3dp"
+        android:layout_alignParentTop="true"
+        android:visibility="gone" >
+    </ProgressBar-->
+
+    <!--TextView
+        android:id="@+id/loader_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/loader_progress_bar"
+        android:layout_alignBottom="@id/loader_progress_bar"
+        android:visibility="gone" /-->
+
+    <!--ProgressBar
+        android:id="@+id/filter_progress_bar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="3dp"
+        android:layout_below="@id/loader_progress_bar"
+        android:visibility="gone" >
+    </ProgressBar-->
+
+    <!--TextView
+        android:id="@+id/filter_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/filter_progress_bar"
+        android:layout_alignBottom="@id/filter_progress_bar"
+        android:visibility="gone" /-->
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title"
+        android:layout_above="@id/filter" >
+        <requestFocus />
+    </ListView>
+
+    <!-- http://code.google.com/p/android/issues/detail?id=21742 -->
+    <!-- setEmptyText()not working!, ...getEmptyView().setText() is needed! -->
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/filter"
+        android:text="@string/empty_list"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ff737373" />
+
+    <!--ProgressBar
+        android:id="@+id/central_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" /-->
+
+</RelativeLayout>

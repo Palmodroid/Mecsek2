@@ -1,0 +1,232 @@
+package digitalgarden.librarydb.database.tables.optypes;
+
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.Uri;
+import android.provider.BaseColumns;
+import android.text.TextUtils;
+
+import digitalgarden.librarydb.templates.GenericDatabase;
+import digitalgarden.logger.Logger;
+import digitalgarden.utils.StringUtils;
+
+import static java.security.AccessController.getContext;
+
+
+public final class OptypesTable implements BaseColumns
+    {
+    private OptypesTable() {} // Cannot instantiate class
+
+    public static final String TABLENAME = "optypes";
+    public static final int TABLEID = 0x600;
+
+    public static final String NAME = "name6";
+    public static final String SEARCH = "search6";
+
+    public static final String FULL_ID = TABLENAME + "." + _ID;
+    public static final String FULL_NAME = TABLENAME + "." + NAME;
+    public static final String FULL_SEARCH = TABLENAME + "." + SEARCH;
+
+    static final String TABLECREATE =
+            "CREATE TABLE " + TABLENAME + " (" +
+                    _ID + " INTEGER PRIMARY KEY, " +
+                    NAME + " TEXT," +
+                    SEARCH + " TEXT" + ")";
+
+    public static final String AUTHORITY = LibraryDatabaseHelper.AUTHORITY;
+    public static final String CONTENT_COUNT = LibraryDatabaseHelper.CONTENT_COUNT;
+
+    private static final String CONTENT_SUBTYPE = "vnd.digitalgarden.librarydb.contentprovider.optype";
+    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_SUBTYPE;
+    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_SUBTYPE;
+
+    public static final Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY + "/" + TABLENAME );
+    public static final Uri CONTENT_COUNT_URI = Uri.parse(CONTENT_URI + CONTENT_COUNT);
+
+    public static final int COUNTID = TABLEID + 1;
+    public static final int DIRID = TABLEID + 2;
+    public static final int ITEMID = TABLEID + 3;
+
+    // Az Uri a szükséges táblát adja meg (nem egy elemet!) melybe az adatokat be kívánjuk illeszteni
+    // A Visszatérési URi ezzel szemben a konkrét beillesztett elem
+    public Uri insert(Context context, LibraryDatabaseHelper libraryDbDatabaseHelper,
+                      Uri uri, int uriType, ContentValues values)
+        {
+        switch (uriType)
+            {
+        case OptypesTable.DIRID:
+            {
+            // Az ekezet nelkuli kereseshez meg egy oszlop hozzakerul
+            values.put( OptypesTable.SEARCH, StringUtils.normalize(
+                    values.getAsString( OptypesTable.NAME ) ));
+
+// Erre várhatóan szükség lesz
+            SQLiteDatabase libraryDb = libraryDbDatabaseHelper.getWritableDatabase();
+            long id = libraryDb.insert( OptypesTable.TABLENAME, null, values );
+
+// Ez is mindben szerepel, nem?
+            context.getContentResolver().notifyChange(uri, null);
+
+            Logger.note("CONTENTPROVIDER: " + id + " inserted into OPTYPES");
+            return Uri.parse( OptypesTable.CONTENT_URI + "/" + id);
+            }
+
+        default:
+            return null;
+            }
+        }
+
+
+    public int delete(Context context, LibraryDatabaseHelper libraryDbDatabaseHelper,
+                      Uri uri, int uriType, String whereClause, String[] whereArgs)
+        {
+        int rowsDeleted = 0;
+
+// Ez is mindben szerepel, nem?
+        SQLiteDatabase libraryDb = libraryDbDatabaseHelper.getWritableDatabase();
+
+        switch (uriType)
+            {
+        case OptypesTable.DIRID:
+            rowsDeleted = libraryDb.delete(OptypesTable.TABLENAME, whereClause, whereArgs);
+            break;
+
+        case OptypesTable.ITEMID:
+            {
+            String id = uri.getLastPathSegment();
+            if (TextUtils.isEmpty(whereClause))
+                {
+                rowsDeleted = libraryDb.delete( OptypesTable.TABLENAME, OptypesTable._ID + "=" + id, null);
+                }
+            else
+                {
+                rowsDeleted = libraryDb.delete( OptypesTable.TABLENAME, OptypesTable._ID + "=" + id + " and " + whereClause, whereArgs);
+                }
+            break;
+            }
+
+        default:
+            return -1;
+            }
+
+// Ez is mindben szerepel, nem?
+        if (rowsDeleted > 0)
+            context.getContentResolver().notifyChange(uri, null);
+
+        Logger.note("CONTENTPROVIDER: " + rowsDeleted + " rows deleted");
+        return rowsDeleted;
+        }
+
+
+    public int update(Context context, LibraryDatabaseHelper libraryDbDatabaseHelper,
+                      Uri uri, int uriType, ContentValues values, String whereClause, String[] whereArgs)
+        {
+        int rowsUpdated = 0;
+
+// Ez is mindben szerepel, nem?
+        SQLiteDatabase libraryDb = libraryDbDatabaseHelper.getWritableDatabase();
+
+        switch (uriType)
+            {
+        case OptypesTable.DIRID:
+            {
+            // Nem biztosítható, hogy a search rész működőképes marad!
+            throw new IllegalArgumentException("Multiple updates on OPTYPES are not allowed: " + uri);
+			/* rowsUpdated = libraryDb.update( AuthorsTable.TABLENAME,
+			values,
+			whereClause,
+			whereArgs);
+			break; */
+            }
+
+        case OptypesTable.ITEMID:
+            {
+            // Az ekezet nelkuli kereseshez meg egy oszlop hozzakerul
+            values.put( OptypesTable.SEARCH, StringUtils.normalize(
+                    values.getAsString( OptypesTable.NAME ) ));
+
+// Ez is mindben szerepel, nem?
+            String id = uri.getLastPathSegment();
+            if (TextUtils.isEmpty(whereClause))
+                {
+                rowsUpdated = libraryDb.update( OptypesTable.TABLENAME,
+                        values,
+                        OptypesTable._ID  + "=" + id,
+                        null);
+                }
+            else
+                {
+                rowsUpdated = libraryDb.update( OptypesTable.TABLENAME,
+                        values,
+                        OptypesTable._ID  + "=" + id
+                                + " and "
+                                + whereClause,
+                        whereArgs);
+                }
+            break;
+            }
+
+            default:
+                return -1;
+            }
+
+// Ez is mindben szerepel, nem?
+        if (rowsUpdated > 0)
+            context.getContentResolver().notifyChange(uri, null);
+
+        Logger.note("CONTENTPROVIDER " + rowsUpdated + " rows updated");
+        return rowsUpdated;
+        }
+
+    public Cursor query(Uri uri, int uriType, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+        {
+        // Uisng SQLiteQueryBuilder instead of query() method
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        String logger;
+        switch (uriType)
+            {
+            case OptypesTable.DIRID:
+                // Set the table
+                queryBuilder.setTables( OptypesTable.TABLENAME );
+                logger = "ALL AUTHORS";
+                break;
+
+            case OptypesTable.ITEMID:
+                // Set the table
+                queryBuilder.setTables( OptypesTable.TABLENAME );
+                // Adding the ID to the original query
+                queryBuilder.appendWhere( OptypesTable._ID  + "=" + uri.getLastPathSegment());
+                logger = "ONE AUTHOR ITEM";
+                break;
+
+            case OptypesTable.COUNTID:
+                // Set the table
+                queryBuilder.setTables( OptypesTable.TABLENAME );
+                projection = new String[] { "count(*) as count" };
+                // Projectiont át kell alakítani!
+                logger = "AUTHORS COUNT";
+                break;
+
+            default:
+                return null;
+            }
+
+// Ez is mindben szerepel, nem?
+        SQLiteDatabase libraryDb = libraryDbDatabaseHelper.getReadableDatabase();
+        Cursor cursor = queryBuilder.query(libraryDb, projection, selection, selectionArgs, null, null, sortOrder);
+
+// Ez is mindben szerepel, nem?
+        // Make sure that potential listeners are getting notified
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        Logger.note("CONTENTPROVIDER " + logger + " queried");
+        return cursor;
+        }
+
+    }

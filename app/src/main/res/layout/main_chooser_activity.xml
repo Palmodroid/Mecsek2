@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	
+	    <TextView
+	        android:id="@+id/main_chooser_message"
+	        android:text="@string/main_chooser_message"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <Button
+	        android:id="@+id/button_authors_table"
+	        android:text="@string/button_authors_table"
+	        android:minEms="10"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="20dp" 
+	        android:layout_below="@id/main_chooser_message"
+	        android:layout_centerHorizontal="true" />
+	
+	    <Button
+	        android:id="@+id/button_books_table"
+	        android:text="@string/button_books_table" 
+	        android:minEms="10"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/button_authors_table"
+	        android:layout_centerHorizontal="true" />
+
+		<Button
+			android:id="@+id/button_patients_table"
+			android:text="@string/button_patients_table"
+			android:minEms="10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/button_books_table"
+			android:layout_centerHorizontal="true" />
+
+		<Button
+			android:id="@+id/button_pills_table"
+			android:text="@string/button_pills_table"
+			android:minEms="10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/button_patients_table"
+			android:layout_centerHorizontal="true" />
+
+		<Button
+			android:id="@+id/button_medications_table"
+			android:text="@string/button_medications_table"
+			android:minEms="10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/button_pills_table"
+			android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/button_calendar_table"
+            android:text="@string/button_calendar_table"
+            android:minEms="10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_medications_table"
+            android:layout_centerHorizontal="true" />
+
+		<Button
+			android:id="@+id/button_proba"
+			android:text="Proba"
+			android:minEms="10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/button_calendar_table"
+			android:layout_centerHorizontal="true" />
+
+		<Button
+	        android:id="@+id/button_export"
+	       	android:text="@string/button_export"
+	        android:minEms="10"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="20dp"
+	        android:layout_below="@id/button_proba"
+	        android:layout_centerHorizontal="true" />
+	
+	    <Button
+	        android:id="@+id/button_import"
+	       	android:text="@string/button_import"
+	        android:minEms="10"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/button_export"
+	        android:layout_centerHorizontal="true"/>
+
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/button_drop"
+            android:text="@string/button_drop"
+            android:minEms="10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/button_import"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+</ScrollView>
+
