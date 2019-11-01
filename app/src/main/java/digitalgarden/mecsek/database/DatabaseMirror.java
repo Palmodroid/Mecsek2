@@ -6,10 +6,10 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 
-import digitalgarden.mecsek.database.library.LibraryDatabase;
+import digitalgarden.mecsek.tables.LibraryDatabase;
 import digitalgarden.mecsek.scribe.Scribe;
-import digitalgarden.mecsek.generic.database.GenericDatabase;
-import digitalgarden.mecsek.generic.database.GenericTable;
+import digitalgarden.mecsek.generic.GenericDatabase;
+import digitalgarden.mecsek.generic.GenericTable;
 
 import static android.provider.BaseColumns._ID;
 import static digitalgarden.mecsek.Debug.DB;

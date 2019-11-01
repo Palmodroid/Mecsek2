@@ -8,14 +8,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
-import digitalgarden.mecsek.database.calendar.CalendarTable;
+import digitalgarden.mecsek.tables.calendar.CalendarTable;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
-import static digitalgarden.mecsek.database.library.LibraryDatabase.CALENDAR;
+import static digitalgarden.mecsek.tables.LibraryDatabase.CALENDAR;
 
 
 /**

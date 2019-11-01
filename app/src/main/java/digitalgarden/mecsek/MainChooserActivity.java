@@ -11,12 +11,12 @@ import java.io.File;
 
 import digitalgarden.mecsek.MainChooserDialogFragment.Type;
 import digitalgarden.mecsek.database.DatabaseContentProvider;
-import digitalgarden.mecsek.database.authors.AuthorsControllActivity;
-import digitalgarden.mecsek.database.books.BooksControllActivity;
-import digitalgarden.mecsek.database.calendar.CalendarControllActivity;
-import digitalgarden.mecsek.database.medications.MedicationsControllActivity;
-import digitalgarden.mecsek.database.patients.PatientsControllActivity;
-import digitalgarden.mecsek.database.pills.PillsControllActivity;
+import digitalgarden.mecsek.tables.authors.AuthorsControllActivity;
+import digitalgarden.mecsek.tables.books.BooksControllActivity;
+import digitalgarden.mecsek.tables.calendar.CalendarControllActivity;
+import digitalgarden.mecsek.tables.records.RecordsControllActivity;
+import digitalgarden.mecsek.tables.patients.PatientsControllActivity;
+import digitalgarden.mecsek.tables.recordtypes.RecordTypesControllActivity;
 import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
@@ -185,28 +185,28 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
                     }
                 });
 
-            findViewById(R.id.button_pills_table).setOnClickListener(new OnClickListener()
+            findViewById(R.id.button_record_types_table).setOnClickListener(new OnClickListener()
                 {
                 public void onClick(View view)
                     {
-                    Scribe.title("MAINCHOOSER: Pills table called");
+                    Scribe.title("MAINCHOOSER: Record types table called");
 
                     Intent i = new Intent();
 
-                    i.setClass(MainChooserActivity.this, PillsControllActivity.class);
+                    i.setClass(MainChooserActivity.this, RecordTypesControllActivity.class);
                     startActivity(i);
                     }
                 });
 
-            findViewById(R.id.button_medications_table).setOnClickListener(new OnClickListener()
+            findViewById(R.id.button_records_table).setOnClickListener(new OnClickListener()
                 {
                 public void onClick(View view)
                     {
-                    Scribe.title("MAINCHOOSER: Medications table called");
+                    Scribe.title("MAINCHOOSER: Records table called");
 
                     Intent i = new Intent();
 
-                    i.setClass(MainChooserActivity.this, MedicationsControllActivity.class);
+                    i.setClass(MainChooserActivity.this, RecordsControllActivity.class);
                     startActivity(i);
                     }
                 });
@@ -224,7 +224,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
                     }
                 });
 
-			findViewById(R.id.button_proba).setOnClickListener(new OnClickListener()
+			findViewById(R.id.button_diary).setOnClickListener(new OnClickListener()
 				{
 				public void onClick(View view)
 					{

@@ -3,7 +3,6 @@ package digitalgarden.mecsek.diary;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -19,14 +18,14 @@ import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
 
-import digitalgarden.mecsek.database.calendar.CalendarEditFragment;
+import digitalgarden.mecsek.tables.calendar.CalendarEditFragment;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static digitalgarden.mecsek.database.calendar.CalendarEditFragment.DATE_HINT;
+import static digitalgarden.mecsek.tables.calendar.CalendarEditFragment.DATE_HINT;
 
 /**
  * DiaryActivity shows the ViewPager, which gets its data from the DiaryAdapter.

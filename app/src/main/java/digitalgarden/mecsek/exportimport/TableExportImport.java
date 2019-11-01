@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-import digitalgarden.mecsek.generic.database.GenericTable;
+import digitalgarden.mecsek.generic.GenericTable;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 import digitalgarden.mecsek.utils.StringUtils;
@@ -21,8 +21,8 @@ import static digitalgarden.mecsek.database.DatabaseMirror.columnType;
 import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.database;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
-import static digitalgarden.mecsek.generic.database.GenericTable.TYPE_DATE;
-import static digitalgarden.mecsek.generic.database.GenericTable.TYPE_TEXT;
+import static digitalgarden.mecsek.generic.GenericTable.TYPE_DATE;
+import static digitalgarden.mecsek.generic.GenericTable.TYPE_TEXT;
 
 
 /**
@@ -605,5 +605,5 @@ public class TableExportImport
         Scribe.debug( table.name() + "[" + records[1] + "] was inserted.");
         }
 
-//            Scribe.note( "Parameters missing from MEDICATIONS row. Item was skipped.");
+//            Scribe.note( "Parameters missing from RECORDS row. Item was skipped.");
     }

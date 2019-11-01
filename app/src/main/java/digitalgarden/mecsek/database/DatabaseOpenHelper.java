@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.Locale;
 
-import digitalgarden.mecsek.generic.database.GenericTable;
+import digitalgarden.mecsek.generic.GenericTable;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.Debug.DB;

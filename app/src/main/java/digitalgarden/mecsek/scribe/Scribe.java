@@ -69,7 +69,7 @@ import java.util.Locale;
  * <p>
  * Message types:
  * <ul>
- * <li>TITLE - title (checks log file lenth!)</li>  
+ * <li>NAME - title (checks log file lenth!)</li>
  * <li>NOTE - normal message</li>
  * <li>ERROR - error message</li>
  * <li>DEBUG - normal message - if debug is enabled!</li>
@@ -1252,7 +1252,7 @@ public class Scribe
     /**
      * Different types of log
      * <ul>
-     * <li>TITLE Title log style</li>
+     * <li>NAME Title log style</li>
      * <li>NOTE Normal log style</li>
      * <li>DEBUG Normal log style, appears only if debug-log is enabled</li>
      * <li>ERROR Error log style</li>
@@ -1449,7 +1449,7 @@ public class Scribe
      ************************************************************/
 
     /**
-     * Adds text as type {@code TITLE} to system log, toast log and file log.
+     * Adds text as type {@code NAME} to system log, toast log and file log.
      * Log note appears only on enabled log streams and only if limit allows it.
      * Primary config is used for EVEN, secondary for ODD levels
      * @param text log note
@@ -1511,7 +1511,7 @@ public class Scribe
     // Public methods without limit check
 
     /**
-     * Adds text as type {@code TITLE} to system log, toast log and file log.
+     * Adds text as type {@code NAME} to system log, toast log and file log.
      * Log note appears only on enabled log streams. No limit check.
      * Primary config is used.
      * @param text log note
@@ -1574,7 +1574,7 @@ public class Scribe
     // Public methods for Secondary config without limit check
 
     /**
-     * Adds text as type {@code TITLE} to system log, toast log and file log.
+     * Adds text as type {@code NAME} to system log, toast log and file log.
      * Log note appears only on enabled log streams. No limit check.
      * Secondary config is used.
      * @param text log note

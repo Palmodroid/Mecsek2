@@ -64,7 +64,7 @@ public class DailyListFragment extends ListFragment implements
 
 		/* args... can be used, too
 		Bundle args = new Bundle();
-		args.putString( "TITLE", exampleTitle);
+		args.putString( "NAME", exampleTitle);
 		listFragmenet.setArguments(args);
 		*/
         return listFragment;

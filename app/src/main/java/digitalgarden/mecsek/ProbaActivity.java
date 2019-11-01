@@ -13,12 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import digitalgarden.mecsek.database.books.BooksTable;
+import digitalgarden.mecsek.tables.books.BooksTable;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
-import static digitalgarden.mecsek.database.library.LibraryDatabase.BOOKS;
+import static digitalgarden.mecsek.tables.LibraryDatabase.BOOKS;
 
 
 public class ProbaActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>

@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import digitalgarden.mecsek.scribe.Scribe;
-import digitalgarden.mecsek.generic.database.GenericTable;
+import digitalgarden.mecsek.generic.GenericTable;
 
 import static digitalgarden.mecsek.Debug.CP;
 import static digitalgarden.mecsek.database.DatabaseMirror.allTables;

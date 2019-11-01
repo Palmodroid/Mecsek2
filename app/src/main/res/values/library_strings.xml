@@ -6,8 +6,8 @@
     <string name="books_title">Books</string>
     <string name="authors_title">Authors</string>
     <string name="patients_title">Patients</string>
-    <string name="pills_title">Pills</string>
-    <string name="medications_title">Medications</string>
+    <string name="record_types_title">Record types</string>
+    <string name="records_title">Records</string>
     <string name="calendar_title">Calendar</string>
 
 	<string name="select_author">"Select author for "</string>
@@ -36,24 +36,24 @@
     <string name="hint_patient_phone">Phone:</string>
     <string name="hint_patient_note">Note:</string>
 
-    <string name="select_pill">"Select pill for "</string>
-    <string name="title_pill_name">Name:</string>
-    <string name="hint_pill_name">pill\'s name</string>
+    <string name="select_record_type">"Select type for record"</string>
+    <string name="title_record_type_name">Type:</string>
+    <string name="hint_record_type_name">records\'s type</string>
 
     <string name="select_patient">"Select patient for "</string>
-    <string name="title_pill">Pill:</string>
-    <string name="hint_pill">pill\'s name</string>
     <string name="title_patient">Patient:</string>
     <string name="hint_patient">patient\'s name</string>
-    <string name="title_medication_name">Medication:</string>
-    <string name="hint_medication_name">medication\'s name</string>
-    <string name="title_medication_date">Date:</string>
-    <string name="hint_medication_date">medication\'s date</string>
-    <string name="title_medication_note">Note:</string>
-    <string name="hint_medication_note">medication\'s note</string>
+    <string name="title_record_type">Type:</string>
+    <string name="hint_record_type">record\'s type</string>
+    <string name="title_record_name">Details:</string>
+    <string name="hint_record_name">record\'s details</string>
+    <string name="title_record_date">Date:</string>
+    <string name="hint_record_date">record\'s date</string>
+    <string name="title_record_note">Note:</string>
+    <string name="hint_record_note">record\'s calendar</string>
 
-    <string name="medications_with">"Medications with "</string>
-    <string name="button_medication_list">Medic.s</string>
+    <string name="records_with">"Records with "</string>
+    <string name="button_record_list">Rec.s</string>
 
     <string name="title_calendar_date">Date:</string>
     <string name="hint_calendar_date">date</string>

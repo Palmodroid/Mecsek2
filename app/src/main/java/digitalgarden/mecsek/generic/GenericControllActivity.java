@@ -38,7 +38,7 @@ import static digitalgarden.mecsek.utils.HidingActionButton.BY_LIST;
  *  Fragment cretaeListFragment()
  *
  *  Beállítható Extrák:
- *  	TITLE - a teljes Activity címe
+ *  	NAME - a teljes Activity címe
  *
  *  SELECTED_ITEM - kijelöl egy már kiválasztott sort a listában. ListFragment nyílik meg
  *
@@ -181,7 +181,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
         String title = getIntent().getStringExtra(TITLE);
         if (title != null)
             {
-            Scribe.note("GenericControllActivity TITLE set: " + title);
+            Scribe.note("GenericControllActivity NAME set: " + title);
             setTitle(title);
             }
         }

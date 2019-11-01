@@ -31,37 +31,37 @@
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.authors.AuthorsControllActivity"
+            android:name=".tables.authors.AuthorsControllActivity"
             android:label="@string/authors_title" >
         </activity>
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.books.BooksControllActivity"
+            android:name=".tables.books.BooksControllActivity"
             android:label="@string/books_title" >
         </activity>
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.pills.PillsControllActivity"
-            android:label="@string/pills_title" >
-        </activity>
-
-        <activity
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.patients.PatientsControllActivity"
+            android:name=".tables.patients.PatientsControllActivity"
             android:label="@string/patients_title" >
         </activity>
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.medications.MedicationsControllActivity"
-            android:label="@string/medications_title" >
+            android:name=".tables.recordtypes.RecordTypesControllActivity"
+            android:label="@string/record_types_title" >
         </activity>
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name="digitalgarden.mecsek.database.calendar.CalendarControllActivity"
+            android:name=".tables.records.RecordsControllActivity"
+            android:label="@string/records_title" >
+        </activity>
+
+        <activity
+            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".tables.calendar.CalendarControllActivity"
             android:label="@string/calendar_title" >
         </activity>
 
