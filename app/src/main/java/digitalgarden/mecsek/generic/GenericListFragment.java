@@ -179,7 +179,7 @@ public abstract class GenericListFragment extends ListFragment
     	}
 	
 	
-	private GenericCursorAdapter globalAdapter;
+	private GenericCombinedCursorAdapter globalAdapter;
 	
 	// Ez a teljes rész a filter miatt kell, egyébként a ListFragment is tartalmaz egy gyári ListView-t
 	private EditText filter;
@@ -238,15 +238,25 @@ public abstract class GenericListFragment extends ListFragment
 
         setupRowLayout();
 
-		globalAdapter = new GenericCursorAdapter(
-				getActivity(), 
-				defineRowLayout(),
-				null,
+/*        globalAdapter = new GenericCursorAdapter(
+                getActivity(),
+                defineRowLayout(),
+                null,
                 from.toArray(new String[0]),
                 Utils.convertToIntArray(to),
-				0,
+                0,
+                getArguments().getLong( SELECTED_ITEM , SELECT_DISABLED )
+        );
+*/
+
+		globalAdapter = new GenericCombinedCursorAdapter(
+				getActivity(), 
+				defineRowLayout(),
+                from.toArray(new String[0]),
+                Utils.convertToIntArray(to),
 				getArguments().getLong( SELECTED_ITEM , SELECT_DISABLED )
 				);
+
 
 		setListAdapter(globalAdapter);
 		
@@ -356,8 +366,9 @@ public abstract class GenericListFragment extends ListFragment
 		{
 		Scribe.note("onLoadFinished (Query finished)");
 
-		globalAdapter.swapCursor(data);
-		
+		 globalAdapter.setListCursor(data);
+		//globalAdapter.swapCursor(data);
+
 		// Ha van kiválasztott elem, akkor itt kikeressük. Ha getCount túl nagy, akkor ezt letilthatjuk
 		// Meg kéne nézni, nincs-e erre lehetőség egy saját Loader-segítségével
 		if ( rollToSelectedItem )
@@ -386,7 +397,8 @@ public abstract class GenericListFragment extends ListFragment
 		// data is not available anymore, delete reference
 		Scribe.note("onLoaderReset");
 
-		globalAdapter.swapCursor(null);
+		globalAdapter.setListCursor(null);
+		//globalAdapter.swapCursor(null);
 		}	
 
 	

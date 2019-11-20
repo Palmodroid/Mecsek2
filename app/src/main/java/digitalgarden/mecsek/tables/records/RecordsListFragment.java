@@ -13,8 +13,10 @@ import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
+import static digitalgarden.mecsek.tables.LibraryDatabase.PATIENTS;
 import static digitalgarden.mecsek.tables.LibraryDatabase.RECORDS;
 import static digitalgarden.mecsek.tables.LibraryDatabase.RECORD_TYPES;
+import static digitalgarden.mecsek.tables.records.RecordsTable.PATIENT_ID;
 
 
 public class RecordsListFragment extends GenericListFragment
@@ -30,7 +32,7 @@ public class RecordsListFragment extends GenericListFragment
         // args.putLong( SELECTED_ITEM , SELECT_DISABLED ); Nincs szelektálás!
 
         args.putLong( LIMITED_ITEM, limit );
-        args.putString( LIMITED_COLUMN, columnFull_id(RECORD_TYPES));
+        args.putString( LIMITED_COLUMN, columnFull(RecordsTable.PATIENT_ID));
         args.putString( ORDERED_COLUMN, columnFull( RecordsTable.NAME ));
         // args.putString( FILTERED_COLUMN, BooksTable.FULL_SEARCH);
         args.putStringArray( FILTERED_COLUMN, new String[] { columnFull(RecordTypesTable.SEARCH), columnFull(RecordsTable.SEARCH)});

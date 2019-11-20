@@ -45,7 +45,7 @@ public class RecordsEditFragment extends GenericEditFragment
         EditFieldDate recordDateField = (EditFieldDate)addEditField( R.id.editdatefield_record_date, RecordsTable.DATE );
 
         // ForeignKey
-        ForeignKey recordTypeKey = addForeignKey( RecordsTable.TITLE_ID, RECORD_TYPES,
+        ForeignKey recordTypeKey = addForeignKey( RecordsTable.TYPE_ID, RECORD_TYPES,
                 RecordTypesControllActivity.class,
                 getActivity().getString( R.string.select_record_type),
                 recordNameField );

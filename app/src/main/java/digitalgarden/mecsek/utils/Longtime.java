@@ -211,7 +211,7 @@ public class Longtime
                 }
             else
                 {
-                part[MONTH] = now.get(Calendar.MONTH);
+                part[MONTH] = now.get(Calendar.MONTH) + 1;
 
                 if (ints.length == 1)
                     {
