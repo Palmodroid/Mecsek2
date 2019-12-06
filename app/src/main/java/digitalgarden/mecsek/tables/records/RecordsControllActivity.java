@@ -8,7 +8,7 @@ import android.content.Intent;
 
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 
 public class RecordsControllActivity extends GenericControllActivity
@@ -22,9 +22,9 @@ public class RecordsControllActivity extends GenericControllActivity
 
 
 	@Override
-	protected GenericListFragment createListFragment()
+	protected GenericCombinedListFragment createListFragment()
 		{
-		long titlesIdLimit = getIntent().getLongExtra(GenericListFragment.LIMITED_ITEM, -1L);
+		long titlesIdLimit = getIntent().getLongExtra(GenericCombinedListFragment.LIMITED_ITEM, -1L);
 		return RecordsListFragment.newInstance( titlesIdLimit );
 		}
 

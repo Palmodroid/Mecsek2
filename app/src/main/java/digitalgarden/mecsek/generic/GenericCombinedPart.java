@@ -121,7 +121,6 @@ public class GenericCombinedPart
                 {
                 view = convertView;
                 }
-
             bindView( view );
             return view;
             }

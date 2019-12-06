@@ -3,19 +3,19 @@ package digitalgarden.mecsek.tables.patients;
 import android.os.Bundle;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.tables.LibraryDatabase.PATIENTS;
 
 
-public class PatientsListFragment extends GenericListFragment
+public class PatientsListFragment extends GenericCombinedListFragment
 	{
 	// static factory method
 	// http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
-	public static GenericListFragment newInstance(long select )
+	public static GenericCombinedListFragment newInstance(long select )
 		{
-		GenericListFragment listFragmenet = new PatientsListFragment();
+		GenericCombinedListFragment listFragmenet = new PatientsListFragment();
 	
 		Bundle args = new Bundle();
 

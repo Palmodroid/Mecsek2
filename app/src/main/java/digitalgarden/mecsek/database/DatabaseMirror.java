@@ -92,7 +92,6 @@ public class DatabaseMirror
         return tables;
         }
 
-
     /*** COLUMNS ***/
 
     private static class Column

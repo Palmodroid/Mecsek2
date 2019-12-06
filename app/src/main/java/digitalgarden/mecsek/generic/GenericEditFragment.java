@@ -385,9 +385,11 @@ public abstract class GenericEditFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
         Scribe.note("General EDIT Fragment onActivityResult");
 
+        // ??????? getActivity().getContentResolver().unregisterContentObserver( this );
+
         if ( resultCode == Activity.RESULT_OK )
             {
-            long selectedId = data.getLongExtra(GenericListFragment.SELECTED_ITEM, GenericListFragment.SELECTED_NONE);
+            long selectedId = data.getLongExtra(GenericCombinedListFragment.SELECTED_ITEM, GenericCombinedListFragment.SELECTED_NONE);
             checkReturningSelector( requestCode, selectedId );
             }
         }
@@ -427,9 +429,12 @@ public abstract class GenericEditFragment extends Fragment
     		{
     		public void onClick(View view) 
     			{
+
+    			// getActivity().getContentResolver().registerContentObserver();
+
     			Intent intent = new Intent(getActivity(), listingActivity);
     			intent.putExtra( GenericControllActivity.TITLE, listTitle + listOwner.getText() );
-    			intent.putExtra( GenericListFragment.LIMITED_ITEM, getRowIndex() );
+    			intent.putExtra( GenericCombinedListFragment.LIMITED_ITEM, getRowIndex() );
     			startActivity( intent );
     			} 
     		});

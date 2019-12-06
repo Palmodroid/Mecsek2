@@ -2,7 +2,6 @@ package digitalgarden.mecsek.generic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 
 import digitalgarden.mecsek.R;
@@ -70,7 +68,7 @@ edit máshonnan, lista nélkül (pl. diary ilyen)
 
 
 public abstract class GenericControllActivity extends AppCompatActivity
-        implements GenericListFragment.OnListReturnedListener, GenericEditFragment.OnFinishedListener
+        implements GenericCombinedListFragment.OnListReturnedListener, GenericEditFragment.OnFinishedListener
     {
     public final static String TITLE = "title";
 
@@ -86,7 +84,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
     protected abstract GenericEditFragment createEditFragment();
 
     // List Fragment létrehozásáért felelős rész
-    protected abstract GenericListFragment createListFragment();
+    protected abstract GenericCombinedListFragment createListFragment();
 
     //boolean flag to know if main FAB is in open or closed state.
     private boolean fabExpanded = false;
@@ -241,7 +239,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
             listFrag = createListFragment();
 
             // !!!!!!!!!!!!!!! EZ VAJON IDE KELL ???????????????
-            ((GenericListFragment)listFrag).rollToSelectedItem();
+            ((GenericCombinedListFragment)listFrag).rollToSelectedItem();
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.list_frame, listFrag, "LIST");
@@ -312,7 +310,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
 
         // Ezt lehet, h. a fragment is meg tudná tenni
         Intent i = new Intent();
-        i.putExtra(GenericListFragment.SELECTED_ITEM, id);
+        i.putExtra(GenericCombinedListFragment.SELECTED_ITEM, id);
         setResult(RESULT_OK, i);
         finish();
         }
@@ -332,6 +330,53 @@ public abstract class GenericControllActivity extends AppCompatActivity
             }
 
         editFrag = createEditFragment();
+        Bundle args = new Bundle();
+        args.putLong(GenericEditFragment.EDITED_ITEM, id);
+        editFrag.setArguments(args);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        // http://stackoverflow.com/questions/4817900/android-fragments-and-animation és
+        // http://daniel-codes.blogspot.hu/2012/06/fragment-transactions-reference.html
+        // fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left , android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        fragmentTransaction.add(R.id.edit_frame, editFrag, "EDIT");
+        fragmentTransaction.addToBackStack("LIBDB");
+        fragmentTransaction.commit();
+
+        Scribe.note("List item selected: New EDIT was created, added");
+
+        findViewById(R.id.edit_frame).setVisibility(View.VISIBLE);
+        Scribe.note("EDIT Frame VISIBLE");
+        if (findViewById(R.id.landscape) == null)
+            {
+            findViewById(R.id.list_frame).setVisibility(View.GONE);
+            Scribe.note("PORTRAIT MODE: LIST Frame GONE");
+            }
+        fab.hide( HidingActionButton.BY_FRAGMENT );
+        }
+
+    public void onItemEditing( long id, Class editClass )
+        {
+        Scribe.note("LIST ITEM was selected for editing: " + id);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Ameddig van aktív EDIT, addig nem választhatunk újat!
+        if (fragmentManager.findFragmentById(R.id.edit_frame) != null)
+            {
+            Scribe.note("New ITEM ignored, previous EDIT is active");
+            return;
+            }
+
+        Fragment editFrag;
+        try
+            {
+            editFrag = (Fragment)editClass.getConstructor().newInstance();
+            }
+        catch (Exception e)
+            {
+            Scribe.error("No EDIT Fragment for header");
+            return;
+            }
+
         Bundle args = new Bundle();
         args.putLong(GenericEditFragment.EDITED_ITEM, id);
         editFrag.setArguments(args);
@@ -384,13 +429,13 @@ public abstract class GenericControllActivity extends AppCompatActivity
             {
             // Ez eddig az editFinished részben volt, de akkor felvillan a List
             // A másik nagy kérdés, hogy a backStacket nem kell-e kiüríteni.
-            if (getIntent().getLongExtra(GenericListFragment.SELECTED_ITEM,
-                    GenericListFragment.SELECT_DISABLED) != GenericListFragment.SELECT_DISABLED)
+            if (getIntent().getLongExtra(GenericCombinedListFragment.SELECTED_ITEM,
+                    GenericCombinedListFragment.SELECT_DISABLED) != GenericCombinedListFragment.SELECT_DISABLED)
                 {
                 // Ugyanaz, mint OnItemEditing
                 // Ezt lehet, h. a fragment is meg tudná tenni
                 Intent i = new Intent();
-                i.putExtra(GenericListFragment.SELECTED_ITEM, rowId);
+                i.putExtra(GenericCombinedListFragment.SELECTED_ITEM, rowId);
                 setResult(RESULT_OK, i);
                 finish();
                 return;
@@ -410,7 +455,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
         Fragment listFrag = fragmentManager.findFragmentById(R.id.list_frame);
         if (listFrag != null)
             {
-            ((GenericListFragment) listFrag).editFinished( rowId );
+            ((GenericCombinedListFragment) listFrag).editFinished( rowId );
             }
 
         fragmentManager.popBackStack();

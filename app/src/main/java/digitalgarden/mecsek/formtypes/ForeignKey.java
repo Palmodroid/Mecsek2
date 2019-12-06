@@ -13,7 +13,7 @@ import java.util.List;
 import digitalgarden.mecsek.generic.Connection;
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
@@ -98,7 +98,7 @@ public class ForeignKey implements Connection.Connectable
                     Scribe.note("ForeignTextField: Selector started!");
                     Intent intent = new Intent( editFragment.getActivity(), selectorActivity);
                     intent.putExtra( GenericControllActivity.TITLE, selectorTitle + selectorOwner.getText() );
-                    intent.putExtra( GenericListFragment.SELECTED_ITEM, getValue() );
+                    intent.putExtra( GenericCombinedListFragment.SELECTED_ITEM, getValue() );
                     editFragment.startActivityForResult( intent, selectorCode );
                     }
                 return true; // nem engedjük mást sem csinálni
@@ -166,10 +166,10 @@ public class ForeignKey implements Connection.Connectable
     // Ezzel a metódussal nézhetjük meg, hogy visszatérés után a konkrét példánynak kell-e változnia
     public void checkReturningSelector(int selectorCode, long id)
         {
-        if (this.selectorCode == selectorCode && id != getValue())
+        if (this.selectorCode == selectorCode)
             {
+            if ( id != getValue() ) edited = true;
             setValue(id);
-            edited = true;
             }
         }
 

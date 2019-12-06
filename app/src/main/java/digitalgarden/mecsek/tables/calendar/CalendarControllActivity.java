@@ -7,7 +7,7 @@ package digitalgarden.mecsek.tables.calendar;
 
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 public class CalendarControllActivity extends GenericControllActivity
 	{
@@ -19,9 +19,9 @@ public class CalendarControllActivity extends GenericControllActivity
 
 
 	@Override
-	protected GenericListFragment createListFragment()
+	protected GenericCombinedListFragment createListFragment()
 		{
-		long initiallySelectedItem = getIntent().getLongExtra(GenericListFragment.SELECTED_ITEM, CalendarListFragment.SELECT_DISABLED);
+		long initiallySelectedItem = getIntent().getLongExtra(GenericCombinedListFragment.SELECTED_ITEM, CalendarListFragment.SELECT_DISABLED);
 		return CalendarListFragment.newInstance( initiallySelectedItem );
 		}
 

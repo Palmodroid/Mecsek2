@@ -7,25 +7,21 @@ import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
 import digitalgarden.mecsek.tables.recordtypes.RecordTypesTable;
 import digitalgarden.mecsek.tables.patients.PatientsTable;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull;
-import static digitalgarden.mecsek.database.DatabaseMirror.columnFull_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
-import static digitalgarden.mecsek.tables.LibraryDatabase.PATIENTS;
 import static digitalgarden.mecsek.tables.LibraryDatabase.RECORDS;
-import static digitalgarden.mecsek.tables.LibraryDatabase.RECORD_TYPES;
-import static digitalgarden.mecsek.tables.records.RecordsTable.PATIENT_ID;
 
 
-public class RecordsListFragment extends GenericListFragment
+public class RecordsListFragment extends GenericCombinedListFragment
 	{
 	// static factory method
 	// http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
-	public static GenericListFragment newInstance(long limit )
+	public static GenericCombinedListFragment newInstance(long limit )
 		{
-        GenericListFragment listFragmenet = new RecordsListFragment();
+        GenericCombinedListFragment listFragmenet = new RecordsListFragment();
 
         Bundle args = new Bundle();
 

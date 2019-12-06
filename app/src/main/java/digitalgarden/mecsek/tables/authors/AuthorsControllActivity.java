@@ -7,7 +7,7 @@ package digitalgarden.mecsek.tables.authors;
 
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 public class AuthorsControllActivity extends GenericControllActivity
 	{
@@ -20,9 +20,9 @@ public class AuthorsControllActivity extends GenericControllActivity
 
 
 	@Override
-	protected GenericListFragment createListFragment()
+	protected GenericCombinedListFragment createListFragment()
 		{
-		long initiallySelectedItem = getIntent().getLongExtra(GenericListFragment.SELECTED_ITEM, AuthorsListFragment.SELECT_DISABLED);
+		long initiallySelectedItem = getIntent().getLongExtra(GenericCombinedListFragment.SELECTED_ITEM, AuthorsListFragment.SELECT_DISABLED);
 		return AuthorsListFragment.newInstance( initiallySelectedItem );
 		}
 

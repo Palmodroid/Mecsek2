@@ -4,7 +4,7 @@ import android.content.Intent;
 
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 
 // res:
@@ -22,9 +22,9 @@ public class BooksControllActivity extends GenericControllActivity
 
 
 	@Override
-	protected GenericListFragment createListFragment()
+	protected GenericCombinedListFragment createListFragment()
 		{
-		long authorIdLimit = getIntent().getLongExtra(GenericListFragment.LIMITED_ITEM, -1L);
+		long authorIdLimit = getIntent().getLongExtra(GenericCombinedListFragment.LIMITED_ITEM, -1L);
 		return BooksListFragment.newInstance( authorIdLimit );
 		}
 	

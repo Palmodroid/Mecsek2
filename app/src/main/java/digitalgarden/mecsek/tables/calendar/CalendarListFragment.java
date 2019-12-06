@@ -3,19 +3,19 @@ package digitalgarden.mecsek.tables.calendar;
 import android.os.Bundle;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.tables.LibraryDatabase.CALENDAR;
 
 
-public class CalendarListFragment extends GenericListFragment
+public class CalendarListFragment extends GenericCombinedListFragment
 	{
 	// static factory method
 	// http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
-	public static GenericListFragment newInstance(long select )
+	public static GenericCombinedListFragment newInstance(long select )
 		{
-		GenericListFragment listFragmenet = new CalendarListFragment();
+		GenericCombinedListFragment listFragmenet = new CalendarListFragment();
 	
 		Bundle args = new Bundle();
 

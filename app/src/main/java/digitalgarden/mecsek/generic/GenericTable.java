@@ -122,6 +122,18 @@ public abstract class GenericTable
         return null;
         }
 
+    // Loader is notified only when its own table is changed
+    // If table contains foreign references, then observation range should be extended to whole
+    // database
+    // ((Own observer should be unregistered, but where? If we unregister it in onPause, then no
+    // foreign changes will be observed
+    private boolean containsForeignReference = false;
+
+    public boolean containsForeignReference()
+        {
+        return containsForeignReference;
+        }
+
 
     public static final int TYPE_KEY = 0;
     public static final int TYPE_TEXT = 1;
@@ -181,6 +193,8 @@ public abstract class GenericTable
 
         createLeftOuterJoin.add(" LEFT OUTER JOIN " + table(referenceTableIndex).name() +
                 " ON " + columnFull( index ) + "=" + columnFull_id(referenceTableIndex) );
+
+        containsForeignReference = true;
 
         return index;
         }

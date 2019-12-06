@@ -24,7 +24,8 @@
 		android:layout_alignParentTop="true"
 		android:layout_above="@+id/filter"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+		android:layout_height="match_parent"
+		android:drawSelectorOnTop="true"/>
 
 	<!-- http://code.google.com/p/android/issues/detail?id=21742 -->
 	<!-- Ennek ellenére minden további kód nélkül működik -->

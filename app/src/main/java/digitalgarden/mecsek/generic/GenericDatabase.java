@@ -1,6 +1,9 @@
 package digitalgarden.mecsek.generic;
 
+import android.net.Uri;
+
 import static digitalgarden.mecsek.database.DatabaseMirror.addTableToDatabase;
+import static digitalgarden.mecsek.database.DatabaseMirror.database;
 
 public abstract class GenericDatabase
 	{
@@ -20,5 +23,10 @@ public abstract class GenericDatabase
     protected int addTable( GenericTable table )
         {
         return addTableToDatabase(table);
+        }
+
+    public Uri contentUri()
+        {
+        return Uri.parse("content://" + authority());
         }
 	}

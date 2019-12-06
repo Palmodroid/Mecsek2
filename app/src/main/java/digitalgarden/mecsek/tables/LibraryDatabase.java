@@ -36,6 +36,8 @@ public class LibraryDatabase extends GenericDatabase
     public static int RECORD_TYPES;
     public static int RECORDS;
 
+    //
+    public final static int MAX_TABLES = 99;
 
     // Ahhoz, hogy a drop table működjön, előbb kell kitörölni a másokra hivatkozó táblákat!
     // Viszont az export igényli, hogy előbb a hivatkozott táblák exportálódjanak

@@ -6,21 +6,22 @@ import android.os.Bundle;
 
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.tables.authors.AuthorsTable;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
+import static digitalgarden.mecsek.tables.LibraryDatabase.AUTHORS;
 import static digitalgarden.mecsek.tables.LibraryDatabase.BOOKS;
 
 
-public class BooksListFragment extends GenericListFragment
+public class BooksListFragment extends GenericCombinedListFragment
 	{
 	// static factory method
 	// http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
-	public static GenericListFragment newInstance(long limit )
+	public static GenericCombinedListFragment newInstance(long limit )
 		{
-		GenericListFragment listFragmenet = new BooksListFragment();
+		GenericCombinedListFragment listFragmenet = new BooksListFragment();
 
 		Bundle args = new Bundle();
 		
@@ -57,7 +58,31 @@ public class BooksListFragment extends GenericListFragment
         addIdField();
         }
 
-	@Override
+    @Override
+    protected Header defineHeader()
+        {
+        return new Header()
+            {
+            protected int defineRowLayout()
+                {
+                return R.layout.book_list_header_view;
+                }
+
+            protected int defineTableIndex()
+                {
+                return AUTHORS;
+                }
+
+            protected void setupRowLayout()
+                {
+                addField( R.id.author, AuthorsTable.NAME );
+                addIdField();
+                }
+            };
+        }
+
+
+    @Override
 	protected void addExamples()
 		{
 		ContentValues values = new ContentValues();

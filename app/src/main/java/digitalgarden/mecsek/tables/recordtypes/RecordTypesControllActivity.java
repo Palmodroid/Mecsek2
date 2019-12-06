@@ -6,7 +6,7 @@ package digitalgarden.mecsek.tables.recordtypes;
 
 import digitalgarden.mecsek.generic.GenericControllActivity;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericListFragment;
+import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 
 public class RecordTypesControllActivity extends GenericControllActivity
@@ -20,9 +20,9 @@ public class RecordTypesControllActivity extends GenericControllActivity
 
 
 	@Override
-	protected GenericListFragment createListFragment()
+	protected GenericCombinedListFragment createListFragment()
 		{
-		long initiallySelectedItem = getIntent().getLongExtra(GenericListFragment.SELECTED_ITEM,
+		long initiallySelectedItem = getIntent().getLongExtra(GenericCombinedListFragment.SELECTED_ITEM,
 				RecordTypesListFragment.SELECT_DISABLED);
 		return RecordTypesListFragment.newInstance( initiallySelectedItem );
 		}

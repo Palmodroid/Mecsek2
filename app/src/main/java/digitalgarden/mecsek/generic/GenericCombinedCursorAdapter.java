@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import digitalgarden.mecsek.R;
-
 
 public class GenericCombinedCursorAdapter extends BaseAdapter
     {
@@ -48,7 +46,7 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
         listPart.setCursor(cursor);
         }
 
-    public boolean isHeaderEnabled()
+    public boolean isHeaderDefinied()
         {
         return headerPart != null;
         }
@@ -67,13 +65,13 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
     @Override
     public int getViewTypeCount()
         {
-        return isHeaderEnabled() ? 2 : 1;
+        return isHeaderDefinied() ? 2 : 1;
         }
 
     @Override
     public int getItemViewType(int position)
         {
-        if ( isHeaderEnabled() )
+        if ( isHeaderDefinied() )
             return ( position < HEADER_ROWS_COUNT ) ? 0 : 1;
         else
             return 0;
@@ -81,19 +79,23 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
 
     public int getCount()
         {
-        return listPart.getCount() + HEADER_ROWS_COUNT;
+        // Header part has got fixed size. One row and can have row separators
+        int length = listPart.getCount() +
+                (isHeaderDefinied() && headerPart.getCount() > 0 ? HEADER_ROWS_COUNT : 0);
+
+        return length;
         }
 
     public Object getItem(int listPosition)
         {
         int cursorPosition = listPosition;
 
-        if ( isHeaderEnabled() )
+        if ( isHeaderDefinied() )
             {
             if (listPosition < HEADER_ROWS_COUNT)
                 return headerPart.getItem(listPosition);
 
-            cursorPosition += HEADER_ROWS_COUNT;
+            cursorPosition -= HEADER_ROWS_COUNT;
             }
 
         return listPart.getItem( cursorPosition );
@@ -103,12 +105,12 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
         {
         int cursorPosition = listPosition;
 
-        if ( isHeaderEnabled() )
+        if ( isHeaderDefinied() )
             {
             if (listPosition < HEADER_ROWS_COUNT)
-                return headerPart.getItemId(listPosition);
+                return -headerPart.getItemId(listPosition);
 
-            cursorPosition += HEADER_ROWS_COUNT;
+            cursorPosition -= HEADER_ROWS_COUNT;
             }
 
         return listPart.getItemId( cursorPosition );
@@ -123,21 +125,20 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
         {
         int cursorPosition = listPosition;
 
-        if ( isHeaderEnabled() )
+        if ( isHeaderDefinied() )
             {
             if (listPosition < HEADER_ROWS_COUNT)
                 {
-                if( convertView == null )
-                    {
-                    //We must create a View:
-                    convertView = layoutInflater.inflate(R.layout.combinedproba, parent, false);
-                    }
-                //Here we can do changes to the convertView, such as set a text on a TextView
-                //or an image on an ImageView.
-                return convertView;
+                // View view = headerPart.getView( cursorPosition, convertView, parent );
+                // view.setPadding(0,0,0,0);
+                // view.setBackgroundColor( 0xFFE8E8E9 ); // Not the best, but can paint background
+
+                // return view;
+
+                return headerPart.getView( cursorPosition, convertView, parent );
                 }
 
-            cursorPosition += HEADER_ROWS_COUNT;
+            cursorPosition -= HEADER_ROWS_COUNT;
             }
 
         return listPart.getView( cursorPosition, convertView, parent );
