@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.tables.authors.AuthorsEditFragment;
+import digitalgarden.mecsek.tables.books.BooksTable;
 import digitalgarden.mecsek.utils.Keyboard;
 import digitalgarden.mecsek.utils.StringUtils;
 import digitalgarden.mecsek.utils.Utils;
@@ -39,6 +40,7 @@ import static digitalgarden.mecsek.database.DatabaseMirror.columnFull;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.database;
+import static digitalgarden.mecsek.database.DatabaseMirror.getColumnReferenceTableId;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
 
 
@@ -80,11 +82,11 @@ import static digitalgarden.mecsek.database.DatabaseMirror.table;
 public abstract class GenericCombinedListFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener
 	{
-	/* 
+	/*
 	 * A kötelező elemek abstract metódusban,
 	 * az opcionális paraméterek argument-ként kerülnek átadásra.
 	 * Nem használhatunk hagyományos paramétereket, mert újraindításkor az üres konstruktor kerül meghívásra.
-	 * 
+	 *
 	 * ((Ugyanezt Builder-rel is megoldhatnánk, de akkor az átadott paramétereket
 	 * el kellene menteni. http://logout.hu/tema/android/hsz_1450-1453.html
 	 */
@@ -108,11 +110,40 @@ public abstract class GenericCombinedListFragment extends ListFragment
      */
     protected abstract class Header
         {
-        protected abstract int defineTableIndex();
-        protected abstract int defineRowLayout(); // A header sor megjelenítéséhez szükséges Layout
-        protected abstract void setupRowLayout();
+        protected abstract int defineLimitedForeignKeyIndex();
+        // Pl. BooksTable.AUTHOR_ID
+
+        // Ha van Header, akkor át kell adni BooksEditFRagment számára:
+        // id-t (limitedItem)
+        // és a column-t (BooksTable.AUTHOR_ID) amire EditFragment.addForeignKey()
+        // foreignKeyIndex-ként hivatkozik
+
+        protected int getReferenceTableIndex()
+            {
+            return getColumnReferenceTableId( defineLimitedForeignKeyIndex() );
+            }
+        // A szűrést a "main" tábla egy "foreign key" elemére végezzük el.
+        // Név: column( BooksTable.AUTHOR_ID );
+        // Tároljk még a TYPE_KEY (0) adatot és a tábla NEVÉT - de nekünk a refrence table kell!!
+
+        // Ebből tudjuk a LIMITED_COLUMN értékét: args.putString( LIMITED_COLUMN, columnFull(BooksTable.AUTHOR_ID));
+        // limitedColumn = getArguments().getString( LIMITED_COLUMN );
+
+        // Ez a kettő nem deríthető ki máshonnan
+        protected abstract int defineRowLayout(); // A "header" rekord layout-ja
+        protected abstract void setupRowLayout(); // A "header" rekordban szereplő mezők
+        // (Összeköti a layout
         }
 
+    // CSAK LIMITED_COLUMN-nal együtt értelmezhető!
+    // Csak azokat az elemeket listázza, ahol LIMITED_COLUMN-ban LIMITED_ITEM érték szerepel
+    public static final String LIMITED_COLUMN = "limited col";
+    public static final String LIMITED_ITEM = "limited item";
+
+    /** FONTOS !!
+     *  EZ változott.
+     *
+     */
 
     // Ha értéke nem SELECT_DISABLED, akkor:
     // - a listát megjelenésekor erre az elemre pörgeti (rollToSelectedItem())
@@ -120,11 +151,6 @@ public abstract class GenericCombinedListFragment extends ListFragment
     public static final String SELECTED_ITEM = "selected item";
     public static final long   SELECTED_NONE = -1L;
     public static final long   SELECT_DISABLED = -2L;
-
-    // CSAK LIMITED_COLUMN-nal együtt értelmezhető!
-    // Csak azokat az elemeket listázza, ahol LIMITED_COLUMN-ban LIMITED_ITEM érték szerepel
-    public static final String LIMITED_COLUMN = "limited col";
-    public static final String LIMITED_ITEM = "limited item";
 
     // A filtert erre a kifejezésre (ált. oszlop-név) alkalmazza
     public static final String FILTERED_COLUMN = "filtered col";
@@ -146,7 +172,7 @@ public abstract class GenericCombinedListFragment extends ListFragment
     protected void addIdField()
         {
         projection[rowType].add( columnFull_id(
-                rowType == LIST_ROW ? defineTableIndex() : header.defineTableIndex()));
+                rowType == LIST_ROW ? defineTableIndex() : header.getReferenceTableIndex()));
         from[rowType].add( column_id());
         to[rowType].add( R.id.id );
         }
@@ -175,7 +201,7 @@ public abstract class GenericCombinedListFragment extends ListFragment
     private EditText filter;
 
     private long limitedItem = -1L;
-    private String limitedColumn;
+    private int limitedColumn = -1;
 
     // Ha rollToSelectedItem == TRUE, akkor a betöltött adatbázist végignézi, és a kiválasztott elemet megjeleníti
     // Ha a rollToSelectedItem() utasítást közvetlenül a létrehozás után adjuk ki, akkor csak az első indításkor mutatja
@@ -205,11 +231,20 @@ public abstract class GenericCombinedListFragment extends ListFragment
      * To use header and limit to header both header and limited item (header) is needed
      * @return true, if limit to header
      */
-    protected boolean isHeaderDefinied()
+    public boolean isHeaderDefinied()
         {
         return header != null && limitedItem >= 0L;
         }
 
+    public int getHintColumn()
+        {
+        return limitedColumn;
+        }
+
+    public long getHintItem()
+        {
+        return limitedItem;
+        }
 
     // LoaderId - egyedi érték, a tábla azonosítója is megfelel. (tabla.TABLEID)
 	// Elvileg a LIMIT-hez egyedi érték kellene. De mégis megy nélküle Hm.
@@ -225,6 +260,22 @@ public abstract class GenericCombinedListFragment extends ListFragment
         return table( defineTableIndex() ).contentUri();
         }
 
+    /**
+     * onAttach()  onCreate()  onCreateView()  onActivityCreated()  onStart() onResume()
+     * onDetach()  onDestroy() onDestroyView()                      onStop()  onPause()
+     *
+     * onListReturnedListener
+     *                         filter.restartLoader
+     *                                         listView
+     *                                         set up adapters
+     *                                                                        initLoader
+     *                                                                        onCreateLoader
+     *                                                                        onLoadFinished
+     *                                                                        (create cursors)
+     *                                                                        -
+     *                                                                        close headerCursor
+     *
+     */
 
 	@Override
     public void onAttach(Activity activity) 
@@ -242,15 +293,6 @@ public abstract class GenericCombinedListFragment extends ListFragment
     	}
 
 
-	@Override
-    public void onDetach() 
-    	{
-        super.onDetach();
-
-        onListReturnedListener = null;
-    	}
-	
-	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 		{
@@ -312,10 +354,11 @@ public abstract class GenericCombinedListFragment extends ListFragment
         // This was not obvious
         // String[] stringarray = (String[]) from[1].toArray(new String[0]);
 
-        limitedItem = getArguments().getLong( LIMITED_ITEM, -1L );
-        limitedColumn = getArguments().getString( LIMITED_COLUMN );
-
         header = defineHeader();
+        limitedItem = getArguments().getLong( LIMITED_ITEM, -1L );
+        limitedColumn = isHeaderDefinied() ?
+                header.defineLimitedForeignKeyIndex() :
+                getArguments().getInt( LIMITED_COLUMN );
 
         if ( isHeaderDefinied() )
             {
@@ -379,6 +422,17 @@ public abstract class GenericCombinedListFragment extends ListFragment
             headerCursor.close();
         }
 
+
+    @Override
+    public void onDetach()
+        {
+        super.onDetach();
+
+        onListReturnedListener = null;
+        }
+
+
+
     // Creates a new loader after the initLoader () call
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
@@ -415,9 +469,9 @@ public abstract class GenericCombinedListFragment extends ListFragment
 
 		// limitedItem és limitedColumn should be class variables beacause of header
 
-		if ( limitedItem >= 0L && limitedColumn != null )
+		if ( limitedItem >= 0L && limitedColumn >= 0 )
 			{
-			limitClause = limitedColumn + " = " + limitedItem;
+			limitClause = columnFull( limitedColumn ) + " = " + limitedItem;
 			}
 		Scribe.note("onCreateLoader (Query) limit clause: [" + limitClause + "]");
 
@@ -442,11 +496,6 @@ public abstract class GenericCombinedListFragment extends ListFragment
 		return cursorLoader;
 		}
 
-	public void rollToSelectedItem()
-		{
-		rollToSelectedItem = true;
-		}
-	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
 		{
@@ -513,12 +562,9 @@ public abstract class GenericCombinedListFragment extends ListFragment
             headerCursor.close();
             }
 
-        Uri itemContentUri =
-                Uri.parse(table( header.defineTableIndex()).contentUri() + "/" + rowIndex);
-
         //https://stackoverflow.com/questions/4042434/converting-arrayliststring-to-string-in-java
         headerCursor = getActivity().getContentResolver().query(
-                    itemContentUri,
+                    table( header.getReferenceTableIndex()).itemContentUri( rowIndex ),
                     (String[]) projection[HEADER_ROW].toArray(new String[0]),
                     null, null,null );
 
@@ -526,6 +572,11 @@ public abstract class GenericCombinedListFragment extends ListFragment
         // nem kell, mert majd ő bemozgatja. A null-t lehet, hogy nézni kellene, de elvileg csak
         // egy létező item-ről juthatunk ide, delete meg nincs
         // headerCursor.moveToFirst();
+        }
+
+    public void rollToSelectedItem()
+        {
+        rollToSelectedItem = true;
         }
 
 

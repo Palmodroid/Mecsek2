@@ -28,7 +28,7 @@ public class RecordsListFragment extends GenericCombinedListFragment
         // args.putLong( SELECTED_ITEM , SELECT_DISABLED ); Nincs szelektálás!
 
         args.putLong( LIMITED_ITEM, limit );
-        args.putString( LIMITED_COLUMN, columnFull(RecordsTable.PATIENT_ID));
+        args.putInt( LIMITED_COLUMN, RecordsTable.PATIENT_ID );
         args.putString( ORDERED_COLUMN, columnFull( RecordsTable.NAME ));
         // args.putString( FILTERED_COLUMN, BooksTable.FULL_SEARCH);
         args.putStringArray( FILTERED_COLUMN, new String[] { columnFull(RecordTypesTable.SEARCH), columnFull(RecordsTable.SEARCH)});

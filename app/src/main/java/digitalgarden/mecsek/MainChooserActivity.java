@@ -261,7 +261,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
                     {
                     Scribe.note("MainActivity Menu: DROP");
                     getContentResolver().call(
-                            Uri.parse("content://" + database().authority()),
+                    		database().contentUri(),
                             DatabaseContentProvider.DROP_METHOD,
                             null, null);
                     }

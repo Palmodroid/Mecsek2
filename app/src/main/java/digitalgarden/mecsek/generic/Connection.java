@@ -56,7 +56,8 @@ public class Connection
 
     private Uri getItemContentUri( long rowIndex )
         {
-        return Uri.parse( table( tableIndex ).contentUri() + "/" + rowIndex );
+        return table( tableIndex ).itemContentUri( rowIndex );
+        // Uri.parse( table( tableIndex ).contentUri() + "/" + rowIndex );
         }
 
 

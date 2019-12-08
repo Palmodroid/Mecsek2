@@ -128,10 +128,10 @@ public class ExternKey implements Connection.Connectable
             }
         }
 
-    // Ez kéne a közösbe!!
     private Uri getItemContentUri( long rowIndex )
         {
-        return Uri.parse( table( tableIndex ).contentUri() + "/" + rowIndex );
+        return table( tableIndex ).itemContentUri( rowIndex );
+        // return Uri.parse( table( tableIndex ).contentUri() + "/" + rowIndex );
         }
 
 

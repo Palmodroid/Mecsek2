@@ -28,7 +28,7 @@ public class BooksListFragment extends GenericCombinedListFragment
 		// args.putLong( SELECTED_ITEM , SELECT_DISABLED ); Nincs szelektálás!
 		
 		args.putLong( LIMITED_ITEM, limit );
-		args.putString( LIMITED_COLUMN, columnFull(BooksTable.AUTHOR_ID));
+		args.putInt( LIMITED_COLUMN, BooksTable.AUTHOR_ID );
 		args.putString( ORDERED_COLUMN, columnFull(AuthorsTable.NAME));
 		// args.putString( FILTERED_COLUMN, BooksTable.FULL_SEARCH);
 		args.putStringArray( FILTERED_COLUMN, new String[] {columnFull(AuthorsTable.SEARCH), columnFull(BooksTable.SEARCH)});
@@ -63,14 +63,15 @@ public class BooksListFragment extends GenericCombinedListFragment
         {
         return new Header()
             {
+            @Override
+            protected int defineLimitedForeignKeyIndex()
+                {
+                return BooksTable.AUTHOR_ID;
+                }
+
             protected int defineRowLayout()
                 {
                 return R.layout.book_list_header_view;
-                }
-
-            protected int defineTableIndex()
-                {
-                return AUTHORS;
                 }
 
             protected void setupRowLayout()

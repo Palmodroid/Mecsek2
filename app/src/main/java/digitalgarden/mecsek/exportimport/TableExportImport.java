@@ -600,7 +600,8 @@ public class TableExportImport
 
         if ( updateNeeded )
             {
-            getContentResolver().update(Uri.parse( table.contentUri() + "/" + row ), values, null, null);
+            getContentResolver().update( table.itemContentUri( row ), values,
+                    null, null);
             }
         Scribe.debug( table.name() + "[" + records[1] + "] was inserted.");
         }

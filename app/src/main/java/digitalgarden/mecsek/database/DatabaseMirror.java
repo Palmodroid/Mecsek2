@@ -96,23 +96,25 @@ public class DatabaseMirror
 
     private static class Column
         {
-        private String tableName;
         private String columnName;
         private int columnType;
+        private int tableId; // "START": defineTables() - setId - is before table.defineColumns()
 
-        Column(String columnName, int columnType, String tableName)
+        private int referenceTableId; // Used only for foreignKey-s
+
+        Column(String columnName, int columnType, int tableId)
             {
             this.columnName = columnName;
             this.columnType = columnType;
-            this.tableName = tableName;
+            this.tableId = tableId;
             }
         }
 
     private static ArrayList<Column> columns = new ArrayList<>();
 
-    public static int addColumnToDatabase(String columnName, int columnType, String tableName )
+    public static int addColumnToDatabase(String columnName, int columnType, int tableId )
         {
-        columns.add( new Column( columnName, columnType, tableName ));
+        columns.add( new Column( columnName, columnType, tableId ));
         return columns.size() - 1;
         }
 
@@ -123,7 +125,7 @@ public class DatabaseMirror
 
     public static String columnFull(int columnIndex )
         {
-        return columns.get( columnIndex ).tableName + "." + column(columnIndex);
+        return table(columns.get( columnIndex ).tableId ).name() + "." + column(columnIndex);
         }
 
     public static String column_id()
@@ -140,4 +142,17 @@ public class DatabaseMirror
         {
         return columns.get(columnIndex).columnType;
         }
+
+    // Itt jobb lenne egy getColumn(), amin belül lehetne set... és getRefTableIndex
+
+    public static void setColumnReferenceTableId(int columnIndex, int referenceTableIndex )
+        {
+        columns.get(columnIndex).referenceTableId = referenceTableIndex;
+        }
+
+    public static int getColumnReferenceTableId(int columnIndex )
+        {
+        return columns.get(columnIndex).referenceTableId;
+        }
+
     }

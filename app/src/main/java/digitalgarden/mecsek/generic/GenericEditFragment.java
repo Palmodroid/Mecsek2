@@ -1,6 +1,7 @@
 package digitalgarden.mecsek.generic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -70,8 +71,24 @@ import static digitalgarden.mecsek.database.DatabaseMirror.table;
  */
 public abstract class GenericEditFragment extends Fragment
     {
+    // Ha EDIT befejezte a ténykedését, akkor mindenképp itt tér vissza
+    // Most csak az ADD adja vissza a létrehozott item id-jét, hogy
+    // SELECT mode-ban kiléphessünk. A többi -1L lesz
+    public interface OnFinishedListener
+        {
+        public void onFinished( long rowId );
+        }
+
+
     public final static String EDITED_ITEM = "edited item";
     public final static long NEW_ITEM = -1L;
+
+    // ListFragment át tudja adni a limited értékeit, és akkor azt kapásból kitölthetjük
+    public final static String LIMITED_COLUMN = "limited col";
+    public final static String LIMITED_ITEM = "limited item";
+
+    private ForeignKey limitedForeignKey = null;
+
 
     private Connection connection;
 
@@ -81,14 +98,6 @@ public abstract class GenericEditFragment extends Fragment
 
     // A szerkesztés végén ide térünk vissza
     OnFinishedListener onFinishedListener;
-
-    // Ha EDIT befejezte a ténykedését, akkor mindenképp itt tér vissza
-    // Most csak az ADD adja vissza a létrehozott item id-jét, hogy
-    // SELECT mode-ban kiléphessünk. A többi -1L lesz
-    public interface OnFinishedListener
-        {
-        public void onFinished( long rowId );
-        }
 
     // Az egyes UI elemeket tartalmazó változók
     private Button buttonAdd;
@@ -138,11 +147,25 @@ public abstract class GenericEditFragment extends Fragment
     // Az űrlap mezőinek megfelelő objektumok itt kerülnek létrehozásra, ill. összekapcsolásra az adatbázissal
     protected abstract void setupFormLayout();
 
+
     public long getRowIndex()
         {
         // Ez korábban egy külső változó is azonosította, így munkásabb, de nincs külön hivatkozás
         Bundle args = getArguments();
         return (args != null) ? args.getLong(EDITED_ITEM, NEW_ITEM) : NEW_ITEM;
+        }
+
+    // Ehelyett jobb lenne vmi összehasonlítás egy függvényben, ami a hint értéket adja vissza
+    public long getLimitedItem()
+        {
+        Bundle args = getArguments();
+        return (args != null) ? args.getLong(LIMITED_ITEM, NEW_ITEM) : NEW_ITEM;
+        }
+
+    public int getLimitedColumn()
+        {
+        Bundle args = getArguments();
+        return (args != null) ? args.getInt(LIMITED_COLUMN, -1) : -1;
         }
 
 
@@ -164,7 +187,6 @@ public abstract class GenericEditFragment extends Fragment
         }
 
 
-
     public ForeignKey addForeignKey( int foreignKeyIndex, int foreignTableIndex,
                                      Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
         {
@@ -173,6 +195,11 @@ public abstract class GenericEditFragment extends Fragment
 
         foreignKeys.add( foreignKey );
         connection.add( foreignKey );
+
+        if (foreignKeyIndex == getLimitedColumn())
+            {
+            limitedForeignKey = foreignKey;
+            }
 
         return foreignKey;
         }
@@ -194,6 +221,28 @@ public abstract class GenericEditFragment extends Fragment
 
         return sourceField;
         }
+
+    /**
+     * onAttach()  onCreate()  onCreateView()  onActivityCreated()  onStart() onResume()
+     * onDetach()  onDestroy() onDestroyView()                      onStop()  onPause()
+     **/
+
+
+    @Override
+    public void onAttach(Context context)
+        {
+        super.onAttach(context);
+
+        try
+            {
+            onFinishedListener = (OnFinishedListener) context;
+            }
+        catch (ClassCastException e)
+            {
+            throw new ClassCastException(context.toString() + " must implement OnFinishedListener");
+            }
+        }
+
 
     // Az űrlapot defineFormLayout() alapján illeszti be
     // Az űrlap mezőkkel történő összekapcsolását setFormLayout() végzi el. (Ezt megelőzően codeGenerator-t nullázuk!)
@@ -255,28 +304,6 @@ public abstract class GenericEditFragment extends Fragment
         return view;
         }
 
-    @Override
-    public void onAttach(Activity activity)
-        {
-        super.onAttach(activity);
-
-        try
-            {
-            onFinishedListener = (OnFinishedListener) activity;
-            }
-        catch (ClassCastException e)
-            {
-            throw new ClassCastException(activity.toString() + " must implement OnFinishedListener");
-            }
-        }
-
-    @Override
-    public void onDetach()
-        {
-        super.onDetach();
-
-        onFinishedListener = null;
-        }
 
     // Ez az adatfel- és visszatöltés leglényegesebb része:
     // Ha edited==TRUE, akkor edited-del együtt az összes változónk érvényes, nincs teendő
@@ -319,6 +346,10 @@ public abstract class GenericEditFragment extends Fragment
 
         else // alapértéket - elvileg csak itt kell beállítani
             {
+            if (limitedForeignKey != null )
+                limitedForeignKey.setValue( getLimitedItem() );
+
+            // -1L-nél ez nem csinál semmit, hint meg csak ott van
             connection.pullData( getRowIndex());
             }
 
@@ -338,6 +369,15 @@ public abstract class GenericEditFragment extends Fragment
             confirmationDialog.dismiss();
             confirmationDialog = null;
             }
+        }
+
+
+    @Override
+    public void onDetach()
+        {
+        super.onDetach();
+
+        onFinishedListener = null;
         }
 
 
@@ -467,7 +507,8 @@ public abstract class GenericEditFragment extends Fragment
 
     protected Uri getItemContentUri()
         {
-        return Uri.parse( table(defineTableIndex()).contentUri() + "/" + getRowIndex());
+        return table(defineTableIndex()).itemContentUri( getRowIndex() );
+        // Uri.parse( table(defineTableIndex()).contentUri() + "/" + getRowIndex());
         }
 
     private void deleteItem()

@@ -21,6 +21,7 @@ import static digitalgarden.mecsek.database.DatabaseMirror.columnFull;
 import static digitalgarden.mecsek.database.DatabaseMirror.columnFull_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.database;
+import static digitalgarden.mecsek.database.DatabaseMirror.setColumnReferenceTableId;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
 
 /**
@@ -171,7 +172,7 @@ public abstract class GenericTable
         columnName = columnName + "_" + Integer.toString(tableId);
 
         createColumns.add(columnName + " " + COLUMN_TYPES[columnType] + (unique ? " UNIQUE " : ""));
-        return addColumnToDatabase( columnName, columnType, name() );
+        return addColumnToDatabase( columnName, columnType, tableId );
         }
 
     protected int addColumn(int columnType, String columnName )
@@ -195,6 +196,9 @@ public abstract class GenericTable
                 " ON " + columnFull( index ) + "=" + columnFull_id(referenceTableIndex) );
 
         containsForeignReference = true;
+
+        // Important!! GenericListFragment.Header needs it!!
+        setColumnReferenceTableId( index, referenceTableIndex);
 
         return index;
         }
@@ -283,7 +287,12 @@ public abstract class GenericTable
 
     public Uri contentUri()
         {
-        return Uri.parse("content://" + authority() + "/" + name());
+        return Uri.parse(database().contentUri() + "/" + name());
+        }
+
+    public Uri itemContentUri( long itemId )
+        {
+        return Uri.parse(contentUri() + "/" + itemId);
         }
 
     public Uri contentCountUri()
@@ -319,7 +328,7 @@ public abstract class GenericTable
             // Egyébként meg meg kellene kérdezni, hogy felülírja-e az előzőt?
             long id = db.insert( name(), null, values );
 
-            return Uri.parse( contentUri() + "/" + id);
+            return itemContentUri( id ); // Uri.parse( contentUri() + "/" + id);
             }
 
         return null;

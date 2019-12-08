@@ -329,8 +329,22 @@ public abstract class GenericControllActivity extends AppCompatActivity
             return;
             }
 
-        editFrag = createEditFragment();
         Bundle args = new Bundle();
+        // Ha új elemet hozunk létre akkor, listFragment (ha van) header (ha van) adhat "hint"-et
+        // Lehet, hogy list-fragmentet lehetne class-variable-ben tárolni.
+
+        if ( id == -1L ) // Uj elemet hozunk létre
+            {
+            GenericCombinedListFragment listFrag =
+                    (GenericCombinedListFragment)fragmentManager.findFragmentById(R.id.list_frame);
+            if (listFrag != null && listFrag.isHeaderDefinied())
+                {
+                args.putInt(GenericEditFragment.LIMITED_COLUMN, listFrag.getHintColumn());
+                args.putLong(GenericEditFragment.LIMITED_ITEM, listFrag.getHintItem());
+                }
+            }
+
+        editFrag = createEditFragment();
         args.putLong(GenericEditFragment.EDITED_ITEM, id);
         editFrag.setArguments(args);
 
