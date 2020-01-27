@@ -9,6 +9,8 @@
     <string name="record_types_title">Record types</string>
     <string name="records_title">Records</string>
     <string name="calendar_title">Calendar</string>
+    <string name="colordefs_title">Color Definitions</string>
+    <string name="color_picker_title">Color Picker</string>
 
 	<string name="select_author">"Select author for "</string>
 	<string name="books_of">"Books of "</string>
@@ -59,6 +61,11 @@
     <string name="hint_calendar_date">date</string>
     <string name="title_calendar_note">Note:</string>
     <string name="hint_calendar_note">note</string>
+
+    <string name="title_color">Color:</string>
+    <string name="hint_color">color\'s name</string>
+    <string name="title_value">Value:</string>
+    <string name="hint_value">value\'s value</string>
 
     <string name="button_add">Add</string>
     <string name="button_update">Update</string>

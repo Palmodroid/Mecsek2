@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import digitalgarden.mecsek.viewutils.BackgroundView;
+import digitalgarden.mecsek.viewutils.BoxView;
 import digitalgarden.mecsek.viewutils.TextPaint;
 
 import static digitalgarden.mecsek.viewutils.TextPaint.millis;
@@ -15,12 +15,12 @@ import static digitalgarden.mecsek.viewutils.TextPaint.millis;
 
 /**
  * Draws a complex diary View on the top of a backgroundView
- * Parameters to set:
+ * Parameters to setStyle:
  * setRowPaint() - paint used for data rows
  * setDayPaint() - paint used for day of the month
  * setDayOfMonth() - sets only day of the month
  */
-public class ComplexDailyView extends BackgroundView
+public class ComplexDailyView extends BoxView
     {
     // text paint to draw text with
     private TextPaint dayPaint;
@@ -144,7 +144,7 @@ public class ComplexDailyView extends BackgroundView
         rowHeight = rowPaint.getMeasuredTextHeight() + millis(imageSize, 100);
         rowMaxWidth = millis( width, 900);
 
-/*        rectF.set(
+/*        rectF.setStyle(
                 millis(width, 520),
                 millis(width, 50),
                 millis(width, 520) + imageSize,
@@ -163,7 +163,7 @@ public class ComplexDailyView extends BackgroundView
     @Override
     protected void onDraw(Canvas canvas)
         {
-        getBackgroundPaint().setColor( dailyData.getDayColor() );
+        getPaperPaint().setColor( dailyData.getDayColor() );
 
         super.onDraw(canvas);
 

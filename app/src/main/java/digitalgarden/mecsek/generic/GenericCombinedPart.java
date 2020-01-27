@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import digitalgarden.mecsek.formtypes.ColorView;
 import digitalgarden.mecsek.formtypes.DateView;
 
 public class GenericCombinedPart
@@ -158,23 +159,25 @@ public class GenericCombinedPart
 
                 //if (!bound)
                 //    {
-                if (v instanceof TextView)
+                if ( v instanceof DateView)
                     {
-                    if ( v instanceof DateView)
+                    long time = cursor.getLong(from[i]);
+                    ((DateView)v).setDate( time );
+                    }
+                else if ( v instanceof ColorView)
+                    {
+                    long color = cursor.getLong(from[i]);
+                    ((ColorView)v).setColor( color );
+                    }
+                else  if (v instanceof TextView) // all previous were descendants of textView
+                    {
+                    String text = cursor.getString(from[i]);
+                    if (text == null)
                         {
-                        long time = cursor.getLong(from[i]);
-                        ((DateView)v).setDate( time );
+                        text = "";
                         }
-                    else
-                        {
-                        String text = cursor.getString(from[i]);
-                        if (text == null)
-                            {
-                            text = "";
-                            }
 
-                        setViewText((TextView) v, text);
-                        }
+                    setViewText((TextView) v, text);
                     }
                 // else if (v instanceof ImageView)
                 //    {

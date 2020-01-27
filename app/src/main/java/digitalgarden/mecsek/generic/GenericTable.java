@@ -127,7 +127,7 @@ public abstract class GenericTable
     // If table contains foreign references, then observation range should be extended to whole
     // database
     // ((Own observer should be unregistered, but where? If we unregister it in onPause, then no
-    // foreign changes will be observed
+    // foreign changes will be observed))
     private boolean containsForeignReference = false;
 
     public boolean containsForeignReference()
@@ -139,8 +139,9 @@ public abstract class GenericTable
     public static final int TYPE_KEY = 0;
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_DATE = 2;
+    public static final int TYPE_COLOR = 3;
 
-    private static final String[] COLUMN_TYPES = {"INTEGER", "TEXT", "INTEGER"};
+    private static final String[] COLUMN_TYPES = {"INTEGER", "TEXT", "INTEGER", "INTEGER"};
 
 
     public static final int COUNTID = 0x100000;
@@ -330,6 +331,35 @@ public abstract class GenericTable
 
             return itemContentUri( id ); // Uri.parse( contentUri() + "/" + id);
             }
+        else if ( uriType == id(ITEMID))
+            {
+            if (searchColumnIndex != -1)
+                {
+                values.put(column(searchColumnIndex), StringUtils.normalize(
+                        values.getAsString(column(searchColumnIndexFor))));
+                }
+
+            // It works also with strings, not only with longs!!
+            String id = uri.getLastPathSegment();
+            values.put( column_id(), id );
+
+            long returnedId = db.insertWithOnConflict( name(), null, values,
+                    SQLiteDatabase.CONFLICT_IGNORE );
+
+            if ( returnedId < 0L )
+                {
+                // rowsUpdated = EZT MEG HOGYAN ELLENŐRZÖM LE???
+                db.update( name(),
+                        values,
+                        column_id()  + "=" + id,
+                        null);
+
+                }
+
+            return uri; // itemContentUri( returnedId ); // Uri.parse( contentUri() + "/" + id);
+            // JUST TRYING !!!!!!!!!!!!!!!!!!!
+            // Mégiscsak logikusabb a másikba tenni...
+            }
 
         return null;
         }
@@ -364,7 +394,58 @@ public abstract class GenericTable
 
         if ( uriType == id(DIRID) )
             {
-            throw new IllegalArgumentException("Multiple updates on " + name() + " are not allowed: " + uri);
+            if (searchColumnIndex != -1)
+                {
+                values.put(column(searchColumnIndex), StringUtils.normalize(
+                        values.getAsString(column(searchColumnIndexFor))));
+                }
+
+            // !!!!!!!!! JUST TRYING IT !!!!!!!!!!!!!!!!!!!!!
+            /*
+            Speciális helyzet, ha egy adott id-hez tartozó rekordot akarunk módosítani.
+            Az update csak akkor működik, ha a rekord már létezik.
+            Az insert csak akkor működik, ha a rekord NEM létezik.
+            Ez általában nem probléma, ill. nem is szabad felülírni rekordot (pl. azonos betegnevek)
+
+            Az insertWithONConflict - CONFLICT_REPLACE ezzel szemben beírja, vagy ha már létezik, akkor törli az előző
+            rekordot. Ennek az az eredménye, hogy egy új rekord keletkezik, ugyanazon az id-n.
+
+            A kérdés, hogy ez a funkció hova kerüljön:
+            az _id-t bele kell tenni a values-ba, és akkor az update alá, ahol Uri a table neve (DIRÖ
+            vagy az insert/ITEM alá, ahol az id mehet az Uri-ba
+            Vagy csináljunk egy REPLACE uri-t?
+
+            Talán az insert/ITEM lenne a legjobb.
+
+            Idea2
+            További olvasással kiderült, hogy a probléma a REPLACE során a törléssel van, mely kaszkád szerűen mindent
+            töröl.
+            Úgyhogy először meg kell próbálni az INSERT-et, ha ez sikertelen (mert létezik), akkor jön az UPDATE
+
+            A kérdés továbbra is az, hogy mi végezze el ezt az UPSERT metódust.
+            Lehetne az INSERT/ID
+            Lehetne az UPDATE/ID - akkor ugye csak ez működik
+            Lehetne az UPDATE/DIR, Content Valuesban az ID-val.
+             */
+
+            Long id = values.getAsLong( column_id() );
+            if ( id == null )
+                throw new IllegalArgumentException("Upsert in " + name() + " needs id among values! " + uri);
+            // long id = db.insertWithOnConflict( name(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
+            if ( db.insertWithOnConflict( name(), null, values, SQLiteDatabase.CONFLICT_IGNORE) < 0L )
+                {
+                rowsUpdated = db.update( name(),
+                        values,
+                        column_id()  + "=" + id,
+                        null);
+                }
+            else
+                {
+                rowsUpdated = 1;
+                }
+
+            // throw new IllegalArgumentException("Multiple updates on " + name() + " are not allowed: " + uri);
             }
         else if ( uriType == id(ITEMID))
             {

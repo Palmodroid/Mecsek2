@@ -1,7 +1,6 @@
 package digitalgarden.mecsek;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.view.View.OnClickListener;
 import java.io.File;
 
 import digitalgarden.mecsek.MainChooserDialogFragment.Type;
+import digitalgarden.mecsek.color.ColorDefsControllActivity;
+import digitalgarden.mecsek.color.ColorPickerActivity;
 import digitalgarden.mecsek.database.DatabaseContentProvider;
 import digitalgarden.mecsek.tables.authors.AuthorsControllActivity;
 import digitalgarden.mecsek.tables.books.BooksControllActivity;
@@ -17,7 +18,6 @@ import digitalgarden.mecsek.tables.calendar.CalendarControllActivity;
 import digitalgarden.mecsek.tables.records.RecordsControllActivity;
 import digitalgarden.mecsek.tables.patients.PatientsControllActivity;
 import digitalgarden.mecsek.tables.recordtypes.RecordTypesControllActivity;
-import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
@@ -42,7 +42,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         /*
         for ( int y = 1970; y < 2020; y++ )
             {
-            longtime.set( y, 1, 1 );
+            longtime.setStyle( y, 1, 1 );
 
             int di = longtime.getDayIndex();
             int mi = longtime.getMonthIndex();
@@ -56,7 +56,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.set(2000, 3, 17);
+        longtime.setStyle(2000, 3, 17);
 
         int di = longtime.getDayIndex();
         int mi = longtime.getMonthIndex();
@@ -73,7 +73,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.set(1970, 1, 1);
+        longtime.setStyle(1970, 1, 1);
         boolean error = false;
         for (int n = 0; n < 500; n++)
             {
@@ -98,7 +98,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.set(1970, 1, 1);
+        longtime.setStyle(1970, 1, 1);
         Scribe.debug("LONGTIME: " + longtime.toString(true) +
                 " index: " + longtime.getDayIndex() );
 
@@ -224,6 +224,8 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
                     }
                 });
 
+			/************************************/
+
 			findViewById(R.id.button_diary).setOnClickListener(new OnClickListener()
 				{
 				public void onClick(View view)
@@ -232,12 +234,26 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
 					Intent i = new Intent();
 
-					i.setClass(MainChooserActivity.this, DiaryActivity.class);
+					// i.setClass(MainChooserActivity.this, DiaryActivity.class);
+					i.setClass(MainChooserActivity.this, ColorDefsControllActivity.class);
 					startActivity(i);
 					}
 				});
 
-			findViewById(R.id.button_export).setOnClickListener(new OnClickListener()
+            findViewById(R.id.button_colordefs).setOnClickListener(new OnClickListener()
+                {
+                public void onClick(View view)
+                    {
+                    Scribe.title("MAINCHOOSER: Colordefs called");
+
+                    Intent i = new Intent();
+
+                    i.setClass(MainChooserActivity.this, ColorPickerActivity.class);
+                    startActivity(i);
+                    }
+                });
+
+            findViewById(R.id.button_export).setOnClickListener(new OnClickListener()
                 {
                 public void onClick(View view)
                     {

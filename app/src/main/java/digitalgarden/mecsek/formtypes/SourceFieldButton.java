@@ -110,7 +110,7 @@ public class SourceFieldButton extends AppCompatButton implements Connection.Con
     @Override
     public void pushData(ContentValues values)
         {
-        // These data cannot be pushed; source is set by the source table
+        // These data cannot be pushed; source is setStyle by the source table
         }
 
     @Override

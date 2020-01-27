@@ -81,13 +81,22 @@
 			android:layout_centerHorizontal="true" />
 
 		<Button
+			android:id="@+id/button_colordefs"
+			android:text="Color Definitions"
+			android:minEms="10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/button_diary"
+			android:layout_centerHorizontal="true" />
+
+		<Button
 	        android:id="@+id/button_export"
 	       	android:text="@string/button_export"
 	        android:minEms="10"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="20dp"
-	        android:layout_below="@id/button_diary"
+	        android:layout_below="@id/button_colordefs"
 	        android:layout_centerHorizontal="true" />
 	
 	    <Button

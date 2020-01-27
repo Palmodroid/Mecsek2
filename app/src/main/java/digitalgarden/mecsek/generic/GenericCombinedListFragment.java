@@ -267,7 +267,7 @@ public abstract class GenericCombinedListFragment extends ListFragment
      * onListReturnedListener
      *                         filter.restartLoader
      *                                         listView
-     *                                         set up adapters
+     *                                         setStyle up adapters
      *                                                                        initLoader
      *                                                                        onCreateLoader
      *                                                                        onLoadFinished
@@ -348,7 +348,7 @@ public abstract class GenericCombinedListFragment extends ListFragment
 				defineRowLayout(),
                 (String[]) from[LIST_ROW].toArray(new String[0]),
                 Utils.convertToIntArray(to[LIST_ROW]),
-				getArguments().getLong( SELECTED_ITEM , SELECT_DISABLED )
+                getArguments().getLong( SELECTED_ITEM , SELECT_DISABLED )
 				);
 
         // This was not obvious
@@ -403,7 +403,7 @@ public abstract class GenericCombinedListFragment extends ListFragment
         {
         super.onResume();
 
-        // It should set headerCursor as well in onLoadFinished
+        // It should setStyle headerCursor as well in onLoadFinished
         LoaderManager.getInstance(getActivity()).initLoader( getLoaderId(), null, this);
 
         // authorsObserver = new AuthorsObserver(null );

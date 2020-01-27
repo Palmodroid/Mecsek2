@@ -179,7 +179,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
         String title = getIntent().getStringExtra(TITLE);
         if (title != null)
             {
-            Scribe.note("GenericControllActivity NAME set: " + title);
+            Scribe.note("GenericControllActivity NAME setStyle: " + title);
             setTitle(title);
             }
         }

@@ -55,18 +55,18 @@ public abstract class CheckedLayout extends ViewGroup
         typedArray.recycle();
         }
 
-    private void initChildViews(Context context)
+    protected void initChildViews(Context context)
         {
         for (int row = 0; row < rows; row++)
             {
             for (int col = 0; col < columns; col++)
                 {
-                addView(getChildView( row, col ));
+                addView(createChildView( row, col ));
                 }
             }
         }
 
-    public void init()
+    protected void init()
         {
         }
 
@@ -96,7 +96,20 @@ public abstract class CheckedLayout extends ViewGroup
             }
         }
 
-    public abstract View getChildView(int row, int col );
+    /*
+     * Invalidate should invalidate childviews
+     */
+    @Override
+    public void invalidate()
+        {
+        // super.invalidate();
+        for (int index = 0; index < getChildCount(); index++)
+            {
+            getChildAt( index ).invalidate();
+            }
+        }
+
+    protected abstract View createChildView(int row, int col );
 
     /**
      * Return child view at the specified row and column coordinate pair.

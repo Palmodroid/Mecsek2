@@ -4,13 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 
 
 /**
  * Draws text in the center of a backgroundview
  */
-public class BackgroundAndTextView extends BackgroundView
+public class BoxAndTextView extends BoxView
     {
     // text paint to draw text with
     private TextPaint textPaint;
@@ -19,17 +18,17 @@ public class BackgroundAndTextView extends BackgroundView
     private String text ="*";
 
 
-    public BackgroundAndTextView(Context context)
+    public BoxAndTextView(Context context)
         {
         super(context);
         }
 
-    public BackgroundAndTextView(Context context, AttributeSet attrs)
+    public BoxAndTextView(Context context, AttributeSet attrs)
         {
         super(context, attrs);
         }
 
-    public BackgroundAndTextView(Context context, AttributeSet attrs, int defStyleAttr)
+    public BoxAndTextView(Context context, AttributeSet attrs, int defStyleAttr)
         {
         super(context, attrs, defStyleAttr);
         }
@@ -69,6 +68,15 @@ public class BackgroundAndTextView extends BackgroundView
     protected void onDraw(Canvas canvas)
         {
         super.onDraw(canvas);
+
+        // longstyle is setStyle by BoxView.setLongstyle() methods
+        // text is always written with inkColor
+        if ( longstyle != null )
+            {
+            textPaint.setColor( longstyle.getInkColor() );
+            textPaint.setTextItalics( longstyle.isItalicsText() );
+            textPaint.setTextBold( longstyle.isBoldText() );
+            }
 
         textPaint.drawText(canvas, text);
         }

@@ -1,0 +1,136 @@
+package digitalgarden.mecsek.color;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+
+import digitalgarden.mecsek.R;
+
+
+public class ColorPickerActivity extends AppCompatActivity
+        implements View.OnClickListener, View.OnLongClickListener
+    {
+    private ColorCheckedLayout colorCheckedLayout;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+        {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_color_picker);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setVisibility(View.GONE);
+
+        colorCheckedLayout = findViewById(R.id.color_checked_layout);
+
+        colorCheckedLayout.setOnClickListener(this);
+        colorCheckedLayout.setOnLongClickListener(this);
+
+        fillColors();
+        }
+
+    private String[][] plan = {
+            {"322", "311", "321", "320", "230", "231", "131", "232"},
+            {"330", "300", "310", "211", "221", "121", "130", "030"},
+            {"331", "301", "200", "210", "220", "120", "020", "031"},
+            {"332", "302", "201", "100", "110", "010", "021", "032"},
+            {"333", "312", "202", "101", "001", "011", "022", "132"},
+            {"222", "303", "212", "102", "002", "012", "122", "033"},
+            {"111", "313", "203", "103", "003", "013", "123", "133"},
+            {"000", "323", "213", "223", "112", "113", "023", "233"}};
+
+
+    // int range = 256; // Can be 256 64 16 4
+    int range = 256;
+    String area = "000";
+    int start[] = { 0,0,0 };
+
+    private void fillColors()
+        {
+        Log.d("COLOR", "New fill - range: " + range + " area: " + area );
+
+        ColorCellView view;
+
+        Log.d("COLOR", "    starts at: " + start[0] + "/" + start[1] + "/" + start[2] + "/" );
+
+        for (int r = 0; r < 8; r++)
+            {
+            for (int c = 0; c < 8; c++)
+                {
+                int color = 0xFF;
+
+                for (int i = 0; i < 3; i++)
+                    {
+                    int chr = plan[r][c].charAt(i);
+                    if (chr == ' ') chr = '3';
+                    int index = chr - '0';
+                    color = color * 256 + index * (range - 1) / 3 + start[i]; // int res = (range-1) / 3;
+                    }
+
+                view = ((ColorCellView) colorCheckedLayout.getChildAt(r, c));
+                view.setPaperColor(color);
+                view.setInkColor( 0xFFE02020 );
+                view.setText(plan[r][c]);
+                view.setTag(plan[r][c]);
+                view.invalidate();
+
+                // Log.d("COLOR", r + ":" + c + " - " + Integer.toHexString(color));
+                }
+            }
+
+        Log.d("COLOR", "Color range: " +
+                Integer.toHexString(((ColorCellView) colorCheckedLayout.getChildAt(7, 0)).getPaperColor() & 0xffffff) + " - " +
+                Integer.toHexString(((ColorCellView) colorCheckedLayout.getChildAt(4, 0)).getPaperColor() & 0xffffff));
+        }
+
+    @Override
+    public void onClick(View v)
+        {
+        Log.d("COLOR", "Clicked: " + v.getTag());
+
+        if ( range <= 4 )
+            return;
+
+        range /= 4;
+        area = (String) v.getTag();
+
+        for (int i = 0; i < 3; i++) // !!!!!!!!!!!!!!!
+            {
+            start[i] += (area.charAt(i) - '0') * range;
+            }
+
+        fillColors();
+        }
+
+
+    @Override
+    public void onBackPressed()
+        {
+        if ( range >= 256 )
+            {
+            super.onBackPressed();
+            }
+        else
+            {
+            range = range * 4;
+
+            for (int i = 0; i < 3; i++) // !!!!!!!!!!!!!!!!
+                {
+                start[i] /= range;
+                start[i] *= range;
+                }
+
+            fillColors();
+            }
+        }
+
+    @Override
+    public boolean onLongClick(View v)
+        {
+        return false;
+        }
+    }

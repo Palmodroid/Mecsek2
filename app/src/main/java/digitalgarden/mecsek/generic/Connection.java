@@ -133,7 +133,7 @@ public class Connection
                 }
             }
 
-        // rowIndex is ready; now we can set "source" for extern items
+        // rowIndex is ready; now we can setStyle "source" for extern items
         for (Connectable connectable : connectables)
             {
             connectable.pushSource( tableIndex, rowIndex );

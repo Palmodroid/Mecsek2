@@ -83,8 +83,8 @@ public class ForeignKey implements Connection.Connectable
         // és a selector-t beállítottuk
         if (editFragment == null || selectorActivity == null)
             {
-            Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
-            throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
+            Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not setStyle!");
+            throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not setStyle!");
             }
 
         // Beállítjuk, hogy érintésre a megfelelő selectorActivity elinduljon

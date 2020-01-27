@@ -38,7 +38,7 @@ public class MonthlyHeaderLayout extends CheckedLayout
     static String[] nameOfDays = {"MON", "TUE", "WED", "THR", "FRI", "SAT", "SUN"};
 
     @Override
-    public View getChildView( int row, int col )
+    public View createChildView(int row, int col )
         {
         ComplexHeaderView child = new ComplexHeaderView(getContext());
         child.setTextPaint(textPaint);

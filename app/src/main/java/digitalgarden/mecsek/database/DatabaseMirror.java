@@ -143,7 +143,7 @@ public class DatabaseMirror
         return columns.get(columnIndex).columnType;
         }
 
-    // Itt jobb lenne egy getColumn(), amin belül lehetne set... és getRefTableIndex
+    // Itt jobb lenne egy getColumn(), amin belül lehetne setStyle... és getRefTableIndex
 
     public static void setColumnReferenceTableId(int columnIndex, int referenceTableIndex )
         {

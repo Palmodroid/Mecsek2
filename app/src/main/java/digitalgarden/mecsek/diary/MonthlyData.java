@@ -61,11 +61,11 @@ public int monthIndex;
         this.dataStore = dataStore;
         this.monthIndex = monthIndex;
 
-        // START DAY of this monthly view - FIRST DAY of the month is set first
+        // START DAY of this monthly view - FIRST DAY of the month is setStyle first
         longtimeFirst = new Longtime();
         longtimeFirst.setMonthIndex(monthIndex);
         longtimeFirst.setDayOfMonth(1);
-        // YEAR MONTH and DAY (DAY_NAME) is set, but TIME is not
+        // YEAR MONTH and DAY (DAY_NAME) is setStyle, but TIME is not
 
         // Data from FIRST DAY of this month
         yearMonthString = longtimeFirst.toStringYearMonth(true);

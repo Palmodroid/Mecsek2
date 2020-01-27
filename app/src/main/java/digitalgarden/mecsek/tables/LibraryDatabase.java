@@ -1,5 +1,6 @@
 package digitalgarden.mecsek.tables;
 
+import digitalgarden.mecsek.color.ColorDefsTable;
 import digitalgarden.mecsek.tables.authors.AuthorsTable;
 import digitalgarden.mecsek.tables.books.BooksTable;
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
@@ -19,7 +20,7 @@ public class LibraryDatabase extends GenericDatabase
     @Override
     public int version()
         {
-        return 1;
+        return 4;
         }
 
     @Override
@@ -27,6 +28,8 @@ public class LibraryDatabase extends GenericDatabase
         {
         return "digitalgarden.mecsek.contentprovider";
         }
+
+    public static int COLOR_DEFS;
 
     public static int AUTHORS;
     public static int BOOKS;
@@ -45,6 +48,7 @@ public class LibraryDatabase extends GenericDatabase
     @Override
     public void defineTables()
         {
+        COLOR_DEFS = addTable( new ColorDefsTable() );
         AUTHORS = addTable( new AuthorsTable() );
         BOOKS = addTable( new BooksTable() );
 

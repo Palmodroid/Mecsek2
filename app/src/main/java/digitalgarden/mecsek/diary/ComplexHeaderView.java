@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import digitalgarden.mecsek.viewutils.BackgroundAndTextView;
+import digitalgarden.mecsek.viewutils.BoxAndTextView;
 
 
-
-public class ComplexHeaderView extends BackgroundAndTextView
+public class ComplexHeaderView extends BoxAndTextView
     {
     private int backgroundColor = 0;
 
@@ -27,7 +26,7 @@ public class ComplexHeaderView extends BackgroundAndTextView
         super(context, attrs, defStyleAttr);
         }
 
-    public void setBackgroundColor( int backgroundColor )
+    public void setBackgroundColor(int backgroundColor)
         {
         this.backgroundColor = backgroundColor;
         }
@@ -35,7 +34,7 @@ public class ComplexHeaderView extends BackgroundAndTextView
     @Override
     protected void onDraw(Canvas canvas)
         {
-        getBackgroundPaint().setColor( backgroundColor );
+        getPaperPaint().setColor(backgroundColor);
         super.onDraw(canvas);
         }
     }
