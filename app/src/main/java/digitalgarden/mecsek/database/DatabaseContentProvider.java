@@ -16,14 +16,42 @@ import static digitalgarden.mecsek.database.DatabaseMirror.allTables;
 import static digitalgarden.mecsek.database.DatabaseMirror.match;
 
 
+/**
+ * {@link DatabaseContentProvider} provides access to the database. {@link #onCreate()} is the entry point for the
+ * whole database.
+ * Standard CRUD methods are:
+ * <ul>
+ * <li>{@link #insert(Uri, ContentValues)},</li>
+ * <li>{@link #delete(Uri, String, String[])}, </li>
+ * <li>{@link #update(Uri, ContentValues, String, String[])} and </li>
+ * <li>{@link #query(Uri, String[], String, String[], String)}</li>
+ * </ul>
+ * <p>Delete should not be used, <em>DELETE FLAG</em> is a better idea. It is not implemented yet, only standard
+ * delete.</p>
+ * <p>Upsert: Insert with overwrite is not a good idea, because it deletes record and all foreign connections first,
+ * and then inserts the new record. Upsert is better, because it inserts record with a given id (if not exists yet)
+ * or updates the record with the given id (if it already exists) - but never deletes it.</p>
+ * <p>There are two possible ways to call upsert: <em>INSERT/ITEMID</em> or <em>UPDATE/DIRID and _id among the
+ * values</em> NOne of them were allowed before upsert. Both possibilities are implemented experimentally.</p>
+ */
 public class DatabaseContentProvider extends ContentProvider
 	{
+	// DatabaseOpenHelper loaded in onCreate and used by the CRUD methods
 	private DatabaseOpenHelper databaseOpenHelper;
 
 	// MIME Type
 	// Minden, ami az egyes táblákra jellemző, átment a GenericDatabase alosztályaiba
-	
 
+    /**
+     * Entry point for database access
+     *
+     * <p>Starts {@link DatabaseMirror} with context, which will create a "mirror" of the database structure. The data
+     * of the mirror helps identify data (tables etc.) inside the database.</p>
+     * <p>Opens {@link DatabaseOpenHelper} which helps to open database inside the CRUD methods.</p>
+     * <p>({@link DatabaseOpenHelper#onCreate(SQLiteDatabase)} will create all the tables.)</p>
+     *
+     * @return true, becasue Content Provider was able to start :)
+     */
 	@Override
 	public boolean onCreate()
 		{
@@ -34,7 +62,7 @@ public class DatabaseContentProvider extends ContentProvider
 		return true; 
 		}
 
-	
+	/** !! Type is not implemented yet !! */
 	@Override
 	public String getType(Uri uri)
 		{
@@ -43,8 +71,17 @@ public class DatabaseContentProvider extends ContentProvider
 		}
 	
 	
-	// Az Uri a szükséges táblát adja meg (nem egy elemet!) melybe az adatokat be kívánjuk illeszteni
-	// A Visszatérési URi ezzel szemben a konkrét beillesztett elem
+    /**
+     * Inserts a new record (defined by <em>ContentValues</em>) into the table defined by <em>Uri</em>. All tables
+     * are called. If the called table identifies itself and inserts the new row then it will return the uri of the
+     * row. At this point this method notifies all the observers (depending on uri) and finishes.
+     * Work is performed by {@link GenericTable#insert(SQLiteDatabase, Uri, int, ContentValues)}
+     * @param uri uri of the table to insert into (and NOT the record!)
+     *            <em>JUST TRYING!</em> uri of the record means, that record will be inserted/updated with the given _id
+     * @param values values of the record (without _id)
+     * @return uri of the inserted record
+     * @throws IllegalArgumentException if no table was found with the given uri (and no record was inserted)
+     */
 	@Override
 	public Uri insert(Uri uri, ContentValues values)
         {
@@ -94,8 +131,23 @@ public class DatabaseContentProvider extends ContentProvider
 		Scribe.note( CP, "CONTENTPROVIDER: " + rowsDeleted + " rows deleted");
 		return rowsDeleted;
 		}
-	
-	
+
+
+    /**
+     * Updates an existing record (defined by Uri) with the values (given by <em>ContentValues</em>). All tables are
+     * called. If the called table identifies itself and updates the row then it will return 1, as one row is
+     * updated. At this point this method notifies all the observers (depending on uri) and finishes.
+     * <em>WHERE</em> parameters can be used.
+     * Work is performed by {@link GenericTable#update(SQLiteDatabase, Uri, int, ContentValues, String, String[])}
+     * Experimentally a UPSERT is implemented: URI (DIRID) defines table, and _id should be given among values.
+     * @param uri uri of the record to be updated (with the given _id)
+     *            <em>JUST TRYING!</em> uri of the table to insert into (and _id among values)
+     * @param values values of the record (without _id / or with _id for UPSERT )
+     * @param whereClause
+     * @param whereArgs
+     * @return number of updated rows
+     * @throws IllegalArgumentException if no record was found with the given uri (and no record was updated)
+     */
 	@Override
 	public int update(Uri uri, ContentValues values, String whereClause, String[] whereArgs) 
 		{

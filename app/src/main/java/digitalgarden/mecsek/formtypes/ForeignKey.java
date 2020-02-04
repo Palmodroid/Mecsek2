@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -43,7 +44,6 @@ public class ForeignKey implements Connection.Connectable
     private long foreignKeyValue = -1L;
 
     private boolean edited = false;
-
 
     public ForeignKey(GenericEditFragment editFragment, int foreignKeyColumnIndex, int foreignTableIndex )
         {

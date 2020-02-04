@@ -9,7 +9,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="digitalgarden.mecsek.color.ColorPickerActivity"
-        tools:showIn="@layout/activity_color_picker">
+        tools:showIn="@layout/activity_style_picker">
 
     <digitalgarden.mecsek.viewutils.BoxAndTextView
             android:id="@+id/title_cell_view"
@@ -20,7 +20,7 @@
             android:verticalSpacing="4dp"
             android:horizontalSpacing="4dp"/>
 
-    <digitalgarden.mecsek.color.ColorPickerCheckedLayout
+    <digitalgarden.mecsek.color.StylePickerCheckedLayout
             android:id="@+id/color_checked_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"

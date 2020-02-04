@@ -12,6 +12,7 @@ import digitalgarden.mecsek.MainChooserDialogFragment.Type;
 import digitalgarden.mecsek.color.ColorDefsControllActivity;
 import digitalgarden.mecsek.color.ColorPickerActivity;
 import digitalgarden.mecsek.database.DatabaseContentProvider;
+import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.tables.authors.AuthorsControllActivity;
 import digitalgarden.mecsek.tables.books.BooksControllActivity;
 import digitalgarden.mecsek.tables.calendar.CalendarControllActivity;
@@ -230,12 +231,11 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 				{
 				public void onClick(View view)
 					{
-					Scribe.title("MAINCHOOSER: Proba called");
+					Scribe.title("MAINCHOOSER: Diary called");
 
 					Intent i = new Intent();
 
-					// i.setClass(MainChooserActivity.this, DiaryActivity.class);
-					i.setClass(MainChooserActivity.this, ColorDefsControllActivity.class);
+					i.setClass(MainChooserActivity.this, DiaryActivity.class);
 					startActivity(i);
 					}
 				});
@@ -248,6 +248,8 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
                     Intent i = new Intent();
 
+                    // ColorPIcker will do the job, standard list is not needed
+					// i.setClass(MainChooserActivity.this, ColorDefsControllActivity.class);
                     i.setClass(MainChooserActivity.this, ColorPickerActivity.class);
                     startActivity(i);
                     }

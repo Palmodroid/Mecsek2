@@ -314,6 +314,21 @@ public abstract class GenericTable
         sURIMatcher.addURI( authority(), name() + contentCount(), id(COUNTID));
         }
 
+    /**
+     * All tables called by {@link digitalgarden.mecsek.database.DatabaseContentProvider#insert(Uri, ContentValues)} to
+     * insert record into table.
+     * <p>If this is THE table to insert data (that means: uriType == id(DIRID) - tableId+DIRID) then</p>
+     * <p>searchColumn (if exists) is filled with normalized data - from searchColumnIndexFor column;</p>
+     * <p>record is inserted into table.</p>
+     * <li><em>id(DIRID)</em> - inserts new record under a new _id</li>
+     * <li><em>id(ITEMID)</em> - upserts (inserts or updates if exist) the new record under the given _id (defined by
+     * uri) <em>JUST TRYING!</em></li>
+     * @param db database
+     * @param uri uri of the table (or record if upsert)
+     * @param uriType uri type (returned by match(uri))
+     * @param values values of the record (without _id)
+     * @return uri of the newly inserted record
+     */
     public Uri insert( SQLiteDatabase db, Uri uri, int uriType, ContentValues values )
         {
         if ( uriType == id(DIRID) )
@@ -388,6 +403,24 @@ public abstract class GenericTable
         }
 
 
+    /**
+     * All tables called by {@link digitalgarden.mecsek.database.DatabaseContentProvider#update(Uri, ContentValues, String, String[])} to
+     * update one given record in one, given table.
+     * <p>If this is THE table to update record (that means: uriType == id(ITEMID) - tableId+ITEMID) then</p>
+     * <p>searchColumn (if exists) is filled with normalized data - from searchColumnIndexFor column;</p>
+     * <p>record with the given _id will be updated.</p>
+     * If no record can be found, then exception is thrown by Content Provider.
+     * <li><em>id(ITEMID)</em> - updates this record with the given _id (in uri)</li>
+     * <li><em>id(DIRID)</em> - upserts (inserts or updates if exist) the new record under the given _id (among values)
+     * <em>JUST TRYING!</em></li>
+     * @param db database
+     * @param uri uri of the record (or table if upsert)
+     * @param uriType uri type (returned by match(uri))
+     * @param values values of the record (without _id) or with _id if UPSERT
+     * @param whereClause
+     * @param whereArgs
+     * @return 1 (number of updated records)
+     */
     public int update(SQLiteDatabase db, Uri uri, int uriType, ContentValues values, String whereClause, String[] whereArgs )
         {
         int rowsUpdated = -1;

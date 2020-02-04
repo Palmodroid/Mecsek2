@@ -59,6 +59,27 @@ import static digitalgarden.mecsek.tables.LibraryDatabase.COLOR_DEFS;
  */
 public class Longstyle
     {
+    // (be careful! database indices start at 1-, while compoundStyleCache indices start at 0-)
+    // 0-63 (1-64 in database) reserved for program / 64-127 (65-128) custom indices for user
+    private static final int MAX_INDEX = 128;
+
+    // Indexed styles can have a "memo", to show their names
+    // !! This name is NOT stored in database, only initialized default values can have a name
+    // (Because these names are fixed to the app. This behavior could be extended to all styles and to the database)
+    private static final int MAX_MEMO = 64;
+
+    // MEMO index is databaseIndex (1 is the first) == Indexed longstyles
+    public static final long MEMO_BASIC = 1L;
+    public static final long MEMO_TOGGLE_OFF = 2L;
+    public static final long MEMO_TOGGLE_ON = 3L;
+    public static final long MEMO_TOGGLE_ITALICS = 4L;
+    public static final long MEMO_TOGGLE_BOLD = 5L;
+    public static final long MEMO_SWITCH_1 = 6L;
+    public static final long MEMO_SWITCH_2 = 7L;
+
+    private static String[] memoTitles = new String[MAX_INDEX];
+
+
     /* Java long is 64 bit / 8 byte
      * Ts ss PP PP  PP II II II
      *                 Ink color as RR GG BB (AA is always 0xFF)
@@ -72,10 +93,10 @@ public class Longstyle
      * 1-256 (or < COMPOUND_MASK) : indexed style
      */
 
-    public static final long COMPOUND_MASK =    0x4000000000000000L;
+    private static final long COMPOUND_MASK = 0x4000000000000000L;
 
-    private static final long BOLD_MASK =       0x0200000000000000L;
-    private static final long ITALICS_MASK =    0x0100000000000000L;
+    private static final long BOLD_MASK = 0x0200000000000000L;
+    private static final long ITALICS_MASK = 0x0100000000000000L;
 
     public static final int DEFAULT_INK_COLOR = 0xFF000000;    // Solid balck
     public static final int DEFAULT_PAPER_COLOR = 0x00FFFFFF;  // Transparent white
@@ -96,9 +117,6 @@ public class Longstyle
     private boolean boldText;
     private boolean italicsText;
 
-    // (be careful! database indices start at 1-, while compoundStyleCache indices start at 0-)
-    private static final int MAX_INDEX = 64;
-
     private static long[] compoundStyleCache = new long[MAX_INDEX];
     // Value: 0 (default) not yet pulled
     // Value: -1 already pulled, but not exist in database
@@ -110,15 +128,15 @@ public class Longstyle
     private static boolean[] italicsTextCache = new boolean[MAX_INDEX];
 
 
-    public Longstyle( Context context )
+    public Longstyle(Context context)
         {
-        this( context, 0L );
+        this(context, 0L);
         }
 
-    public Longstyle( Context context, long longstyle )
+    public Longstyle(Context context, long longstyle)
         {
         this.context = context.getApplicationContext(); // Context is needed by database queries
-        set( longstyle );
+        set(longstyle);
         }
 
     /**
@@ -127,18 +145,18 @@ public class Longstyle
      * 1 - < MAX_INDEX : indexed (pullStyle pulls it)
      * all others : not valid, returns predefined values
      */
-    public void set( long longstyle )
+    public void set(long longstyle)
         {
         // Compound style
-        if ( longstyle >= COMPOUND_MASK )
+        if (longstyle >= COMPOUND_MASK)
             {
             cacheIndex = -1;
 
             compoundStyle = longstyle;
-            inkColor = calcInkColor( longstyle );
-            paperColor = calcPaperColor( longstyle );
-            boldText = calcBoldText( longstyle );
-            italicsText = calcItalicsText( longstyle );
+            inkColor = calcInkColor(longstyle);
+            paperColor = calcPaperColor(longstyle);
+            boldText = calcBoldText(longstyle);
+            italicsText = calcItalicsText(longstyle);
             }
         // Indexed style
         else
@@ -147,7 +165,7 @@ public class Longstyle
             cacheIndex = checkIndex(longstyle);
 
             // Invalid indices - predefined values
-            if ( isInstanceStyle() )
+            if (isInstanceStyle())
                 {
                 compoundStyle = 0L; // not defined style
                 inkColor = DEFAULT_INK_COLOR;
@@ -167,29 +185,78 @@ public class Longstyle
 
     /**
      * Check if index is valid.
+     *
      * @param databaseIndex
      * @return cache index (if valid) or -1 if index is invalid
      */
-    public int checkIndex(long databaseIndex)
+    private static int checkIndex(long databaseIndex)
         {
-        return ( databaseIndex < 1L || databaseIndex > MAX_INDEX ) ? -1 : (int) databaseIndex-1;
+        return (databaseIndex < 1L || databaseIndex > MAX_INDEX) ? -1 : (int) databaseIndex - 1;
+        }
+
+    private static void setNotDefinedStyleCache(int index)
+        {
+        compoundStyleCache[index] = -1L; // not defined style
+        inkColorCache[index] = DEFAULT_INK_COLOR;
+        paperColorCache[index] = DEFAULT_PAPER_COLOR;
+        boldTextCache[index] = DEFAULT_BOLD_TEXT;
+        italicsTextCache[index] = DEFAULT_ITALICS_TEXT;
+        }
+
+    public static void pullAllStyles(Context context)
+        {
+        // Clear all previous style first
+        for (int index = 0; index < MAX_INDEX; index++)
+            {
+            setNotDefinedStyleCache(index);
+            }
+
+        // Overwrite all existing styles next        
+        String[] projection = {
+                column_id(),
+                column(VALUE)}; // One column is enough, id_ is the database index (1-256)
+
+        Cursor cursor = context.getContentResolver().query(
+                table(COLOR_DEFS).contentUri(),
+                projection, null, null, null);
+
+        // Queries are never NULL!!!
+        while (cursor.moveToNext())
+            {
+            // cacheIndex = databaseId - 1
+            int cacheIndex = (int) cursor.getLong(cursor.getColumnIndex(column_id())) - 1;
+
+            if (cacheIndex >= 0 && cacheIndex < MAX_INDEX)
+                {
+                // value is pulled
+                // store COMPOUND VALUE of this indexed longstyle
+                compoundStyleCache[cacheIndex] = cursor.getLong(cursor.getColumnIndex(column(VALUE)));
+
+                inkColorCache[cacheIndex] = calcInkColor(compoundStyleCache[cacheIndex]);
+                paperColorCache[cacheIndex] = calcPaperColor(compoundStyleCache[cacheIndex]);
+                boldTextCache[cacheIndex] = calcBoldText(compoundStyleCache[cacheIndex]);
+                italicsTextCache[cacheIndex] = calcItalicsText(compoundStyleCache[cacheIndex]);
+                }
+            }
+        cursor.close();
         }
 
 
     /**
      * Pull indexed longstyle from database - INDEX IS NOT VERIFIED!!!
-     * @return  true  - if index is valid, and indexed longstyle exists
+     *
+     * @return true  - if index is valid, and indexed longstyle exists
      * or       false - indexed longstyle is not yet stored
      */
-    private boolean pullStyle( )
+    private boolean pullStyle()
         {
         // Value not yet pulled - try to pull it
-        if ( compoundStyleCache[cacheIndex] == 0L )
+        if (compoundStyleCache[cacheIndex] == 0L)
             {
             String[] projection = {column(VALUE)}; // One column is enough, id_ is the database cacheIndex (1-256)
 
             Cursor cursor = context.getContentResolver().query(
-                    table(COLOR_DEFS).itemContentUri( cacheIndex + 1 ),    // longstyle == database cacheIndex
+                    table(COLOR_DEFS).itemContentUri(cacheIndex + 1),    // longstyle == database cacheIndex
                     projection, null, null, null);
 
             // Queries are never NULL!!!
@@ -199,22 +266,21 @@ public class Longstyle
                 // store COMPOUND VALUE of this indexed longstyle
                 compoundStyleCache[cacheIndex] = cursor.getLong(cursor.getColumnIndex(column(VALUE)));
 
-                inkColorCache[cacheIndex] = calcInkColor( compoundStyleCache[cacheIndex] );
-                paperColorCache[cacheIndex] = calcPaperColor( compoundStyleCache[cacheIndex] );
-                boldTextCache[cacheIndex] = calcBoldText( compoundStyleCache[cacheIndex] );
-                italicsTextCache[cacheIndex] = calcItalicsText( compoundStyleCache[cacheIndex] );
-                }
-            else
+                inkColorCache[cacheIndex] = calcInkColor(compoundStyleCache[cacheIndex]);
+                paperColorCache[cacheIndex] = calcPaperColor(compoundStyleCache[cacheIndex]);
+                boldTextCache[cacheIndex] = calcBoldText(compoundStyleCache[cacheIndex]);
+                italicsTextCache[cacheIndex] = calcItalicsText(compoundStyleCache[cacheIndex]);
+                } else
                 {
                 // This indexed longstyle does not exist,
                 // Storing -1L means, that pull was already tried;
-                compoundStyleCache[cacheIndex] = -1L;
+                setNotDefinedStyleCache(cacheIndex);
                 }
             cursor.close();
             }
 
         // Pull already tried - but without success. Previous pull filled up compoundStyleCache with values.
-        return ( compoundStyleCache[cacheIndex] >= 0L );
+        return (compoundStyleCache[cacheIndex] >= 0L);
         }
 
 
@@ -223,7 +289,7 @@ public class Longstyle
      * in cache[cacheIndex]
      * and in database, too
      */
-    private boolean calcAndPushStyle( )
+    private boolean calcAndPushStyle()
         {
         compoundStyleCache[cacheIndex] = calcCompoundStyle(
                 inkColorCache[cacheIndex],
@@ -232,7 +298,7 @@ public class Longstyle
                 italicsTextCache[cacheIndex]);
 
         ContentValues values = new ContentValues();
-        values.put( column( VALUE ), compoundStyleCache[cacheIndex] );
+        values.put(column(VALUE), compoundStyleCache[cacheIndex]);
 
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // Ez még nem működik tökéletesen
@@ -244,10 +310,10 @@ public class Longstyle
         // context.getContentResolver().insert(
         //        table( COLOR_DEFS ).itemContentUri(cacheIndex + 1), values );
 
-        values.put( column_id(), (long)(cacheIndex + 1) );
+        values.put(column_id(), (long) (cacheIndex + 1));
 
-        if ( context.getContentResolver().update(
-                table( COLOR_DEFS ).contentUri(), values, null, null) != 1 )
+        if (context.getContentResolver().update(
+                table(COLOR_DEFS).contentUri(), values, null, null) != 1)
             {
             return false;
             }
@@ -257,115 +323,111 @@ public class Longstyle
         }
 
 
-    public void setPaperColor( int paperColor )
+    public void setPaperColor(int paperColor)
         {
-        if ( isInstanceStyle() )
+        paperColor |= 0xff000000;
+        if (isInstanceStyle())
             {
             this.paperColor = paperColor;
             calcStyle();
-            }
-        else
+            } else
             {
             paperColorCache[cacheIndex] = paperColor;
-            calcAndPushStyle( );
+            calcAndPushStyle();
             }
         }
 
-    public void setInkColor( int inkColor )
+    public void setInkColor(int inkColor)
         {
-        if ( isInstanceStyle() )
+        inkColor |= 0xff000000;
+        if (isInstanceStyle())
             {
             this.inkColor = inkColor;
             calcStyle();
-            }
-        else
+            } else
             {
             inkColorCache[cacheIndex] = inkColor;
-            calcAndPushStyle( );
+            calcAndPushStyle();
             }
         }
 
-    public void setBoldText( boolean boldText )
+    public void setBoldText(boolean boldText)
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             {
             this.boldText = boldText;
             calcStyle();
-            }
-        else
+            } else
             {
             boldTextCache[cacheIndex] = boldText;
-            calcAndPushStyle( );
+            calcAndPushStyle();
             }
         }
 
-    public void setItalicsText( boolean italicsText )
+    public void setItalicsText(boolean italicsText)
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             {
             this.italicsText = italicsText;
             calcStyle();
-            }
-        else
+            } else
             {
             italicsTextCache[cacheIndex] = italicsText;
-            calcAndPushStyle( );
+            calcAndPushStyle();
             }
-        }
-
-
-    /**
-     * Set all parameters, clearing cacheIndex (seting it to 0)
-     * @param inkColor
-     * @param paperColor
-     * @param boldText
-     * @param italicsText
-     */
-    public void setInstanceStyle( int inkColor, int paperColor, boolean boldText, boolean italicsText )
-        {
-        cacheIndex = -1;
-        set( inkColor, paperColor, boldText, italicsText );
         }
 
 
     /**
      * Sets style parameters - retaining cacheIndex
      * If it is an indexed style, than corresponding database compoundStyle will be updated
+     *
      * @param inkColor
      * @param paperColor
      * @param boldText
      * @param italicsText
      */
-    public void set( int inkColor, int paperColor, boolean boldText, boolean italicsText )
+    public void set(int inkColor, int paperColor, boolean boldText, boolean italicsText)
         {
-        if ( isInstanceStyle() )
+        inkColor |= 0xff000000;
+        paperColor |= 0xff000000;
+        if (isInstanceStyle())
             {
             this.inkColor = inkColor;
             this.paperColor = paperColor;
             this.boldText = boldText;
             this.italicsText = italicsText;
             calcStyle();
-            }
-        else
+            } else
             {
             inkColorCache[cacheIndex] = inkColor;
             paperColorCache[cacheIndex] = paperColor;
             boldTextCache[cacheIndex] = boldText;
             italicsTextCache[cacheIndex] = italicsText;
-            calcAndPushStyle( );
+            calcAndPushStyle();
             }
         }
 
-    public void clearIndex()
+    public void convert2InstanceStyle()
         {
-        if ( !isInstanceStyle() )
+        if (!isInstanceStyle())
             {
-            this.inkColor = inkColorCache[cacheIndex];
-            this.paperColor = paperColorCache[cacheIndex];
-            this.boldText = boldTextCache[cacheIndex];
-            this.italicsText = italicsTextCache[cacheIndex];
+            if (pullStyle())
+                {
+                this.inkColor = inkColorCache[cacheIndex];
+                this.paperColor = paperColorCache[cacheIndex];
+                this.boldText = boldTextCache[cacheIndex];
+                this.italicsText = italicsTextCache[cacheIndex];
+                calcStyle();
+                } else
+                {
+                inkColor = DEFAULT_INK_COLOR;
+                paperColor = DEFAULT_PAPER_COLOR;
+                boldText = DEFAULT_BOLD_TEXT;
+                italicsText = DEFAULT_ITALICS_TEXT;
+                compoundStyle = 0L; // not defined style
+                }
             cacheIndex = -1;
-            calcStyle();
             }
         }
 
@@ -385,77 +447,82 @@ public class Longstyle
 
     /**
      * Always returns compund style, and NOT index!!
+     *
      * @return
      */
     public long getCompoundStyle()
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             {
             return compoundStyle;
             }
-
-        return pullStyle() ? compoundStyleCache[cacheIndex] : 0L;
+        pullStyle();
+        return compoundStyleCache[cacheIndex];
         }
 
     public int getInkColor()
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             return inkColor;
 
-        return pullStyle() ? inkColorCache[cacheIndex] : DEFAULT_INK_COLOR;
+        pullStyle();
+        return inkColorCache[cacheIndex];
         }
 
     public int getPaperColor()
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             return paperColor;
 
-        return pullStyle() ? paperColorCache[cacheIndex] : DEFAULT_PAPER_COLOR;
+        pullStyle();
+        return paperColorCache[cacheIndex];
         }
 
     public boolean isBoldText()
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             return boldText;
 
-        return pullStyle() ? boldTextCache[cacheIndex] : DEFAULT_BOLD_TEXT;
+        pullStyle();
+        return boldTextCache[cacheIndex];
         }
 
     public boolean isItalicsText()
         {
-        if ( isInstanceStyle() )
+        if (isInstanceStyle())
             return italicsText;
 
-        return pullStyle() ? italicsTextCache[cacheIndex] : DEFAULT_ITALICS_TEXT;
+        pullStyle();
+        return italicsTextCache[cacheIndex];
         }
 
 
-    private static int calcInkColor( long longstyle )
+    private static int calcInkColor(long longstyle)
         {
         return (int) longstyle | 0xFF000000;           // AA is explicitly solid (0xFF)
         }
 
-    private static int calcPaperColor( long longstyle )
+    private static int calcPaperColor(long longstyle)
         {
         return (int) (longstyle >> 24) | 0xFF000000; // AA is explicitly solid (0xFF)
         }
 
-    private static boolean calcBoldText( long longstyle )
+    private static boolean calcBoldText(long longstyle)
         {
         return (longstyle & BOLD_MASK) != 0L;
         }
 
-    private static boolean calcItalicsText( long longstyle )
+    private static boolean calcItalicsText(long longstyle)
         {
         return (longstyle & ITALICS_MASK) != 0L;
         }
 
-    private static long calcCompoundStyle(int inkColor, int paperColor, boolean boldText, boolean italicsText )
+    private static long calcCompoundStyle(int inkColor, int paperColor, boolean boldText, boolean italicsText)
         {
         //        long longstyle = COMPOUND_MASK |
         //                inkColor | (paperColor << 24) | (boldText ? BOLD_MASK : 0) | (italicsText ? ITALICS_MASK : 0);
 
-        long longstyle =  (paperColor & 0x00FFFFFF);
+        long longstyle = (paperColor & 0x00FFFFFF);
         longstyle = (longstyle << 24);
         longstyle |= COMPOUND_MASK;
         longstyle |= (inkColor & 0x00FFFFFF);
@@ -463,6 +530,100 @@ public class Longstyle
         longstyle |= (italicsText ? ITALICS_MASK : 0);
 
         return longstyle;
+        }
+
+/*
+    static boolean setDefault(Context context, long databaseIndex,
+                              int inkColor, int paperColor, boolean boldText, boolean italicsText)
+        {
+        Longstyle longstyle = new Longstyle( context, databaseIndex );
+        if ( longstyle.isInstanceStyle() )
+            return false;
+        if ( longstyle.getCompoundStyle() <= 0L )
+            {
+            longstyle.set(inkColor, paperColor, boldText, italicsText);
+            }
+        return true;
+        }
+*/
+
+
+    public static class defaultStyleCreator
+        {
+        private Context context;
+        private boolean overwrite;
+
+        private defaultStyleCreator(Context context, boolean overwrite)
+            {
+            this.context = context.getApplicationContext();
+            this.overwrite = overwrite;
+            }
+
+        public defaultStyleCreator style(long databaseIndex,
+                                         int inkColor, int paperColor, boolean boldText, boolean italicsText,
+                                         String memoTitle )
+            {
+            // memo titles are always overwritten - because they are NOT stored inside database!
+            if (databaseIndex >= 1L && databaseIndex <= MAX_MEMO)
+                {
+                memoTitles[(int) databaseIndex - 1] = memoTitle;
+                }
+
+            return style(databaseIndex, inkColor, paperColor, italicsText, boldText);
+            }
+
+        public defaultStyleCreator style(long databaseIndex,
+                                         int inkColor, int paperColor, boolean boldText, boolean italicsText)
+            {
+            Longstyle longstyle = new Longstyle(context, databaseIndex);
+            if (!longstyle.isInstanceStyle() && (longstyle.getCompoundStyle() <= 0L || overwrite))
+                {
+                longstyle.set(inkColor, paperColor, boldText, italicsText);
+                }
+            return this;
+            }
+        }
+
+
+    public static String getMemoTitle(long databaseIndex)
+        {
+        if (databaseIndex < 1L || databaseIndex > MAX_MEMO)
+            return "N/A";
+
+        String title = memoTitles[(int) databaseIndex - 1];
+        if (title == null)
+            {
+            title = "#" + databaseIndex;
+            }
+        return title;
+        }
+
+
+    public static defaultStyleCreator setDefaults(Context context, boolean overwrite )
+        {
+        return new defaultStyleCreator( context, overwrite);
+        }
+
+    /**
+     * This could go anywhere inside app !!!
+     */
+    public static void initDefaults(Context context)
+        {
+        pullAllStyles( context );
+        setDefaults( context, false )
+                .style(MEMO_BASIC, 0x000000, 0xefefef, false, false )
+                .style(MEMO_TOGGLE_OFF, 0xc0c0c0, 0xeaeaea, false, false,
+                        "Toggle button OFF" )
+                .style(MEMO_TOGGLE_ON, 0xff0000, 0x3fff3f, false, false,
+                        "Toggle button ON" )
+                .style(MEMO_TOGGLE_ITALICS, 0xff0000, 0x3fff3f, false, true,
+                        "Toggle button ITALICS" )
+                .style(MEMO_TOGGLE_BOLD, 0xff0000, 0x3fff3f, true, false,
+                        "Toggle button BOLD" )
+                .style(MEMO_SWITCH_1, 0x000055, 0x55aaff, true, true,
+                        "Switch button 1" )
+                .style(MEMO_SWITCH_2, 0xff0000, 0xffffaa, true, true,
+                        "Switch button 2" );
         }
 
     }

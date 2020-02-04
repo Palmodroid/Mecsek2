@@ -29,6 +29,8 @@ public class LibraryDatabase extends GenericDatabase
         return "digitalgarden.mecsek.contentprovider";
         }
 
+    /* Id-s/indices of the tables used by DatabaseMIrror.table( int index */
+
     public static int COLOR_DEFS;
 
     public static int AUTHORS;
@@ -39,11 +41,6 @@ public class LibraryDatabase extends GenericDatabase
     public static int RECORD_TYPES;
     public static int RECORDS;
 
-    //
-    public final static int MAX_TABLES = 99;
-
-    // Ahhoz, hogy a drop table működjön, előbb kell kitörölni a másokra hivatkozó táblákat!
-    // Viszont az export igényli, hogy előbb a hivatkozott táblák exportálódjanak
 
     @Override
     public void defineTables()

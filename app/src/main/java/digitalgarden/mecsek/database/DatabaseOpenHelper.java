@@ -15,6 +15,10 @@ import static digitalgarden.mecsek.database.DatabaseMirror.allTables;
 import static digitalgarden.mecsek.database.DatabaseMirror.database;
 
 
+/**
+ * SQLiteOpenHelper subclass to create/open SQLite database.
+ * <p>{@link #onCreate(SQLiteDatabase)} calls each table mirrors to create their own database tables.</p>
+ */
 public class DatabaseOpenHelper extends SQLiteOpenHelper
 	{
     public DatabaseOpenHelper(Context context )

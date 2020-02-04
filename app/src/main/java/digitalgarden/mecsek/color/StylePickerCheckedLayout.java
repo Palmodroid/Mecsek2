@@ -6,8 +6,10 @@ import android.view.View;
 
 import digitalgarden.mecsek.viewutils.*;
 
-public class ColorPickerCheckedLayout extends CheckedLayout
+public class StylePickerCheckedLayout extends CheckedLayout
     {
+    private static final int CUSTOM_STYLE_OFFSET = 64;
+
     private static final String[][] PLAN = {
             {"322", "311", "321", "320", "230", "231", "131", "232"},
             {"330", "300", "310", "211", "221", "121", "130", "030"},
@@ -19,10 +21,16 @@ public class ColorPickerCheckedLayout extends CheckedLayout
             {"000", "323", "213", "223", "112", "113", "023", "233"}};
 
 
-    // true - show indexed longstyles, false - show color chart
-    private boolean showingLongstyles;
-    // true - choose ink color (same paper), false - choose paper color (same ink)
+    // true  - show indexed styles (fix or custom)
+    // false - show compose style chart
+    private boolean showingIndexedStyleView;
+    // true - show (or use) fix styles (1-64)
+    // false - show (or use) custom styles (64-128)
+    private boolean showingFixStyleView;
+    // true - choose ink color (same paper)
+    // false - choose paper color (same ink)
     private boolean showingInkColor;
+
 
     // Range can be 256 64 16 4
     private int range;
@@ -34,17 +42,17 @@ public class ColorPickerCheckedLayout extends CheckedLayout
     private TextPaint textPaint;
 
 
-    public ColorPickerCheckedLayout(Context context)
+    public StylePickerCheckedLayout(Context context)
         {
         super(context);
         }
 
-    public ColorPickerCheckedLayout(Context context, AttributeSet attrs)
+    public StylePickerCheckedLayout(Context context, AttributeSet attrs)
         {
         super(context, attrs);
         }
 
-    public ColorPickerCheckedLayout(Context context, AttributeSet attrs, int defStyleAttr)
+    public StylePickerCheckedLayout(Context context, AttributeSet attrs, int defStyleAttr)
         {
         super(context, attrs, defStyleAttr);
         }
@@ -61,16 +69,16 @@ public class ColorPickerCheckedLayout extends CheckedLayout
         }
 
     @Override
-    protected View createChildView(int row, int col )
+    protected View createChildView(int row, int col)
         {
         BoxAndTextView child = new BoxAndTextView(getContext());
         child.setTextPaint(textPaint);
         return child;
         }
 
-    public void fillColors()
+    public void refreshComposeStyleView()
         {
-        showingLongstyles = false;
+        showingIndexedStyleView = false;
 
         BoxAndTextView view;
 
@@ -90,12 +98,11 @@ public class ColorPickerCheckedLayout extends CheckedLayout
 
                 view = ((BoxAndTextView) getChildAt(r, c));
 
-                view.setLongstyle( longstyle.getCompoundStyle() );
+                view.setLongstyle(longstyle.getCompoundStyle());
                 if (showingInkColor)
                     {
                     view.getLongstyle().setInkColor(color);
-                    }
-                else
+                    } else
                     {
                     view.getLongstyle().setPaperColor(color);
                     }
@@ -106,19 +113,20 @@ public class ColorPickerCheckedLayout extends CheckedLayout
         invalidate();
         }
 
-    private void fillLongstyles()
+    public void showIndexedStyleView()
         {
-        showingLongstyles = true;
+        showingIndexedStyleView = true;
 
         BoxAndTextView view;
 
-        for (int index = 0; index < 64; index++)
+        for (int index = 0, databaseIndex = 1 + (showingFixStyleView ? 0 : CUSTOM_STYLE_OFFSET);
+             index < 64; index++, databaseIndex++)
             {
             view = (BoxAndTextView) getChildAt(index);
-            view.setLongstyle( index+1 );
+            view.setLongstyle(databaseIndex);
 
             view.setText("Xx");
-            view.setTag( index+1 );
+            view.setTag( (long)databaseIndex );
             }
         invalidate();
         }
@@ -127,7 +135,7 @@ public class ColorPickerCheckedLayout extends CheckedLayout
 
     private Longstyle longstyle;
 
-    public void showColors(Longstyle longstyle, boolean showInkColor)
+    public void showComposeStyleView(Longstyle longstyle, boolean showInkColor)
         {
         this.longstyle = longstyle;
         this.showingInkColor = showInkColor;
@@ -138,12 +146,12 @@ public class ColorPickerCheckedLayout extends CheckedLayout
         start[1] = 0;
         start[2] = 0;
 
-        fillColors();
+        refreshComposeStyleView();
         }
 
     public boolean colorsUp(String area)
         {
-        if (showingLongstyles || range <= 4)
+        if (showingIndexedStyleView || range <= 4)
             return false;
 
         range /= 4;
@@ -153,14 +161,14 @@ public class ColorPickerCheckedLayout extends CheckedLayout
             start[i] += (area.charAt(i) - '0') * range;
             }
 
-        fillColors();
+        refreshComposeStyleView();
 
         return true;
         }
 
     public boolean colorsDown()
         {
-        if (showingLongstyles || range >= 256)
+        if (showingIndexedStyleView || range >= 256)
             return false;
 
         range = range * 4;
@@ -171,19 +179,24 @@ public class ColorPickerCheckedLayout extends CheckedLayout
             start[i] *= range;
             }
 
-        fillColors();
+        refreshComposeStyleView();
 
         return true;
         }
 
-    public void showLongstyles()
+    public void setIndexedStyleView(boolean showFixStyle)
         {
-        fillLongstyles();
+        showingFixStyleView = showFixStyle;
         }
 
-    public boolean isShowingLongstyles()
+    public boolean isShowingIndexedStyleView()
         {
-        return showingLongstyles;
+        return showingIndexedStyleView;
+        }
+
+    public boolean isShowingFixStyleView()
+        {
+        return showingFixStyleView;
         }
 
     public boolean isShowingInkColor()
