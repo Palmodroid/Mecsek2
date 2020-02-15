@@ -5,20 +5,29 @@
     android:padding="6dip" >
  
     <TextView
-        android:id="@+id/record_type"
+        android:id="@+id/category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="- record type -"
+        android:text="- category -"
         android:textAppearance="?android:attr/textAppearanceMedium" />
- 
+
+    <TextView
+        android:id="@+id/style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/category"
+        android:text="- style -"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <TextView
         android:id="@+id/id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/record_type"
+        android:layout_below="@id/style"
         android:text="- id -" />
 
 </RelativeLayout>

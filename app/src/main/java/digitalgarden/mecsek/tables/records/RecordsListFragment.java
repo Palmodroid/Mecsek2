@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
-import digitalgarden.mecsek.tables.recordtypes.RecordTypesTable;
+import digitalgarden.mecsek.tables.category.CategoriesTable;
 import digitalgarden.mecsek.tables.patients.PatientsTable;
 import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
@@ -31,7 +31,7 @@ public class RecordsListFragment extends GenericCombinedListFragment
         args.putInt( LIMITED_COLUMN, RecordsTable.PATIENT_ID );
         args.putString( ORDERED_COLUMN, columnFull( RecordsTable.NAME ));
         // args.putString( FILTERED_COLUMN, BooksTable.FULL_SEARCH);
-        args.putStringArray( FILTERED_COLUMN, new String[] { columnFull(RecordTypesTable.SEARCH), columnFull(RecordsTable.SEARCH)});
+        args.putStringArray( FILTERED_COLUMN, new String[] { columnFull(CategoriesTable.SEARCH), columnFull(RecordsTable.SEARCH)});
 
         listFragmenet.setArguments(args);
 
@@ -53,7 +53,7 @@ public class RecordsListFragment extends GenericCombinedListFragment
     @Override
     protected void setupRowLayout()
         {
-        addField( R.id.record_type, RecordTypesTable.NAME);
+        addField( R.id.category, CategoriesTable.NAME);
         addField( R.id.patient, PatientsTable.NAME );
         addField( R.id.patient_dob, PatientsTable.DOB );
         addField( R.id.record, RecordsTable.NAME );

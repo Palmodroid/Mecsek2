@@ -7,6 +7,10 @@ import android.util.AttributeSet;
 
 import digitalgarden.mecsek.utils.Longtime;
 
+/**
+ * DateView shows longtime as text
+ * It is a simple (AppCompat)TextView which setDate() method sets its text from longtime value
+ */
 public class DateView extends AppCompatTextView
     {
     public DateView(Context context)

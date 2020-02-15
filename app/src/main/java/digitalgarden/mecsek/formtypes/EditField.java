@@ -16,8 +16,10 @@ import digitalgarden.mecsek.generic.GenericEditFragment;
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 
 
-// Ez a mező csak annyival tud többet, hogy az értékváltozást jelzi
-// 18.06.14 - és belepakoljuk a hozzárendelt értékekekt is
+/**
+ * Base class for all fields
+ * <p>PUSH and PULL methods should be implemented by subclasses!!!</p>
+ */
 public abstract class EditField extends AppCompatEditText implements Connection.Connectable
 	{
     public EditField(Context context)
@@ -35,31 +37,48 @@ public abstract class EditField extends AppCompatEditText implements Connection.
         super(context, attrs, defStyle);
     	}
 
+    /** Field's column - field shows/sets data of this column */
     protected int columnIndex;
 
-    public void addColumn( List<String> columns )
+    /** Adds Field's column to projection to query data */
+    public void addColumnToProjection(List<String> projection)
         {
-        columns.add( column(columnIndex) );
+        projection.add( column(columnIndex) );
         }
 
+    /** Flag to check if field was edited */
     private boolean edited = false;
 
-    // Pl. EditFieldDate automatikusan javítja a beírást focus váltásakor.
+    /** Returns TRUE if field was edited */
     public boolean isEdited()
         {
         return edited;
         }
 
+    /** clears edited flag - eg. {@link EditFieldDate} writes date in different types: text is changed, but value was
+     *  not edited */
     protected void clearEdited()
         {
         edited = false;
         }
 
-    public void connect(final GenericEditFragment form, int columnIndex)
+    /**
+     * Connect field with column (database).
+     * <p>Field should be added to Connection to be connected to database! Table Id is stored inside Connection.
+     * (??? These to cannot be added together ???)</p>
+     * @param form form ({@link GenericEditFragment} of the field - needed only by onTextChanged
+     * @param columnIndex field's column stored inside field
+     */
+    public void connect(final GenericEditFragment form, Connection connection, int columnIndex)
 		{
-        this.columnIndex = columnIndex;
+		// column index (or indices) are stored inside field
+        // table index (only one) is stored inside connection
+        // so connect will add both data at the same place, connection.add is not needed as a separate row
 
-		addTextChangedListener(new TextWatcher() 
+        this.columnIndex = columnIndex;
+        connection.add( this );
+
+		addTextChangedListener(new TextWatcher()
         	{
 	        @Override
 	        public void onTextChanged(CharSequence s, int start, int before, int count) 
@@ -85,12 +104,14 @@ public abstract class EditField extends AppCompatEditText implements Connection.
         	});
 		}
 
+    /** Not needed - views (fields) can save their data in most cases */
     @Override
     public void saveData(Bundle data)
         {
         // Nincs rá szükség
         }
 
+    /** Not needed - views (fields) can save their data in most cases */
     @Override
     public void retrieveData(Bundle data)
         {
@@ -103,6 +124,8 @@ public abstract class EditField extends AppCompatEditText implements Connection.
         // No source for edit fields
         }
 
+    /** Hint can be set from Intent
+     *  <p>??? It will be overwritten by pulled data ???</p> */
     public void setHint( Bundle arguments, String hintKey )
         {
         String hint = arguments.getString( hintKey );

@@ -6,6 +6,9 @@
     android:layout_height="wrap_content" 
     android:orientation="vertical" >
 
+
+    <!-- DATA OF THE PATIENT (OWNER OF THE RECORD) -->
+
 	<TextView
 		android:id="@+id/title_patient"
 		android:layout_width="wrap_content"
@@ -36,6 +39,30 @@
 
 	</LinearLayout>
 
+
+    <!-- CATEGORY (TYPE OF THE RECORD) -->
+
+    <TextView
+            android:id="@+id/title_record_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_record_category"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <digitalgarden.mecsek.formtypes.EditFieldText
+            android:id="@+id/editfieldtext_category_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="@string/hint_record_category"
+
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="@drawable/border"
+            android:layout_margin="5dp"/>
+
+
+    <!-- DATE OF THE RECORD -->
+
     <TextView
         android:id="@+id/title_record_date"
         android:layout_width="wrap_content"
@@ -43,54 +70,46 @@
         android:text="@string/title_record_date"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldDate
-        android:id="@+id/editdatefield_record_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_record_date" />
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:background="@drawable/border"
+			android:layout_margin="5dp" >
+
+        <digitalgarden.mecsek.formtypes.EditFieldDate
+                android:id="@+id/externdate_calendar_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_record_calendar_date" />
+
+        <digitalgarden.mecsek.formtypes.EditFieldText
+                android:id="@+id/externtext_calendar_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_record_calendar_note" />
+
+    </LinearLayout>
+
+
+    <!-- DETAILS OF THE RECORD -->
 
     <TextView
-		android:id="@+id/title_record_type"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/title_record_type"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
-
-	<digitalgarden.mecsek.formtypes.EditFieldText
-		android:id="@+id/foreigntext_record_type_name"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-
-		android:text="@string/hint_record_type"
-
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:background="@drawable/border"
-		android:layout_margin="5dp"/>
-
-	<TextView
-        android:id="@+id/title_record_name"
+        android:id="@+id/title_record_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_record_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <digitalgarden.mecsek.formtypes.EditFieldText
-        android:id="@+id/edittextfield_record_name"
+        android:id="@+id/editfieldtext_record_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:maxLines="12"
+        android:gravity="top|left"
         android:hint="@string/hint_record_name" />
-
-    <TextView
-        android:id="@+id/title_note"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_record_note"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <digitalgarden.mecsek.formtypes.EditFieldText
-        android:id="@+id/externtext_calendar_note"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_record_note" />
 
 </LinearLayout>

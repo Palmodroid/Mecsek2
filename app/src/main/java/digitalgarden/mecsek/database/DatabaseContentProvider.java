@@ -173,11 +173,29 @@ public class DatabaseContentProvider extends ContentProvider
 		return rowsUpdated;
 		}
 
-	
+
+    /**
+     * Queries database and returns cursor.
+     * <ol>
+     * <li>Each {@link GenericTable#buildQuery(Uri, int, SQLiteQueryBuilder)} is called, </li>
+     * <li>If table was found {@link GenericTable#buildProjection(int, String[])} is called just to change projection
+     * to count, if needed, </li>
+     * <li>Database is queried using selection parameters, </li>
+     * <li>and listeners are notified. </li>
+     * </ol>
+     * If no table can be identified than an IllegalArgumentException is thrown.
+     * @param uri URI of one table / one item / count
+     * @param projection string array of names of the needed columns (use {@link DatabaseMirror#column(int)}
+     * @param selection
+     * @param selectionArgs
+     * @param sortOrder
+     * @return cursor containing the results
+     * @throws IllegalArgumentException if no uri can be identified
+     */
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 		{
-		// Uisng SQLiteQueryBuilder instead of query() method
+		// Using SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		int uriType = match(uri);
         boolean ready = false;

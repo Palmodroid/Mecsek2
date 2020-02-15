@@ -1,13 +1,13 @@
 package digitalgarden.mecsek.tables.records;
 
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
-import digitalgarden.mecsek.tables.recordtypes.RecordTypesTable;
+import digitalgarden.mecsek.tables.category.CategoriesTable;
 import digitalgarden.mecsek.tables.patients.PatientsTable;
 import digitalgarden.mecsek.generic.GenericTable;
 
 import static digitalgarden.mecsek.tables.LibraryDatabase.CALENDAR;
 import static digitalgarden.mecsek.tables.LibraryDatabase.PATIENTS;
-import static digitalgarden.mecsek.tables.LibraryDatabase.RECORD_TYPES;
+import static digitalgarden.mecsek.tables.LibraryDatabase.CATEGORIES;
 
 public final class RecordsTable extends GenericTable
     {
@@ -29,7 +29,7 @@ public final class RecordsTable extends GenericTable
         {
         NAME = addColumn( TYPE_TEXT, "name" );
         DATE = addColumn( TYPE_DATE, "date" );
-        TYPE_ID = addForeignKey( "title_id", RECORD_TYPES);
+        TYPE_ID = addForeignKey( "title_id", CATEGORIES);
         PATIENT_ID = addForeignKey( "patient_id", PATIENTS );
         CALENDAR_ID = addExternKey( "calendar_id", CALENDAR );
         SEARCH = addSearchColumnFor( NAME );
@@ -43,7 +43,7 @@ public final class RecordsTable extends GenericTable
         {
         exportImport().addColumnAllVersions( RecordsTable.NAME );
         exportImport().addColumnAllVersions( RecordsTable.DATE );
-        exportImport().addForeignKeyAllVersions(TYPE_ID, RECORD_TYPES, RecordTypesTable.NAME);
+        exportImport().addForeignKeyAllVersions(TYPE_ID, CATEGORIES, CategoriesTable.NAME);
         exportImport().addForeignKeyAllVersions( PATIENT_ID, PATIENTS, PatientsTable.NAME, PatientsTable.DOB, PatientsTable.TAJ );
         exportImport().addExternKeyAllVersions( CALENDAR_ID, CALENDAR, CalendarTable.NOTE);
         }

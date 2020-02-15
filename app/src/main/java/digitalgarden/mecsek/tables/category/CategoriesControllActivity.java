@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.tables.recordtypes;
+package digitalgarden.mecsek.tables.category;
 
 
 // res:
@@ -9,13 +9,13 @@ import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 
 
-public class RecordTypesControllActivity extends GenericControllActivity
+public class CategoriesControllActivity extends GenericControllActivity
 	{
 
 	@Override
 	protected GenericEditFragment createEditFragment()
 		{
-		return new RecordTypesEditFragment();
+		return new CategoriesEditFragment();
 		}
 
 
@@ -23,8 +23,8 @@ public class RecordTypesControllActivity extends GenericControllActivity
 	protected GenericCombinedListFragment createListFragment()
 		{
 		long initiallySelectedItem = getIntent().getLongExtra(GenericCombinedListFragment.SELECTED_ITEM,
-				RecordTypesListFragment.SELECT_DISABLED);
-		return RecordTypesListFragment.newInstance( initiallySelectedItem );
+				CategoriesListFragment.SELECT_DISABLED);
+		return CategoriesListFragment.newInstance( initiallySelectedItem );
 		}
 
 	}

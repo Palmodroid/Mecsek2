@@ -9,8 +9,7 @@ import android.view.View.OnClickListener;
 import java.io.File;
 
 import digitalgarden.mecsek.MainChooserDialogFragment.Type;
-import digitalgarden.mecsek.color.ColorDefsControllActivity;
-import digitalgarden.mecsek.color.ColorPickerActivity;
+import digitalgarden.mecsek.color.StylePickerActivity;
 import digitalgarden.mecsek.database.DatabaseContentProvider;
 import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.tables.authors.AuthorsControllActivity;
@@ -18,7 +17,7 @@ import digitalgarden.mecsek.tables.books.BooksControllActivity;
 import digitalgarden.mecsek.tables.calendar.CalendarControllActivity;
 import digitalgarden.mecsek.tables.records.RecordsControllActivity;
 import digitalgarden.mecsek.tables.patients.PatientsControllActivity;
-import digitalgarden.mecsek.tables.recordtypes.RecordTypesControllActivity;
+import digitalgarden.mecsek.tables.category.CategoriesControllActivity;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
@@ -186,7 +185,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
                     }
                 });
 
-            findViewById(R.id.button_record_types_table).setOnClickListener(new OnClickListener()
+            findViewById(R.id.button_category_table).setOnClickListener(new OnClickListener()
                 {
                 public void onClick(View view)
                     {
@@ -194,7 +193,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
                     Intent i = new Intent();
 
-                    i.setClass(MainChooserActivity.this, RecordTypesControllActivity.class);
+                    i.setClass(MainChooserActivity.this, CategoriesControllActivity.class);
                     startActivity(i);
                     }
                 });
@@ -250,7 +249,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
                     // ColorPIcker will do the job, standard list is not needed
 					// i.setClass(MainChooserActivity.this, ColorDefsControllActivity.class);
-                    i.setClass(MainChooserActivity.this, ColorPickerActivity.class);
+                    i.setClass(MainChooserActivity.this, StylePickerActivity.class);
                     startActivity(i);
                     }
                 });

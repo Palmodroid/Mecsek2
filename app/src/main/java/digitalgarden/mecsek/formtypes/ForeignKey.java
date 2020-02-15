@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -24,40 +23,60 @@ import static digitalgarden.mecsek.database.DatabaseMirror.column;
  * table
  * foreignkey (columnindex)
  */
-
-public class ForeignKey implements Connection.Connectable
+/**
+ * Foreign key points to a row in a foreign table. Foreign key can be changed to point to an other foreign record,
+ * but values of the foreign record will not change throgh foreign key.
+ * <p>Extern key always points to the same extern record. Extern key will never change, but the values of the extern
+ * record can change.</p>
+ * <p>MAIN TABLE - foreign key column (changes) --> FOREIGN TABLE - foreign columns </p>
+ */
+public class ForeignKey implements Connection.Connectable, GenericEditFragment.UsingSelector
     {
-    private Connection connection;
+    /** Connection of the foreign table contains fields of the foreign columns */
+    private Connection foreignConnection;
 
+    /** Form of the table - should be stored because Fields could be added to the form under ForeignKey */
     private GenericEditFragment editFragment;
-    private int tableIndex; // lehet, hogy elég Connection-ben tárolni!
-    private int columnIndex;
 
-    // ForeignKey és kapcsolódó mezők közös selectorCode-ja, vagyis a selectorActivity requestCode-ja
+    /** Index of the Foreign Key Column inside MAIN table */
+    private int foreignKeyColumnIndex;
+
+    /** Common CODE between Foreign Key and selectorActivity Request Code
+     *  With this common code selectorActivity can identify its calling ForeignKey */
     private int selectorCode = -1;
 
-    // És a selector adatai
+    /** Parameters of the selectorActivity defined by {@link #setupSelector(Class, String, TextView)} */
     private Class<?> selectorActivity;
     private String selectorTitle;
     private TextView selectorOwner;
 
+    /** Actual value of the Foreign Key Column */
     private long foreignKeyValue = -1L;
 
+    /** TRUE if value of the Foreign Key was changed */
     private boolean edited = false;
 
+    /**
+     * Constructor to create foreign key. Fields of the Foreign Table can be added later to this ForeignKey.
+     * @param editFragment form of the fields
+     * @param foreignKeyColumnIndex index of the Foreign Key Column (inside MAIN table)
+     * @param foreignTableIndex index of the Foreign Table (stored inside foreignConnection)
+     */
     public ForeignKey(GenericEditFragment editFragment, int foreignKeyColumnIndex, int foreignTableIndex )
         {
-        this.tableIndex = foreignTableIndex;
-        this.columnIndex = foreignKeyColumnIndex;
         this.editFragment = editFragment;
+        this.foreignKeyColumnIndex = foreignKeyColumnIndex;
         selectorCode = editFragment.getCode();
 
-        connection = new Connection( editFragment.getContext(), tableIndex );
+        foreignConnection = new Connection( editFragment.getContext(), foreignTableIndex );
         }
 
-    // selectorActivity - a megfelelő táblához tartozó GenericControllActivity
-    // selectorTitle - selector címének eleje
-    // selectorOwner - a jelenlegi elemet leginkább jellemző TextView
+    /**
+     * Selector activity will select one record from the foreign table and give back its row index
+     * @param selectorActivity ControllActivity of the foreign table
+     * @param selectorTitle Beginning of the title
+     * @param selectorOwner TextView descripting current item to choose
+     */
     public void setupSelector(final Class<?> selectorActivity, final String selectorTitle, final TextView selectorOwner)
         {
         this.selectorActivity = selectorActivity;
@@ -65,19 +84,30 @@ public class ForeignKey implements Connection.Connectable
         this.selectorOwner = selectorOwner;
         }
 
+    /** Adds ForeignKey column to the Connection of the MAIN table. FOREIGN KEY is the only column needed from MAIN
+     * TABLE. */
     @Override
-    public void addColumn( List<String> columns )
+    public void addColumnToProjection(List<String> projection)
         {
-        columns.add( column(columnIndex) );
+        projection.add( column(foreignKeyColumnIndex) );
         }
 
-
-    public EditField addEditField(int editFieldId, int columnIndex )
+    /**
+     * Adds an EDIT FIELD (any subclass) to a FOREIGN COLUMN of the FOREIGN TABLE.
+     * <p>On touch Selector Activity is started to select one record of the Foreign Table. {@link #selectorCode} is
+     * unique to this Foreign Key, so Selector Activity can found it.</p>
+     * ??? What happens with Selector Code on config changes ??? Maybe nothing, because foreign keys get selector
+     * code in the same order. Selector code could be te index of the ForeignKeyArray, too !!!
+     * @param editFieldId id of the field
+     * @param foreignColumnIndex index of the column (inside extern table)
+     * @return the created, connected editField
+     */
+    public EditField addEditField(int editFieldId, int foreignColumnIndex )
         {
         final EditField editField = (EditField) editFragment.getView().findViewById( editFieldId );
         //editField.setBackground(null);
-        editField.connect( editFragment, columnIndex );
-        connection.add( editField );
+        editField.connect( editFragment, foreignConnection, foreignColumnIndex );
+        //foreignConnection.add( editField ); added to connect, not needed any more
 
         // link csak akkor lehetséges, ha a ForeignKey már az űrlaphoz kötött!!
         // és a selector-t beállítottuk
@@ -108,68 +138,89 @@ public class ForeignKey implements Connection.Connectable
         return editField;
         }
 
-    // Set: értékadás a listener-ek értesítésével
+    /**
+     * Set a new value means: Setting up foreignKeyValue (not pushed to database yet) and refresh fields of foreign
+     * table through foreignConnection
+     * @param newId new id of the foreign record
+     */
     public void setValue( long newId )
         {
         foreignKeyValue = newId;
-        connection.pullData( foreignKeyValue);
+        foreignConnection.pullData( foreignKeyValue );
         }
 
-    // Get: id lekérdezés
+    /**
+     * Value of foreignKey (not certanly pushed to the database yet)
+     * @return value of foreignKey
+     */
     public long getValue()
         {
         return foreignKeyValue;
         }
 
+    /** ForeignKey is PULLED from MAIN Connection. Can be null if not yet defined */
     @Override
-    public void pullData(Cursor cursor)
+    public void getDataFromPull(Cursor cursor)
         {
-        int column = cursor.getColumnIndexOrThrow(column(columnIndex));
+        int column = cursor.getColumnIndexOrThrow(column(foreignKeyColumnIndex));
         if (cursor.isNull(column))
             setValue(-1L);
         else
             setValue(cursor.getLong(column));
         }
 
+    /** ForeignKey (or null if not yet defined) is added to PUSH of MAIN Connection */
     @Override
-    public void pushData(ContentValues values)
+    public void addDataToPush(ContentValues values)
         {
         if (getValue() >= 0)
-            values.put( column(columnIndex), getValue());
+            values.put( column(foreignKeyColumnIndex), getValue());
         else
-            values.putNull( column(columnIndex) );
+            values.putNull( column(foreignKeyColumnIndex) );
         }
 
+    /** ForeignKeys do not have any SOURCE (only externKeys has got sources */
     @Override
     public void pushSource( int tableIndex, long rowIndex )
         {
-        // No source for edit fields
+        // No source for foreign fields
         }
 
-    /*
-    Az egyes elemek állapotát nem kell elmenteni, hiszen azok változatlanok
-     */
+    /** Save foreignKey value during config changes. Foreign fields cannot change so save of the foreignConnection is
+     * not needed */
     @Override
     public void saveData(Bundle data)
         {
-        data.putLong( column(columnIndex), getValue() );
+        data.putLong( column(foreignKeyColumnIndex), getValue() );
         }
 
+    /** Retrieve foreignKey value on config changes */
     @Override
     public void retrieveData(Bundle data)
         {
         // Ezzel le is kéri a hozzá tartozó adatokat, melyek elvileg változatlanok
-        setValue( data.getLong( column(columnIndex) ) );
+        setValue( data.getLong( column(foreignKeyColumnIndex) ) );
         }
 
     // ForeignKey ált. selectorActivity-ból való visszatérés során változik.
     // Ezzel a metódussal nézhetjük meg, hogy visszatérés után a konkrét példánynak kell-e változnia
-    public void checkReturningSelector(int selectorCode, long id)
+    /**
+     * Activity (when SelectorActivity returns) checks here which ForeignKey called SelectorActivity. If selector
+     * code is identical then value is set.
+     * @param selectorCode unique selector code (returned by Selector activity)
+     * @param data data returned by Activity, containing id of the newly selected foreign record
+     */
+    public void checkReturningSelector(int selectorCode, Intent data)
         {
         if (this.selectorCode == selectorCode)
             {
-            if ( id != getValue() ) edited = true;
-            setValue(id);
+            long selectedId = data.getLongExtra(GenericCombinedListFragment.SELECTED_ITEM,
+                    GenericCombinedListFragment.SELECTED_NONE);
+
+            if ( selectedId != getValue() ) edited = true;
+            // Foreign values could change during the run of the external activity - these values should be repulled,
+            // even if value is nOT changed
+            setValue(selectedId);
             }
         }
 

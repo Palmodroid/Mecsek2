@@ -49,7 +49,7 @@
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name=".tables.recordtypes.RecordTypesControllActivity"
+            android:name=".tables.category.CategoriesControllActivity"
             android:label="@string/record_types_title" >
         </activity>
 
@@ -73,7 +73,7 @@
 
         <activity
             android:theme="@style/AppTheme.NoActionBar"
-            android:name=".color.ColorPickerActivity"
+            android:name=".color.StylePickerActivity"
             android:label="@string/color_picker_title" >
         </activity>
 

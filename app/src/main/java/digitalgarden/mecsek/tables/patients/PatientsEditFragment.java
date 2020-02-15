@@ -4,9 +4,7 @@ import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.formtypes.EditField;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.tables.books.BooksControllActivity;
 import digitalgarden.mecsek.tables.records.RecordsControllActivity;
-import digitalgarden.mecsek.tables.recordtypes.RecordTypesControllActivity;
 
 import static digitalgarden.mecsek.tables.LibraryDatabase.PATIENTS;
 

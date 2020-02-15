@@ -5,7 +5,7 @@ import digitalgarden.mecsek.tables.authors.AuthorsTable;
 import digitalgarden.mecsek.tables.books.BooksTable;
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
 import digitalgarden.mecsek.tables.records.RecordsTable;
-import digitalgarden.mecsek.tables.recordtypes.RecordTypesTable;
+import digitalgarden.mecsek.tables.category.CategoriesTable;
 import digitalgarden.mecsek.tables.patients.PatientsTable;
 import digitalgarden.mecsek.generic.GenericDatabase;
 
@@ -20,7 +20,7 @@ public class LibraryDatabase extends GenericDatabase
     @Override
     public int version()
         {
-        return 4;
+        return 1;
         }
 
     @Override
@@ -38,7 +38,7 @@ public class LibraryDatabase extends GenericDatabase
 
     public static int CALENDAR;
     public static int PATIENTS;
-    public static int RECORD_TYPES;
+    public static int CATEGORIES;
     public static int RECORDS;
 
 
@@ -51,7 +51,7 @@ public class LibraryDatabase extends GenericDatabase
 
         CALENDAR = addTable( new CalendarTable() );
         PATIENTS = addTable( new PatientsTable() );
-        RECORD_TYPES = addTable( new RecordTypesTable() );
+        CATEGORIES = addTable( new CategoriesTable() );
         RECORDS = addTable( new RecordsTable() );
         }
     }

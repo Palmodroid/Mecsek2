@@ -1,30 +1,33 @@
-package digitalgarden.mecsek.tables.recordtypes;
+package digitalgarden.mecsek.tables.category;
 
 
 import digitalgarden.mecsek.generic.GenericTable;
 
-public final class RecordTypesTable extends GenericTable
+public final class CategoriesTable extends GenericTable
     {
     @Override
     public String name()
         {
-        return "recordtypes";
+        return "category";
         }
 
     public static int NAME;
     public static int SEARCH;
+    public static int STYLE;
+
 
     @Override
     public void defineColumns()
         {
         NAME = addColumn( TYPE_TEXT, "name" );
+        STYLE = addColumn( TYPE_COLOR, "style");
         SEARCH = addSearchColumnFor(NAME);
         }
 
     @Override
     public void defineExportImportColumns()
         {
-        exportImport().addColumnAllVersions( RecordTypesTable.NAME);
+        exportImport().addColumnAllVersions( CategoriesTable.NAME);
         }
 
     /*
@@ -37,19 +40,19 @@ public final class RecordTypesTable extends GenericTable
 
         // Uniqe ellenőrzés kódból. Lehetne adatbázis szinten is, hiba ellenőrzésével
         String[] projection = {
-                column(RecordTypesTable.NAME) };
+                column(CategoriesTable.NAME) };
         Cursor cursor = getContentResolver()
-                .query( table(RECORD_TYPES).contentUri(), projection,
-                        column(RecordTypesTable.NAME) + "='" + records[1] + "'", null, null);
+                .query( table(CATEGORIES).contentUri(), projection,
+                        column(CategoriesTable.NAME) + "='" + records[1] + "'", null, null);
 
         // http://stackoverflow.com/a/16108435
         if (cursor == null || cursor.getCount() == 0)
             {
             ContentValues values = new ContentValues();
-            values.put( column(RecordTypesTable.NAME), records[1]);
+            values.put( column(CategoriesTable.NAME), records[1]);
 
             getContentResolver()
-                    .insert( table(RECORD_TYPES).contentUri(), values);
+                    .insert( table(CATEGORIES).contentUri(), values);
             Scribe.debug( "Record type [" + records[1] + "] was inserted.");
             }
         else

@@ -1,9 +1,15 @@
 package digitalgarden.mecsek.formtypes;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.Toast;
+import digitalgarden.mecsek.generic.Connection;
+import digitalgarden.mecsek.generic.GenericEditFragment;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 
@@ -34,7 +40,22 @@ public class EditFieldColor extends EditField
         super(context, attrs, defStyle);
     	}
 
-    public void pullData(Cursor cursor )
+    @Override
+    public void connect(GenericEditFragment form, Connection connection, int columnIndex)
+        {
+        super.connect(form, connection, columnIndex);
+
+        setOnClickListener(new OnClickListener()
+            {
+            @Override
+            public void onClick(View v)
+                {
+                Toast.makeText( getContext(), "Style button clicked!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    public void getDataFromPull(Cursor cursor )
         {
         // !! cursor.getType() could automate this project!
 
@@ -42,9 +63,10 @@ public class EditFieldColor extends EditField
         setText( Long.toHexString( value ) );
         }
 
-    public void pushData(ContentValues values)
+    public void addDataToPush(ContentValues values)
         {
         long value = Long.parseLong( getText().toString(), 16 );
         values.put(column( columnIndex ), value );
         }
+
     }

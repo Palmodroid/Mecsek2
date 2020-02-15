@@ -3,16 +3,23 @@ package digitalgarden.mecsek.generic;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 
+import digitalgarden.mecsek.database.DatabaseContentProvider;
+import digitalgarden.mecsek.database.DatabaseMirror;
+import digitalgarden.mecsek.database.DatabaseOpenHelper;
 import digitalgarden.mecsek.exportimport.TableExportImport;
 import digitalgarden.mecsek.scribe.Scribe;
+import digitalgarden.mecsek.tables.LibraryDatabase;
 import digitalgarden.mecsek.utils.StringUtils;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.addColumnToDatabase;
@@ -73,74 +80,105 @@ import static digitalgarden.mecsek.database.DatabaseMirror.table;
  */
 public abstract class GenericTable
     {
+    /** Unique id of the table - equals index of the table-list {@link DatabaseMirror#tables}
+     *  (These will not change if {@link LibraryDatabase#defineTables()} does not change) */
     private int tableId;
 
+    /** Every GenericTable subclass contains exactly one TableExportImport class to separate export/import */
     private TableExportImport tableExportImport;
 
+    /** Constructor just creates separated TableExportImport */
     public GenericTable( )
         {
         this.tableExportImport = new TableExportImport( this );
         }
 
-    // Az Id megegyezik a tábla list sorszámával, de ezt csak az elhelyezés után tudjuk elkérni.
-    // Igazából itt lehetne egy ellenőrzés, hogy ne lehessen többször értéket adni.
+    /** id (index) is available (and therefore set) after table instantiation
+     *  Check {@link DatabaseMirror#addTableToDatabase(GenericTable)} */
     public void setId( int tableId )
         {
         this.tableId = tableId;
         }
 
+    /** id (index) of the table */
     public int id()
         {
         return tableId;
         }
 
+    /** Gets separated export/import class for this table */
     public TableExportImport exportImport()
         {
         return tableExportImport;
         }
 
+    /**
+     * Define data to export. Import is available for different versions.
+     * <p>Get separated {@link TableExportImport} by {@link #exportImport()} and use <em>add...</em> methods to add
+     * different columns and versions. For available methods check {@link TableExportImport} class!</p>
+     * <p>Ex.: <code>exportImport().addColumnAllVersions( BooksTable.TITLE );</code></p>
+     */
     public abstract void defineExportImportColumns();
 
+    /** Extern records could know their "SOURCE" MAIN Record */
     private static final String SOURCE_TABLE_COLUMN_NAME = "srctbl";
     private static final String SOURCE_ROW_COLUMN_NAME = "srcrow";
 
+    /** Index of SOURCE_TABLE column (containing MAIN table inside EXTERN Record
+     *  If Column Index is negative, then SOURCE Columns are NOT defined */
     public int SOURCE_TABLE = -1;
+
+    /** Index of SOURCE_ROW column (containing MAIN Record index inside EXTERN Record */
     public int SOURCE_ROW;
 
+    /** Extern Table could contain SOURCE columns (not obligatory) */
     protected void addSourceColumns()
         {
         SOURCE_TABLE = addColumn( TYPE_TEXT, SOURCE_TABLE_COLUMN_NAME);
         SOURCE_ROW = addColumn( TYPE_KEY, SOURCE_ROW_COLUMN_NAME);
         }
 
+    /** True if SOURCE coulmns are defined and valid */
     public boolean hasSourceColumns()
         {
         return SOURCE_TABLE >= 0;
         }
 
+    /** Extern record knows its SOURCE table index. Using its {@link GenericControllActivity} can show original data */
     public Class getControllActivity()
         {
         return null;
         }
 
-    // Loader is notified only when its own table is changed
-    // If table contains foreign references, then observation range should be extended to whole
-    // database
-    // ((Own observer should be unregistered, but where? If we unregister it in onPause, then no
-    // foreign changes will be observed))
+    /**
+     * Loader is notified only when its own table (== own URI) is changed
+     * <p>If table contains foreign references, then observation range should be extended to whole database</p>
+     * ((Own observer cannot be unregistered, but where? If we unregister it in onPause, then no
+     * foreign changes will be observed - independent loader class will solve the problem.))
+     */
     private boolean containsForeignReference = false;
 
+    /**
+     * Returns true, if table contains foreign reference.
+     * <p>In these cases update can change data in further tables, so CursorLoader should be notified about changes
+     * in the whole database, and not only about changes in the current table (which is the default behavior). Check
+     * {@link GenericCombinedListFragment#onLoadFinished(Loader, Cursor)} for further details. </p>
+     */
     public boolean containsForeignReference()
         {
         return containsForeignReference;
         }
 
-
+    /**
+     * Column types used by app. Every type has got a database-type pair in COLUMN_TYPES
+     * <p>App uses more specific types: like TYPE_COLOR, which is stored inside database as simple "INTEGER" type</p>
+     */
     public static final int TYPE_KEY = 0;
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_DATE = 2;
     public static final int TYPE_COLOR = 3;
 
+    /** Corresponding database column types. */
     private static final String[] COLUMN_TYPES = {"INTEGER", "TEXT", "INTEGER", "INTEGER"};
 
 
@@ -148,26 +186,53 @@ public abstract class GenericTable
     public static final int DIRID = 0x200000;
     public static final int ITEMID = 0x300000;
 
+    /** id-s for {@link DatabaseMirror#match(Uri)} uri-matcher
+     *  There are separate DIRID, ITEMID and COUNTID codes for each table */
     public int id(int ext)
         {
         return ext + id();
         }
 
+    /** Name of the table */
     public abstract String name();
 
+    /**
+     * Columns for the table should be defined here using <em>add...</em> methods. Each column definition returns an
+     * unique index for that column which should be stored inside this class in a public variable. Later on these
+     * indices could identify columns: ex. {@link DatabaseMirror#column(int index)} returns column's name.
+     */
     public abstract void defineColumns();
 
+
+    /** Commands (strings) to create columns. Check <em>add...</em> and {@link #create(SQLiteDatabase)}  */
     private ArrayList<String> createColumns = new ArrayList<>();
 
+    /** Commands to create foreign/extern columns. Check <em>add...</em> and {@link #create(SQLiteDatabase)} */
     private ArrayList<String> createForeignKeys = new ArrayList<>();
 
+    /** Commands to create LEFT OUTER JOINS for foreign/extern tables (Used only in queries). Check <em>add...</em>
+     *  and {@link #buildQuery(Uri, int, SQLiteQueryBuilder)} */
     private ArrayList<String> createLeftOuterJoin = new ArrayList<>();
 
+    /** Command to create UNIQUE constraint for more columns. Only ONE constraint is allowed/table.
+     *  Check {@link #addUniqueConstraint(int...)} and {@link #create(SQLiteDatabase)} */
     private String createUniqueConstraint = "";
 
+    /** contains the index of the SEARCH column {@link #addSearchColumnFor(int)} */
     private int searchColumnIndex = -1;
+    /** contains the index of the original (searchable) column {@link #addSearchColumnFor(int)}  */
     private int searchColumnIndexFor = -1;
 
+
+    /**
+     * Adds a simple database column to this table.
+     * Adds a new line to createColumns: <p>NAME DBTYPE or NAME DBTYPE UNIQUE </p>
+     * @param columnType TYPE_KEY, TYPE_TEXT etc. These are 'app-types'. Corresponding 'db-types' (like INTEGER) are
+     *                   found in {@link #COLUMN_TYPES}
+     * @param columnName Name of the column. It will be extended with '_tableIndex' to be unique
+     * @param unique true, if this column should be UNIQUE
+     * @return index of the column, which should be stored, because later this index could identify the column
+     */
     protected int addColumn( int columnType, String columnName, boolean unique )
         {
         columnName = columnName + "_" + Integer.toString(tableId);
@@ -176,17 +241,33 @@ public abstract class GenericTable
         return addColumnToDatabase( columnName, columnType, tableId );
         }
 
+    /** Same as {@link #addColumn(int, String, boolean)} without UNIQUE */
     protected int addColumn(int columnType, String columnName )
         {
         return addColumn( columnType, columnName, false );
         }
 
+    /** Same as {@link #addColumn(int, String, boolean)} but always adding UNIQUE */
     protected int addUniqueColumn(int columnType, String columnName )
         {
         return addColumn( columnType, columnName, true );
         }
 
-    // Foreign key rész
+    /**
+     * Foreign keys refers to one record (row) in the foreign table. Changing the value will refer to an other 
+     * foreign record, but the foreign record itself will not change. (Extern keys are very similar, but they always 
+     * refer to the same foreign record (or none). Changes change the foreign record's value and NOT the record's id)
+     * Adds a new line to createForeignKeys:
+     * <p>" FOREIGN KEY ( columnName ) REFERENCES foreignTableName ( _id ) ON DELETE CASCADE "</p>
+     * Adds a new line to createLeftOuterJoin:
+     * <p>" LEFT OUTER JOIN foreignTableName ON mainTableName.columnName = foreignTableName._id "</p>
+     * ForeignTable should be stored for column.
+     * {@link #containsForeignReference} should be TRUE, because the whole database could change if one record is
+     * changed.
+     * @param columnName column in the main table which contains the id of one record in the foreign table
+     * @param referenceTableIndex foreign table index 
+     * @return index of the column, which should be stored, because later this index could identify the column
+     */
     protected int addForeignKey(String columnName, int referenceTableIndex)
         {
         int index = addColumn( TYPE_KEY, columnName);
@@ -204,12 +285,19 @@ public abstract class GenericTable
         return index;
         }
 
+    /** Extern key - as database structure - is similar to foreign keys */
     protected int addExternKey(String columnName, int referenceTableIndex)
         {
         // Ez ugyanaz, mint a Foreign Key, csak nem a hivatkozás sorszáma, hanem maga a hivatkozott érték változik
         return addForeignKey( columnName, referenceTableIndex );
         }
 
+    /**
+     * Creates unique constraint for table creation as
+     * ", UNIQUE ( index1, index2, index3,... ) "
+     * Only one unique constraint is allowed per table
+     * @param columnIndices list of columns (indices) to be unique together
+     */
     protected void addUniqueConstraint(int... columnIndices)
         {
         if ( !createUniqueConstraint.isEmpty() )
@@ -224,6 +312,16 @@ public abstract class GenericTable
         createUniqueConstraint = ", UNIQUE ( " + sb.toString() + " ) ";
         }
 
+    /**
+     * Creates (adds) SEARCH column. Currently SEARCH column can contain only one other column's textual data. This
+     * string is normailzed (without accented chars and white-spaces) to be easily searchable. Only ONE Search column
+     * is allowed!
+     * <p>{@link #searchColumnIndex} contains the index of the SEARCH column</p>
+     * <p>{@link #searchColumnIndexFor} contains the index of the original column</p>
+     * @param columnIndex column to search (its data will be stored (and normalized) in SEARCH column)
+     * @return index of the SEARCH column (it is also stored internally)
+     * @throws IllegalArgumentException if SEARCH column already exists
+     */
     protected int addSearchColumnFor(int columnIndex )
         {
         if ( searchColumnIndex != -1 )
@@ -233,6 +331,20 @@ public abstract class GenericTable
         return searchColumnIndex;
         }
 
+    /**
+     * Create database table. Called by {@link DatabaseOpenHelper#onCreate(SQLiteDatabase)},  but check also
+     * {@link DatabaseMirror#start(Context)}! Command string consists of:
+     * <ol>
+     * CREATE TABLE tableName (
+     * <li> _id  INTEGER PRIMARY KEY,</li>
+     * <li><em>each createColumns row as:</em> <p>columnName columnType,</p> <em>or</em> <p>columnName columnType UNIQUE,
+     * </p></li>
+     * <li><em>each createForeignKeys row as:</em> <p>?????????????????????????,</p></li>
+     * <li><em>createUniqueConstraint if needed:</em> <p>???????????????????????</p></li>
+     * )
+     * </ol>
+     * This command string will be executed.
+     */
     public void create(SQLiteDatabase db)
         {
         StringBuilder sb = new StringBuilder("CREATE TABLE ");
@@ -254,17 +366,20 @@ public abstract class GenericTable
         db.execSQL(sb.toString());
         }
 
+    /** DROP table - used only by version changes */
     public void drop(SQLiteDatabase db)
         {
         Scribe.note("DB Drop: " + name());
         db.execSQL("DROP TABLE IF EXISTS " + name());
         }
 
+    /** authority - for URIs - identical to database authority */
     public String authority()
         {
         return database().authority();
         }
 
+    /** content count string - for URISs - "/count" */
     public String contentCount()
         {
         return database().contentCount();
@@ -286,16 +401,22 @@ public abstract class GenericTable
         return ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + contentSubtype();
         }
 
+    /** Content uri for this table:
+     * "content://digitalgarden.mecsek.contentprovider/TABLENAME" */
     public Uri contentUri()
         {
         return Uri.parse(database().contentUri() + "/" + name());
         }
 
+    /** Content uri for one record in this table:
+     * "content://digitalgarden.mecsek.contentprovider/TABLENAME/RECORDID" */
     public Uri itemContentUri( long itemId )
         {
         return Uri.parse(contentUri() + "/" + itemId);
         }
 
+    /** Content count uri for this table:
+     * "content://digitalgarden.mecsek.contentprovider/TABLENAME/count" */
     public Uri contentCountUri()
         {
         return Uri.parse(contentUri() + contentCount());
@@ -379,6 +500,7 @@ public abstract class GenericTable
         return null;
         }
 
+    /** DELETE is implemented, but shouldn't be used! DELETE flag is under construction !!! */
     public int delete( SQLiteDatabase db, Uri uri, int uriType, String whereClause, String[] whereArgs )
         {
         int rowsDeleted = -1;
@@ -509,6 +631,14 @@ public abstract class GenericTable
         return rowsUpdated;
         }
 
+    /** 
+     * Called by {@link DatabaseContentProvider} query()
+     * ???????????????????????
+     * If this table is needed:
+     * Selects table with left outer join
+     * Adds ITEM id to the where clause
+     * <p>WHERE _id = RecordId</p>
+     */
     public boolean buildQuery(Uri uri, int uriType, SQLiteQueryBuilder queryBuilder )
         {
         if ( uriType == id(DIRID) || uriType == id(COUNTID) )
@@ -532,6 +662,8 @@ public abstract class GenericTable
         return true;
         }
 
+    /** Called by {@link DatabaseContentProvider} query()
+     *  Only replaces projection when records count are needed from table */
     public String[] buildProjection( int uriType, String[] projection )
         {
         if ( uriType == id(COUNTID) )

@@ -6,7 +6,7 @@
     <string name="button_books_table">Books</string>
     <string name="button_authors_table">Authors</string>
     <string name="button_patients_table">Patients</string>
-    <string name="button_record_types_table">Record types</string>
+    <string name="button_category_table">Category</string>
     <string name="button_records_table">Records</string>
     <string name="button_calendar_table">Calendar</string>
     <string name="button_export">Export</string>

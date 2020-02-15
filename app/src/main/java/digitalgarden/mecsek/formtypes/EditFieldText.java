@@ -8,9 +8,9 @@ import android.util.AttributeSet;
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 
 
-// Ez a mező csak annyival tud többet, hogy az értékváltozást jelzi
-// 18.06.14 - és belepakoljuk a hozzárendelt értékekekt is
-// 18.07.22 - Lett belőle egy külön EditFieldText
+/**
+ * TEXT type field
+ */
 public class EditFieldText extends EditField
 	{
     public EditFieldText(Context context)
@@ -28,12 +28,14 @@ public class EditFieldText extends EditField
         super(context, attrs, defStyle);
     	}
 
-    public void pullData(Cursor cursor )
+    /** pulls text data of Field's Column */
+    public void getDataFromPull(Cursor cursor )
         {
         setText(cursor.getString(cursor.getColumnIndexOrThrow( column( columnIndex ))));
         }
 
-    public void pushData(ContentValues values)
+    /** push text data of Field's Column */
+    public void addDataToPush(ContentValues values)
         {
         values.put(column( columnIndex ), getText().toString() );
         }

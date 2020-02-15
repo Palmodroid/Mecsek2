@@ -115,7 +115,7 @@ public class EditFieldDate extends EditField implements View.OnFocusChangeListen
      * Pulls longtime from sqlite database (cursor)
      * Called only once, after hint, during the first start, if has rowId
      */
-    public void pullData(Cursor cursor)
+    public void getDataFromPull(Cursor cursor)
         {
         longtime.set(cursor.getLong(cursor.getColumnIndexOrThrow(column(columnIndex))));
         setTextFromTime(true);
@@ -126,7 +126,7 @@ public class EditFieldDate extends EditField implements View.OnFocusChangeListen
      * Pushes longtime to sqlite database
      * Called only once, before finish
      */
-    public void pushData(ContentValues values)
+    public void addDataToPush(ContentValues values)
         {
         if (isEdited())
             {

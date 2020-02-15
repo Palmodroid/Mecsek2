@@ -14,7 +14,7 @@ import static digitalgarden.mecsek.viewutils.Longstyle.*;
 
 
 /**
- * ColorPickerActivity picks a style in Longtime format (paper color, ink color, bold and italics attributes)
+ * StylePickerActivity picks a style in Longtime format (paper color, ink color, bold and italics attributes)
  * Activity uses the same layout for different tasks:
  * - IndexedStyleView (Fix or Custom) to select an indexed style
  * - ComposeStyleView to compose an indexed or custom style
@@ -50,7 +50,7 @@ import static digitalgarden.mecsek.viewutils.Longstyle.*;
  * show 64 custom colors: two tables for ink/paper, on 4 levels to show all colors (64^4)
  *
  *      Paper/Ink set by ColorPickerCheckedLayout.showComposeStyleView(,showInkColor), get by .isShowingInkColor()
- *          if both colors are selected, ColorPickerActivity will return on short click
+ *          if both colors are selected, StylePickerActivity will return on short click
  *          if "Paper/Ink" button is touched, both colors should be selected, or "Set" will return
  *
  *      Levels set by ColorPickerCheckedLayout.colorsUp(plan area) and .colorsDown
@@ -105,7 +105,7 @@ import static digitalgarden.mecsek.viewutils.Longstyle.*;
  * ViewGroupban ez nem kerül meghívásra.
  * Ki kell ezt tenni innen egyáltalán?
  */
-public class ColorPickerActivity extends AppCompatActivity
+public class StylePickerActivity extends AppCompatActivity
         implements View.OnClickListener, View.OnLongClickListener
     {
 
@@ -359,7 +359,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initPaperInkToggle()
         {
-        paperInkToggle = new ToggleBoxView(ColorPickerActivity.this);
+        paperInkToggle = new ToggleBoxView(StylePickerActivity.this);
         paperInkToggle.setTextPaint(textPaint);
         paperInkToggle.setStyle(0, "Paper", MEMO_SWITCH_1 );
         paperInkToggle.setStyle(1, "Ink", MEMO_SWITCH_2 );
@@ -378,7 +378,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initItalicsToggle()
         {
-        italicsToggle = new ToggleBoxView(ColorPickerActivity.this);
+        italicsToggle = new ToggleBoxView(StylePickerActivity.this);
         italicsToggle.setTextPaint(textPaint);
         italicsToggle.setStyle(0, "italics", MEMO_TOGGLE_OFF);
         italicsToggle.setStyle(1, "ITALICS", MEMO_TOGGLE_ITALICS);
@@ -396,7 +396,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initBoldToggle()
         {
-        boldToggle = new ToggleBoxView(ColorPickerActivity.this);
+        boldToggle = new ToggleBoxView(StylePickerActivity.this);
         boldToggle.setTextPaint(textPaint);
         boldToggle.setStyle(0, "bold", MEMO_TOGGLE_OFF);
         boldToggle.setStyle(1, "BOLD", MEMO_TOGGLE_BOLD);
@@ -414,7 +414,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initSetButton()
         {
-        setButton = new BoxAndTextView(ColorPickerActivity.this);
+        setButton = new BoxAndTextView(StylePickerActivity.this);
         setButton.setTextPaint(textPaint);
         // setButton.setText("SET");
         setButton.setLongstyle( composeStyle );
@@ -429,7 +429,7 @@ public class ColorPickerActivity extends AppCompatActivity
                     }
                 else
                     {
-                    Longstyle longstyle = new Longstyle(ColorPickerActivity.this, composeIndex);
+                    Longstyle longstyle = new Longstyle(StylePickerActivity.this, composeIndex);
                     longstyle.set(
                             composeStyle.getInkColor(),
                             composeStyle.getPaperColor(),
@@ -444,7 +444,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initCustomStyleButton()
         {
-        BoxAndTextView customStyleButton = new BoxAndTextView(ColorPickerActivity.this);
+        BoxAndTextView customStyleButton = new BoxAndTextView(StylePickerActivity.this);
         customStyleButton.setTextPaint(textPaint);
         customStyleButton.setLongstyle( MEMO_BASIC );
         customStyleButton.setText("Custom");
@@ -463,7 +463,7 @@ public class ColorPickerActivity extends AppCompatActivity
 
     private View initEmptyButton()
         {
-        BoxView emptyButton = new BoxView(ColorPickerActivity.this);
+        BoxView emptyButton = new BoxView(StylePickerActivity.this);
         emptyButton.setVisibility(View.INVISIBLE);
         return emptyButton;
         }

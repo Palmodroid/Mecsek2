@@ -1,6 +1,7 @@
 package digitalgarden.mecsek.generic;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,10 +23,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.formtypes.EditField;
-import digitalgarden.mecsek.formtypes.ExternKey;
-import digitalgarden.mecsek.formtypes.ForeignKey;
-import digitalgarden.mecsek.formtypes.SourceFieldButton;
+import digitalgarden.mecsek.color.StylePickerActivity;
+import digitalgarden.mecsek.formtypes.*;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
@@ -76,7 +75,18 @@ public abstract class GenericEditFragment extends Fragment
     // SELECT mode-ban kiléphessünk. A többi -1L lesz
     public interface OnFinishedListener
         {
-        public void onFinished( long rowId );
+        void onFinished( long rowId );
+        }
+
+    /**
+     * Some fields (eg. ForeignKey) calls external Activity (in most cases ControllActivity with ListFragment) to
+     * select its value. startActivityForResult will return to {@link #onActivityResult(int, int, Intent)}.
+     * Each Field can ask for a unique code from {@link #getCode()}. This code can be used as selector-code to decide
+     * which Field has called external Activity.
+     */
+    public interface UsingSelector
+        {
+        void checkReturningSelector( int requestCode, Intent data );
         }
 
 
@@ -92,7 +102,7 @@ public abstract class GenericEditFragment extends Fragment
 
     private Connection connection;
 
-    private ArrayList<ForeignKey> foreignKeys = new ArrayList<>();
+    private ArrayList<UsingSelector> usingSelectors = new ArrayList<>();
 
     private View view;
 
@@ -169,11 +179,23 @@ public abstract class GenericEditFragment extends Fragment
         }
 
 
+    /**
+     * Adds an EditField (any type) to this form (EditFragment) inside {@link #setupFormLayout()} (inside
+     * {@link #onActivityCreated(Bundle)}.
+     * <p>EditField is on the layout form (defined by {@link #defineFormLayout()} under id <em>editFieldId</em>. </p>
+     * <p>Column containing data for this EditField is defined by <em>columnIndex</em>. </p>
+     * <p><em>ColumnIndex</em> is stored inside EditField connected by
+     * ({@link EditField#connect(GenericEditFragment, Connection, int)}. {@link #connection} contains
+     * <em>tableIndex</em> for the whole table. EditField should be connected to the {@link #connection}  as well </p>
+     * @param editFieldId
+     * @param columnIndex
+     * @return
+     */
     public EditField addEditField(int editFieldId, int columnIndex )
         {
         EditField editField = (EditField) view.findViewById( editFieldId );
-        editField.connect( this, columnIndex );
-        connection.add( editField );
+        editField.connect( this, connection, columnIndex );
+        // connection.add( editField ); added to connect, not needed any more
 
         return editField;
         }
@@ -186,17 +208,32 @@ public abstract class GenericEditFragment extends Fragment
         return editField;
         }
 
-
-    public ForeignKey addForeignKey( int foreignKeyIndex, int foreignTableIndex,
+    /**
+     * ForeignKey is a special "field" without an existing cell on the form. ForeignKey is tied to the column of the
+     * MAIN table (defined by foreignKeyColumnIndex) which value is the id of a record of the FOREIGN table (defined
+     * by foreignTableIndex).
+     * <p>As there is no field cell, connection of Form, Column (and foreignTableIndex) is performed inside
+     * ForeignKey constructor. ForeignKey should be added to {@link #connection} </p>
+     * <p>Value of ForeignKey (row id of the foreign table) is selected by the use of an external ControllActivity
+     * (Selector). Because of the use of the Selector ForeignKey should be added to {@link #usingSelectors} </p>
+     * !!! NOT READY !!!
+     * @param foreignKeyColumnIndex
+     * @param foreignTableIndex
+     * @param selectorActivity
+     * @param selectorTitle
+     * @param selectorTitleOwner
+     * @return
+     */
+    public ForeignKey addForeignKey( int foreignKeyColumnIndex, int foreignTableIndex,
                                      Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
         {
-        ForeignKey foreignKey = new ForeignKey( this, foreignKeyIndex, foreignTableIndex );
-        foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
-
-        foreignKeys.add( foreignKey );
+        ForeignKey foreignKey = new ForeignKey( this, foreignKeyColumnIndex, foreignTableIndex );
         connection.add( foreignKey );
 
-        if (foreignKeyIndex == getLimitedColumn())
+        foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
+        usingSelectors.add( foreignKey );
+
+        if (foreignKeyColumnIndex == getLimitedColumn())
             {
             limitedForeignKey = foreignKey;
             }
@@ -213,13 +250,29 @@ public abstract class GenericEditFragment extends Fragment
         return externKey;
         }
 
-    public SourceFieldButton addSourceField( int sourceFieldId )
+
+    public SourceButton addSourceField(int sourceFieldId )
         {
-        SourceFieldButton sourceField = (SourceFieldButton) view.findViewById( sourceFieldId );
-        sourceField.connect( this );
-        connection.add( sourceField );
+        SourceButton sourceField = (SourceButton) view.findViewById( sourceFieldId );
+        sourceField.connect( this , connection);
 
         return sourceField;
+        }
+
+    /**
+     * StyleButton clicks start {@link StylePickerActivity} to select style for Column defined by columnIndex.
+     * @param styleButtonId
+     * @param columnIndex
+     * @return
+     */
+    public StyleButton addStyleButton(int styleButtonId, int columnIndex )
+        {
+        StyleButton styleButton = (StyleButton) view.findViewById( styleButtonId );
+        styleButton.connect( this, connection, columnIndex );
+
+        usingSelectors.add( styleButton );
+
+        return styleButton;
         }
 
     /**
@@ -416,6 +469,13 @@ public abstract class GenericEditFragment extends Fragment
             }
         }
 
+    public int getCode()
+        {
+        codeGenerator++;
+        Scribe.note("General EDIT Fragment: Code generated: " + codeGenerator);
+        return codeGenerator;
+        }
+
     // Ez a rész lehet, h. minden más ELŐTT kerül végrehajtásra! Ezért fontos edited-et TRUE-ra állítani
     // A ForeignTextField érintésére meghívásra kerül egy új Activity, ahol kiválaszthatjuk az új elemet
     // Ez azonban itt tér vissza, és a (TextField alapján megadott) requestCode alapján kell végigellenőrizni a ForeignKey mezőket
@@ -429,27 +489,23 @@ public abstract class GenericEditFragment extends Fragment
 
         if ( resultCode == Activity.RESULT_OK )
             {
-            long selectedId = data.getLongExtra(GenericCombinedListFragment.SELECTED_ITEM, GenericCombinedListFragment.SELECTED_NONE);
-            checkReturningSelector( requestCode, selectedId );
+            checkReturningSelector( requestCode, data );
             }
         }
 
-
-    protected void checkReturningSelector(int requestCode, long selectedId)
+    protected void checkReturningSelector(int requestCode, Intent data)
         {
-        for (ForeignKey key : foreignKeys)
+        for (UsingSelector field : usingSelectors)
             {
-            key.checkReturningSelector( requestCode, selectedId );
+            field.checkReturningSelector( requestCode, data );
             }
         }
 
-
-	public int getCode()
-		{
-		codeGenerator++;
-		Scribe.note("General EDIT Fragment: Code generated: " + codeGenerator);
-		return codeGenerator;
-		}
+    public void onColumnValueChanged(ContentValues values)
+        {
+        // Currently only StyleButton gives back data to recolor form
+        // Descendants can implement this
+        }
 
 
 	// Kilistázhatjuk egy tábla azon elemeit, melyek a mi elemünkre hivatkoznak
