@@ -215,7 +215,7 @@ public class DatabaseMirror
         return columns.get(columnIndex).columnType;
         }
 
-    // Itt jobb lenne egy getColumn(), amin belül lehetne setStyle... és getRefTableIndex
+    // Itt jobb lenne egy getColumn(), amin belül lehetne set... és getRefTableIndex
 
     /**
      * Sets column's reference table (Only for Foreign Keys!) (Because it needed only by foreign keys, it is not part

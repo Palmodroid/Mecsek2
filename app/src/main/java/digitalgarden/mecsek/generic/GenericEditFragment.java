@@ -517,7 +517,7 @@ public abstract class GenericEditFragment extends Fragment
 	// LIMITED_ITEM_hez tartozik a COLUMN is, csak abból most csak egyetlen van
 	protected void setupListButton( final Class<?> listingActivity, final String buttonTitle, final String listTitle, final TextView listOwner )
 		{
-    	Scribe.note("Genaral EDIT Fragment: ListButton was setStyle: " + buttonTitle );
+    	Scribe.note("Genaral EDIT Fragment: ListButton was set: " + buttonTitle );
 
 		buttonList.setVisibility( View.VISIBLE );
 		buttonList.setText( buttonTitle );

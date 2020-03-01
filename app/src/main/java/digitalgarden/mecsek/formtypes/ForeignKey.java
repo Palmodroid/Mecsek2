@@ -113,8 +113,8 @@ public class ForeignKey implements Connection.Connectable, GenericEditFragment.U
         // és a selector-t beállítottuk
         if (editFragment == null || selectorActivity == null)
             {
-            Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not setStyle!");
-            throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not setStyle!");
+            Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
+            throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
             }
 
         // Beállítjuk, hogy érintésre a megfelelő selectorActivity elinduljon
@@ -137,6 +137,25 @@ public class ForeignKey implements Connection.Connectable, GenericEditFragment.U
 
         return editField;
         }
+
+
+    /**
+     * StyleField connects to a foreign style column. It has NOT got any field to show the value, but calls
+     * {@link GenericEditFragment#onColumnValueChanged(ContentValues)} when style was changed or pulled. Then view of
+     * the form can changed
+     * @param foreignColumnIndex foreign column containing longstyle data
+     * @return StyleField - usually not needed, {@link GenericEditFragment#onColumnValueChanged(ContentValues)} will
+     * be called
+     */
+    public StyleField addStyleField( int foreignColumnIndex )
+        {
+        final StyleField styleField = new StyleField();
+        styleField.connect( editFragment, foreignConnection, foreignColumnIndex );
+        //foreignConnection.add( editField ); added to connect, not needed any more
+
+        return styleField;
+        }
+
 
     /**
      * Set a new value means: Setting up foreignKeyValue (not pushed to database yet) and refresh fields of foreign

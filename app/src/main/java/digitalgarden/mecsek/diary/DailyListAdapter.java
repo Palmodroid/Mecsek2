@@ -25,7 +25,7 @@ import digitalgarden.mecsek.scribe.Scribe;
  */
 public class DailyListAdapter extends BaseAdapter implements Filterable
     {
-    /** Needed by {getView}, setStyle by constructor (using {@link Context}) */
+    /** Needed by {getView}, set by constructor (using {@link Context}) */
     private LayoutInflater layoutInflater;
     /** Context needed by progress-messages */
     private Context context;
@@ -147,7 +147,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
      * convertView is a comlex, ready View - without its data
      * viewHolder (as its tag) contains its classes
      * To make convertView ready:
-     * Just setStyle its views' data inside its tag!
+     * Just set its views' data inside its tag!
      * No view inflation is needed (if convertView is ready), only entering data]
      */
     @Override

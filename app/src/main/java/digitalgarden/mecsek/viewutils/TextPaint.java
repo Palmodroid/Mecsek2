@@ -9,17 +9,17 @@ import android.util.Log;
 /**
  * TextPaint class extends Paint to draw text with these attributes. Text size is adjusted to
  * fit inside window (or box).
- * Text parameters should be setStyle first:
- * setTextFlags() - setStyle by constructor,
+ * Text parameters should be set first:
+ * setTextFlags() - set by constructor,
  * setTextItalics() and setTextBold() - if needed
- * setTextBox() - setStyle box inside text should fit
- * setTextToMeasure() - setStyle text to measure (text for width and height can be setStyle separately)
- * (it will setStyle paint's own textSize!!)
+ * setTextBox() - set box inside text should fit
+ * setTextToMeasure() - set text to measure (text for width and height can be set separately)
+ * (it will set paint's own textSize!!)
  * Second step:
- * calculateTextSizeForBox() - calculates size from the previously setStyle parameters
+ * calculateTextSizeForBox() - calculates size from the previously set parameters
  * Last step:
- * drawText() or drawEllipsizedText() - draw text using text size setStyle by calculateTextSizeForBox()
- * (Coordinates and alignment can be setStyle previously for drawText(), but not for
+ * drawText() or drawEllipsizedText() - draw text using text size set by calculateTextSizeForBox()
+ * (Coordinates and alignment can be set previously for drawText(), but not for
  * drawEllipsizedText())
  */
 public class TextPaint extends Paint
@@ -146,7 +146,7 @@ public class TextPaint extends Paint
         }
 
     /**
-     * Set text to fit inside box (box size is setStyle by setTextBox())
+     * Set text to fit inside box (box size is set by setTextBox())
      * This text is used to measure size.
      * Other text could be draw whit this size later
      * @param textToMeasure text
@@ -158,8 +158,8 @@ public class TextPaint extends Paint
         }
 
     /**
-     * Set text to fit inside box (box size is setStyle by setTextBox())
-     * Text for width and text for height can be setStyle separately.
+     * Set text to fit inside box (box size is set by setTextBox())
+     * Text for width and text for height can be set separately.
      * These texts are used to measure size. Both width and height should fit.
      * Other text could be draw whit this size later
      * @param textToMeasureX text to measure width (Default "MMM")
@@ -178,7 +178,7 @@ public class TextPaint extends Paint
 
 
     /**
-     * When all parameters are setStyle, this method will calculate actual text size.
+     * When all parameters are set, this method will calculate actual text size.
      * @param width box width
      * @param height box height
      */
@@ -265,7 +265,7 @@ public class TextPaint extends Paint
         }
 
     /**
-     * Draw text with the size, coordinates and text-align previously setStyle
+     * Draw text with the size, coordinates and text-align previously set
      * @param canvas canvas to draw on
      * @param text text to draw
      *              Text size comes from measured text, but aligned width is calculated
@@ -311,7 +311,7 @@ public class TextPaint extends Paint
         }
 
     /**
-     * Draw text with the size previously setStyle
+     * Draw text with the size previously set
      * @param canvas canvas to draw on
      * @param text text to draw
      * @param x x coordinate

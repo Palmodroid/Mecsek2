@@ -12,9 +12,7 @@ import digitalgarden.mecsek.tables.calendar.CalendarTable;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
-import static digitalgarden.mecsek.database.DatabaseMirror.column;
-import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
-import static digitalgarden.mecsek.database.DatabaseMirror.table;
+import static digitalgarden.mecsek.database.DatabaseMirror.*;
 import static digitalgarden.mecsek.tables.LibraryDatabase.CALENDAR;
 
 
@@ -61,11 +59,11 @@ public int monthIndex;
         this.dataStore = dataStore;
         this.monthIndex = monthIndex;
 
-        // START DAY of this monthly view - FIRST DAY of the month is setStyle first
+        // START DAY of this monthly view - FIRST DAY of the month is set first
         longtimeFirst = new Longtime();
         longtimeFirst.setMonthIndex(monthIndex);
         longtimeFirst.setDayOfMonth(1);
-        // YEAR MONTH and DAY (DAY_NAME) is setStyle, but TIME is not
+        // YEAR MONTH and DAY (DAY_NAME) is set, but TIME is not
 
         // Data from FIRST DAY of this month
         yearMonthString = longtimeFirst.toStringYearMonth(true);
@@ -131,7 +129,7 @@ public int monthIndex;
             }
 
         String[] projection = {
-                column_id(),
+                columnFull_id( CALENDAR ),
                 column(CalendarTable.DATE),
                 column(CalendarTable.NOTE)};
 

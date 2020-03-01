@@ -69,7 +69,7 @@ public class BoxAndTextView extends BoxView
         {
         super.onDraw(canvas);
 
-        // longstyle is setStyle by BoxView.setLongstyle() methods
+        // longstyle is set by BoxView.setLongstyle() methods
         // text is always written with inkColor
         if ( longstyle != null )
             {

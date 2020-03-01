@@ -113,7 +113,6 @@ public class SourceButton extends AppCompatButton implements Connection.Connecta
         projection.add( column(table(editFragment.defineTableIndex()).SOURCE_ROW));
         }
 
-
     /**
      * Value of SOURCE Columns are loaded into {@link #sourceTableIndex} and {@link #sourceRowIndex}
      * If no value can be found, then Button is GONE

@@ -57,8 +57,8 @@ import java.util.Locale;
  * <li>toast log (default: off)</li>
  * </ul>
  * The whole log or each direction separately can be enabled/disabled.
- * System log's tag can be setStyle.
- * Directory path (on primary sd-card) and log file name can be setStyle.
+ * System log's tag can be set.
+ * Directory path (on primary sd-card) and log file name can be set.
  * Helper methods are available to delete log-file and archive longer logs (in several steps). 
  * <p>
  * Configuration:
@@ -79,7 +79,7 @@ import java.util.Locale;
  * <p>
  * Log message can be sent from any thread.
  * Configurational settings are also "thread-safe", but these settings will immediately appear on other threads as well,
- * so configurations should be setStyle on the main-thread (before starting any other thread)
+ * so configurations should be set on the main-thread (before starting any other thread)
  * <p>
  * Configuratins are stored in static variables (ti. application levels). 
  * The values in these variables can be remain between activity restarts.
@@ -209,7 +209,7 @@ public class Scribe
     /** Default log file name: could be changed to package.extension */
     private static volatile String defaultFileName = DEFAULT_FILE_NAME;
 
-    /** Temporary variable to setStyle up config[] first */
+    /** Temporary variable to set up config[] first */
     private static final Config primaryConfig = new Config();
 
     /**
@@ -688,16 +688,16 @@ public class Scribe
 
     /**
      * Returns to previously saved config settings. Toast-log will be disabled.
-     * setAll can be used to explicitly setStyle scribe settings,
-     * missing settings will be setStyle to their default values.
-     * Default file name will be setStyle only, if bundle contains it.
+     * setAll can be used to explicitly set scribe settings,
+     * missing settings will be set to their default values.
+     * Default file name will be set only, if bundle contains it.
      * Default values should be identical with resetAll!!
      * @param conf PRIMARY/SECONDARY configuration
      * @param state  settings returned by {@link #getAll(int)}
      */
     private static void setAll( int conf, Bundle state )
         {
-        // defaultPackageName will be setStyle only, if bundle contains it!
+        // defaultPackageName will be set only, if bundle contains it!
         if ( state.containsKey( PACKAGE ))
             {
             defaultFileName = state.getString( PACKAGE ) + DEFAULT_FILE_EXT;
@@ -808,7 +808,7 @@ public class Scribe
 
     /**
      * Helper method to return a new instance of ScribeSettings.
-     * This instance could be used to setStyle Scribe config.
+     * This instance could be used to set Scribe config.
      * @return a new, empty ScribeSettings instance
      */
     public static ScribeSettings setConfig()
@@ -2010,7 +2010,7 @@ public class Scribe
     public static void logUncaughtExceptions()
         {
         if ( defaultUncaughtExceptionHandler != null )
-            return; // already setStyle!
+            return; // already set!
 
         defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 

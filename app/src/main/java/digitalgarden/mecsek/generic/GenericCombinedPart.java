@@ -1,6 +1,7 @@
 package digitalgarden.mecsek.generic;
 
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import digitalgarden.mecsek.formtypes.ColorView;
 import digitalgarden.mecsek.formtypes.DateView;
+import digitalgarden.mecsek.viewutils.Longstyle;
 
 public class GenericCombinedPart
     {
@@ -21,6 +23,9 @@ public class GenericCombinedPart
 
     protected Cursor cursor = null;
     private int rowIDColumn = -1;
+
+    protected String styleColumnName = null;
+    protected int styleColumnIndex;
 
 
     public GenericCombinedPart(GenericCombinedCursorAdapter adapter,
@@ -62,6 +67,17 @@ public class GenericCombinedPart
             {
             this.from[i] = cursor.getColumnIndexOrThrow(fromNames[i]);
             }
+
+        if ( styleColumnName != null )
+            {
+            styleColumnIndex = cursor.getColumnIndexOrThrow( styleColumnName );
+            }
+        }
+
+
+    public void setStyleColumnName( String styleColumnName )
+        {
+        this.styleColumnName = styleColumnName;
         }
 
 
@@ -99,6 +115,36 @@ public class GenericCombinedPart
         }
 
 
+    /*
+    projection
+    (list of column names)
+
+    from - to
+    (column names) (view id)
+
+    Ehelyett:
+    1.
+    projection
+    from column
+    to view
+    -
+    -
+    2. (color)
+    projection
+    from column
+
+    3.
+    projection
+    from column
+    to view
+    recolor using column (ink)
+
+    4.
+    -
+    -
+    to view
+    recolor using column (paper)
+     */
     public View getView(int cursorPosition, View convertView, ViewGroup parent)
         {
         if (cursor == null) // Hoppá!! Ilyen lehet az elején, ha nincs feltöltve a cursor.
@@ -117,11 +163,13 @@ public class GenericCombinedPart
             if (convertView == null)
                 {
                 view = adapter.getLayoutInflater().inflate(this.layout, parent, false);
+                view.setTag( view.getBackground() ); // background is stored in Background and in Tag.
                 }
             else
                 {
                 view = convertView;
                 }
+
             bindView( view );
             return view;
             }
@@ -140,6 +188,14 @@ public class GenericCombinedPart
         {
         //super.bindView(view, context, cursor);
         // Ez igazából a super-methodból kimásolt kód
+
+        // background is set to original - selection can be set later
+        view.setBackground( (Drawable)view.getTag() );
+        if ( styleColumnName != null )
+            {
+            // Override main form view backgrounds color - if any
+            Longstyle.override(cursor.getLong(styleColumnIndex), view);
+            }
 
         //final ViewBinder binder = getViewBinder();
         final int count = this.to.length;
@@ -169,7 +225,7 @@ public class GenericCombinedPart
                     long color = cursor.getLong(from[i]);
                     ((ColorView)v).setColor( color );
                     }
-                else  if (v instanceof TextView) // all previous were descendants of textView
+                else if (v instanceof TextView) // all previous were descendants of textView
                     {
                     String text = cursor.getString(from[i]);
                     if (text == null)
@@ -187,6 +243,12 @@ public class GenericCombinedPart
                     {
                     throw new IllegalStateException(v.getClass().getName() + " is not a "
                             + " view that can be bounds by this SimpleCursorAdapter");
+                    }
+
+                // if there is a style column then this part overrides field colors
+                if ( styleColumnName != null )
+                    {
+                    Longstyle.override(cursor.getLong(styleColumnIndex), v);
                     }
                 //    }
                 }

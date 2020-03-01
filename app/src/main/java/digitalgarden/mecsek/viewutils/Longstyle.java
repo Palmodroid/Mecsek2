@@ -3,6 +3,12 @@ package digitalgarden.mecsek.viewutils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.view.View;
+import android.widget.TextView;
 
 import static digitalgarden.mecsek.color.ColorDefsTable.VALUE;
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
@@ -76,6 +82,7 @@ public class Longstyle
     public static final long MEMO_TOGGLE_BOLD = 5L;
     public static final long MEMO_SWITCH_1 = 6L;
     public static final long MEMO_SWITCH_2 = 7L;
+    public static final long SELECTOR_BLUE = 8L;
 
     private static String[] memoTitles = new String[MAX_INDEX];
 
@@ -140,10 +147,8 @@ public class Longstyle
         }
 
     /**
-     * Sets compoundStyle from long parameter
-     * >= COMPOUND_MASK : compound data, derived from long
-     * 1 - < MAX_INDEX : indexed (pullStyle pulls it)
-     * all others : not valid, returns predefined values
+     * Sets compoundStyle from long parameter >= COMPOUND_MASK : compound data, derived from long 1 - < MAX_INDEX :
+     * indexed (pullStyle pulls it) all others : not valid, returns predefined values
      */
     public void set(long longstyle)
         {
@@ -245,8 +250,8 @@ public class Longstyle
     /**
      * Pull indexed longstyle from database - INDEX IS NOT VERIFIED!!!
      *
-     * @return true  - if index is valid, and indexed longstyle exists
-     * or       false - indexed longstyle is not yet stored
+     * @return true  - if index is valid, and indexed longstyle exists or       false - indexed longstyle is not yet
+     * stored
      */
     private boolean pullStyle()
         {
@@ -285,9 +290,8 @@ public class Longstyle
 
 
     /**
-     * Generates longstyle from parameters, and stores it INDEX IS NOT VERIFIED!!!
-     * in cache[cacheIndex]
-     * and in database, too
+     * Generates longstyle from parameters, and stores it INDEX IS NOT VERIFIED!!! in cache[cacheIndex] and in database,
+     * too
      */
     private boolean calcAndPushStyle()
         {
@@ -379,8 +383,8 @@ public class Longstyle
 
 
     /**
-     * Sets style parameters - retaining cacheIndex
-     * If it is an indexed style, than corresponding database compoundStyle will be updated
+     * Sets style parameters - retaining cacheIndex If it is an indexed style, than corresponding database compoundStyle
+     * will be updated
      *
      * @param inkColor
      * @param paperColor
@@ -432,9 +436,7 @@ public class Longstyle
         }
 
     /**
-     * Generates compoundStyle from parameters, and stores it
-     * in cache[cacheIndex]
-     * and in database, too
+     * Generates compoundStyle from parameters, and stores it in cache[cacheIndex] and in database, too
      */
     private void calcStyle()
         {
@@ -532,6 +534,51 @@ public class Longstyle
         return longstyle;
         }
 
+
+    static public void override( Long style, View... views )
+        {
+        if ( style != null && views.length > 0 )
+            {
+            // Views should contain context !
+            Longstyle longstyle = new Longstyle(views[0].getContext(), style);
+
+            for (View view : views)
+                {
+                longstyle.overrideViewStyle( view );
+                }
+            }
+        }
+
+    public void overrideViewStyle( View view )
+        {
+        Drawable background = view.getBackground();
+
+        if ( background instanceof GradientDrawable ) // returns false on null, too
+            {
+            // shape drawable is gradientbackground!!
+            ((GradientDrawable)background).setColor( getPaperColor() );
+            ((GradientDrawable)background).setStroke(2, getInkColor() );
+            }
+
+        if ( view instanceof TextView )
+            {
+            // !!! TODO Paint should be changed by setTypeface and NOT DIRECTLY !!!
+            Paint paint = ((TextView) view).getPaint();
+
+            if ( isBoldText() )
+                {
+                paint.setFlags(paint.getFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                }
+            else
+                {
+                paint.setFlags( paint.getFlags() & (~Paint.FAKE_BOLD_TEXT_FLAG));
+                }
+
+            paint.setTextSkewX( isItalicsText() ? -0.25f : 0);
+            ((TextView)view).setTextColor( getInkColor() );
+            }
+        }
+
 /*
     static boolean setDefault(Context context, long databaseIndex,
                               int inkColor, int paperColor, boolean boldText, boolean italicsText)
@@ -623,7 +670,9 @@ public class Longstyle
                 .style(MEMO_SWITCH_1, 0x000055, 0x55aaff, true, true,
                         "Switch button 1" )
                 .style(MEMO_SWITCH_2, 0xff0000, 0xffffaa, true, true,
-                        "Switch button 2" );
+                        "Switch button 2" )
+                .style(SELECTOR_BLUE, 0x16c1ff, 0xd6f8ff, false, true,
+                "Selector" );
         }
 
     }

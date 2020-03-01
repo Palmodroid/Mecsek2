@@ -60,6 +60,8 @@ public class RecordsListFragment extends GenericCombinedListFragment
         addField( R.id.date, RecordsTable.DATE );
         addField( R.id.note, CalendarTable.NOTE);
         addIdField();
+
+        addStyleField( CategoriesTable.STYLE );
         }
 
 	@Override

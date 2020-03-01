@@ -38,7 +38,7 @@ public class BoxView extends View
     public static final int PAPER_AND_FRAME = PAPER | FRAME;
     // if PAPER and FRAME bits are 0 - nothing is drawn
 
-    // How to overwrite colors if Longstyle is setStyle
+    // How to overwrite colors if Longstyle is set
     private int overwriteMode = PAPER_AND_FRAME;
 
     // last size of this view
@@ -148,7 +148,7 @@ public class BoxView extends View
      */
 
     /**
-     * Draw using attributes setStyle by onAttachedToWindow and coordinates measured by onSizeChanged
+     * Draw using attributes set by onAttachedToWindow and coordinates measured by onSizeChanged
      */
     @Override
     protected void onDraw(Canvas canvas)

@@ -1,18 +1,11 @@
 package digitalgarden.mecsek.formtypes;
 
-
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageButton;
-import android.util.AttributeSet;
-import android.view.View;
 import digitalgarden.mecsek.color.StylePickerActivity;
 import digitalgarden.mecsek.generic.Connection;
 import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.scribe.Scribe;
 
 import java.util.List;
 
@@ -21,44 +14,21 @@ import static digitalgarden.mecsek.viewutils.Longstyle.SELECTOR_BLUE;
 
 
 /**
- * Style (as longstyle) is stored in a column (WHICH????). StyleButton defines a Button (WHICH???). Pressing the
- * button starts StylePickerActivity to choose a new style for this column. Changing the column should call (?????)
- * method of the parent GenericEditFragment, to change the colors of different parts.
+ * StyleField is very similar to {@link StyleButton} but no style selection is allowed. It can be used in
+ * {@link ForeignKey}-s to connect record with foreign styles. Style changes if ForeignKey changes.
+ * <p>Style is stored in a (mostly foreign) column. StyleField only connects this column to the form, and any changes
+ * (of the ForeignKey) will trigger {@link GenericEditFragment#onColumnValueChanged(ContentValues)} call.</p>
  */
-public class StyleButton extends AppCompatImageButton
-        implements Connection.Connectable, GenericEditFragment.UsingSelector
+public class StyleField implements Connection.Connectable
     {
-    public StyleButton(Context context)
-        {
-        super(context);
-        }
-
-    public StyleButton(Context context, AttributeSet attrs)
-        {
-        super(context, attrs);
-        }
-
-    public StyleButton(Context context, AttributeSet attrs, int defStyleAttr)
-        {
-        super(context, attrs, defStyleAttr);
-        }
-
-
     /** Form of the table - should be stored because after returning from selector form should be recolored */
     private GenericEditFragment editFragment;
 
     /** Style's column - styleButton sets data of this column */
     protected int columnIndex;
 
-    /** TRUE if value of the style was changed */
-    private boolean edited = false;
-
     /** Actual value of the style Column - this is NOT stored by the button */
     private long styleValue = 0L;
-
-    /** Common CODE between Style Button and selectorActivity Request Code
-     *  With this common code selectorActivity can identify its calling Field */
-    private int selectorCode = -1;
 
 
     /**
@@ -96,24 +66,10 @@ public class StyleButton extends AppCompatImageButton
         this.editFragment = form;
         this.columnIndex = columnIndex;
         connection.add( this );
-        selectorCode = editFragment.getCode();
-
-        setOnClickListener(new OnClickListener()
-            {
-            @Override
-            public void onClick(View v)
-                {
-                Scribe.note("StyleButton: StylePickerActivity started!");
-                Intent intent = new Intent( editFragment.getActivity(), StylePickerActivity.class );
-                // intent.putExtra( GenericControllActivity.TITLE, selectorTitle + selectorOwner.getText() );
-                // intent.putExtra( GenericCombinedListFragment.SELECTED_ITEM, getValue() );
-                editFragment.startActivityForResult( intent, selectorCode );
-                }
-            });
 
         // Could be set by an independent "hint" parameter
         // !!! https://android-developers.googleblog.com/2009/05/drawable-mutations.html - use .mutate() !!
-        setValue( 0L );
+        setValue( SELECTOR_BLUE );
         }
 
 
@@ -124,6 +80,7 @@ public class StyleButton extends AppCompatImageButton
         projection.add( column( columnIndex ) );
         }
 
+
     /** Style is PULLED from MAIN Connection. Theoretically cannot be null, but null validation (coming from
      * ForeignKey) is still there: 0L longstyle means: not defined, default values are returned */
     @Override
@@ -133,18 +90,15 @@ public class StyleButton extends AppCompatImageButton
         setValue( cursor.isNull( column ) ? 0L : cursor.getLong(column) );
         }
 
-    /** Style is added to PUSH of MAIN Connection. */
+    /** StyleField cannot be changed, so PUSH is not needed */
     @Override
-    public void addDataToPush(ContentValues values)
-        {
-        values.put( column( columnIndex ), styleValue);
-        }
+    public void addDataToPush(ContentValues values) { }
 
     /** Styles do not have any SOURCE (only externKeys has got sources */
     @Override
     public void pushSource(int tableIndex, long rowIndex){ }
 
-    /** Save style value during config changes. */
+    /** Save style value during config changes (only pulled, never changed values) */
     @Override
     public void saveData(Bundle data)
         {
@@ -159,32 +113,10 @@ public class StyleButton extends AppCompatImageButton
         setValue(data.getLong( column(columnIndex)) );
         }
 
+    /** EditorField cannot be edited, it just helps to change the look of the form */
     @Override
     public boolean isEdited()
         {
-        return edited;
-        }
-
-    /**
-     * Activity (when SelectorActivity returns) checks here which Field called SelectorActivity. If selector
-     * code is identical then value is set.
-     * @param selectorCode unique selector code (returned by Selector activity)
-     * @param data data returned by ACtivity containing selected style
-     */
-    @Override
-    public void checkReturningSelector( int selectorCode, Intent data )
-        {
-        Scribe.locus();
-
-        if (this.selectorCode == selectorCode)
-            {
-            long selectedStyle = data.getLongExtra( StylePickerActivity.LONGSTYLE_KEY,0L);
-
-            if ( selectedStyle != styleValue)    edited = true;
-
-            // To recolor all necessary fields setValue() should be called always! Color of the same index could be
-            // changed
-            setValue( selectedStyle );
-            }
+        return false;
         }
     }

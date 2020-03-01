@@ -42,7 +42,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         /*
         for ( int y = 1970; y < 2020; y++ )
             {
-            longtime.setStyle( y, 1, 1 );
+            longtime.set( y, 1, 1 );
 
             int di = longtime.getDayIndex();
             int mi = longtime.getMonthIndex();
@@ -56,7 +56,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.setStyle(2000, 3, 17);
+        longtime.set(2000, 3, 17);
 
         int di = longtime.getDayIndex();
         int mi = longtime.getMonthIndex();
@@ -73,7 +73,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.setStyle(1970, 1, 1);
+        longtime.set(1970, 1, 1);
         boolean error = false;
         for (int n = 0; n < 500; n++)
             {
@@ -98,7 +98,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         */
 
         /*
-        longtime.setStyle(1970, 1, 1);
+        longtime.set(1970, 1, 1);
         Scribe.debug("LONGTIME: " + longtime.toString(true) +
                 " index: " + longtime.getDayIndex() );
 

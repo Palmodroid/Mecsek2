@@ -1,9 +1,12 @@
 package digitalgarden.mecsek.generic;
 
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 
 import digitalgarden.mecsek.R;
+import digitalgarden.mecsek.scribe.Scribe;
+import digitalgarden.mecsek.viewutils.Longstyle;
 
 public class GenericCombinedPartForList extends GenericCombinedPart
     {
@@ -26,6 +29,7 @@ public class GenericCombinedPartForList extends GenericCombinedPart
     private long editedItem = -1L;
 
 
+
     public GenericCombinedPartForList(GenericCombinedCursorAdapter adapter,
                                       int layout, String[] fromNames, int[] to)
         {
@@ -37,7 +41,6 @@ public class GenericCombinedPartForList extends GenericCombinedPart
         {
         this.selectedItem = selectedItem;
         }
-
 
     // editedItem változása után újra kell rajzolni a listát
     // ez kikényszeríthető pl. a notifyDataSetChanged paranccsal,
@@ -93,7 +96,7 @@ public class GenericCombinedPartForList extends GenericCombinedPart
                 }
             view.setBackground( backgroundBorder );
             }
-        else
-            view.setBackgroundResource( 0 );
+
+        // Backround set to original (from Tag) at the very beginning !
         }
     }

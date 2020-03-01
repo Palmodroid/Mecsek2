@@ -285,6 +285,14 @@ public abstract class GenericTable
         return index;
         }
 
+    protected void addFarawayForeignQuery(int farawayForeignKey, int farawayReferenceTableIndex)
+        {
+        createLeftOuterJoin.add(" LEFT OUTER JOIN " + table(farawayReferenceTableIndex).name() +
+                " ON " + columnFull( farawayForeignKey ) + "=" + columnFull_id(farawayReferenceTableIndex) );
+
+        // containsForeignReference = true;
+        }
+
     /** Extern key - as database structure - is similar to foreign keys */
     protected int addExternKey(String columnName, int referenceTableIndex)
         {
@@ -646,6 +654,7 @@ public abstract class GenericTable
             StringBuilder sb = new StringBuilder( name() );
             for (String createLeftOuterJoin : this.createLeftOuterJoin)
                 sb.append(createLeftOuterJoin);
+            Scribe.debug("QUERY TABLES: " + sb.toString() );
             queryBuilder.setTables( sb.toString() );
             }
         else if ( uriType == id(ITEMID) )
@@ -653,6 +662,7 @@ public abstract class GenericTable
             StringBuilder sb = new StringBuilder( name() );
             for (String createLeftOuterJoin : this.createLeftOuterJoin)
                 sb.append(createLeftOuterJoin);
+            Scribe.debug("QUERY TABLES: " + sb.toString() );
             queryBuilder.setTables( sb.toString() );
             // Adding the ID to the original query
             queryBuilder.appendWhere( name() + "." + column_id() + "=" + uri.getLastPathSegment());

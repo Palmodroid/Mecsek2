@@ -51,7 +51,7 @@ import digitalgarden.mecsek.generic.GenericTable;
  *  IMPORTANT!!!
  *
  *  _id is a PRIMARY INTEGER KEY - which is an alias to ROWID
- *  It can be setStyle expicitly to any (unique) integer value, so can be used as index.
+ *  It can be set expicitly to any (unique) integer value, so can be used as index.
  *  It can (but should not) contain 0.
  *
  */

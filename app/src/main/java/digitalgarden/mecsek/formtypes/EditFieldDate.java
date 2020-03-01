@@ -98,7 +98,7 @@ public class EditFieldDate extends EditField implements View.OnFocusChangeListen
         {
         if (longtime.setDate(getText().toString()))
             {
-            Toast.makeText(getContext(), "Date is setStyle: " + longtime.toString(false), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Date is set: " + longtime.toString(false), Toast.LENGTH_SHORT).show();
             }
         }
 

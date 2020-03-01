@@ -34,7 +34,7 @@ public class MonthlyLayout extends CheckedLayout
     @Override
     public void init()
         {
-        // Columns and Rows are expicitly setStyle for MonthlyViewer
+        // Columns and Rows are expicitly set for MonthlyViewer
         columns = 7;
         rows = 6; // 2019.09 - 6 rows are needed
 

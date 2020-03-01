@@ -7,7 +7,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/title_name"
+        android:id="@+id/title_category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_name"

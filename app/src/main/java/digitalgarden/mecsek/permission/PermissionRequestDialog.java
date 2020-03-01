@@ -224,7 +224,7 @@ public class PermissionRequestDialog extends DialogFragment
             editor.putBoolean(PERMISSION_ALREADY_REQUESTED, false);
             editor.apply();
 
-            // setStyle views
+            // set views
             StoragePermissionOk.setVisibility(View.VISIBLE);
             StoragePermissionButton.setVisibility(View.GONE);
             StoragePermissionSettingsButton.setVisibility(View.GONE);

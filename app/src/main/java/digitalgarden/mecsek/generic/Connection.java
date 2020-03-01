@@ -116,8 +116,11 @@ public class Connection
     public void pullData( long rowIndex )
         {
         // Negatív rowIndex azt jelenti, hogy új adatsort készítünk
+        // Néhány Field (pl. StyleButton) igényli az inicializálást, ezt tehetjük meg itt
         if ( rowIndex < 0L )
+            {
             return;
+            }
 
         // A projection-t nem kell előre összerakni, mert a lekérés csak egyszer történik meg
         List<String> projection = new ArrayList<>();

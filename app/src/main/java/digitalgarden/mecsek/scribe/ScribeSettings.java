@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * With the use of ScribeSettings all settings of scribe can be setStyle at once.
- * ScribeSetting is the preferred mode to setStyle settings.
- * Primary and secondary configs are setStyle independently.
+ * With the use of ScribeSettings all settings of scribe can be set at once.
+ * ScribeSetting is the preferred mode to set settings.
+ * Primary and secondary configs are set independently.
  * Both configs derive from default values.
  * ScribeSettings should be used at each entry points!
  * A new ScribeSettings can be get from Scribe.setConfig() method.
@@ -115,7 +115,7 @@ public class ScribeSettings
         }
 
 
-    // Toast log cannot be setStyle as general!!
+    // Toast log cannot be set as general!!
 
 
     /**
@@ -169,8 +169,8 @@ public class ScribeSettings
 
 
     /**
-     * Initializes Scribe with the values setStyle by ScribeSettings previously
-     * @param context to setStyle the default file name with
+     * Initializes Scribe with the values set by ScribeSettings previously
+     * @param context to set the default file name with
      */
     public void init( Context context )
         {
@@ -179,7 +179,7 @@ public class ScribeSettings
         }
 
     /**
-     * Initializes Scribe with the values setStyle by ScribeSettings previously
+     * Initializes Scribe with the values set by ScribeSettings previously
      */
     public void init( )
         {
@@ -187,9 +187,9 @@ public class ScribeSettings
         }
 
     /**
-     * Initializes Scribe secondary with the values setStyle by ScribeSettings previously
+     * Initializes Scribe secondary with the values set by ScribeSettings previously
      * Default file name is preserved, so initSecondary() could be used after init(context).
-     * @param context to setStyle the default file name with
+     * @param context to set the default file name with
      */
     public void initSecondary( Context context )
         {
@@ -198,7 +198,7 @@ public class ScribeSettings
         }
 
     /**
-     * Initializes Scribe secondary with the values setStyle by ScribeSettings previously
+     * Initializes Scribe secondary with the values set by ScribeSettings previously
      */
     public void initSecondary( )
         {

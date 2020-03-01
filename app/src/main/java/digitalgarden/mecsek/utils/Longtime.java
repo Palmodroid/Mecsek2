@@ -8,26 +8,26 @@ import java.util.Calendar;
  * Timestamp is stored as
  * - long (used by sqlite)
  * - different "time"-parts as YEAR MONTH DAY (DAY_NAME) HOUR MIN SEC and MILL
- * Set... methods always setStyle both data, they are always synchronized.
+ * Set... methods always set both data, they are always synchronized.
  *
  * IMPORTANT!! HOW TO SET TIME?
  * Set - as long - no error check is performed!
  * ALWAYS SET! auto - always false
- * ALWAYS CALL! convertLong2Parts() - (no error check) - error is always setStyle to false
+ * ALWAYS CALL! convertLong2Parts() - (no error check) - error is always set to false
  *
  * Set (or modify) parts
- * ALWAYS SET! auto - setStyle if any value is setStyle automatically (ex. from calendar)
- * ALWAYS CALL! convertParts2Long() - calls checkParts() - error is setStyle,
+ * ALWAYS SET! auto - set if any value is set automatically (ex. from calendar)
+ * ALWAYS CALL! convertParts2Long() - calls checkParts() - error is set,
  * if time value is invalid - (clearAbove() is called on and above invalid part)
  *
- * Set methods (mostly) return true if error OR auto is setStyle.
+ * Set methods (mostly) return true if error OR auto is set.
  * isAuto() and isError() can help to decide
- * ?? returning first part where auto or error was setStyle ??
+ * ?? returning first part where auto or error was set ??
  */
 
 public class Longtime
     {
-    /** Timestamp as long - currently 0L (is it ok??) means - no time is setStyle */
+    /** Timestamp as long - currently 0L (is it ok??) means - no time is set */
     private long time = 0L;
 
     /** Timestamp divided into parts as YEAR MONTH DAY (DAY_NAME) HOUR MIN SEC and MILL */
@@ -72,16 +72,16 @@ public class Longtime
     /** checkParts() sets it true if any of the time-values is invalid */
     private boolean error = false;
 
-    /** Parsing sets it true if any of the time-values is setStyle automatically */
+    /** Parsing sets it true if any of the time-values is set automatically */
     private boolean auto = false;
 
     /** Constructor without setting any value */
     public Longtime()
         {
-        // all parts are 0 - '0' YEAR means - no YEAR is setStyle
+        // all parts are 0 - '0' YEAR means - no YEAR is set
         }
 
-    /** Constructor setStyle longtime by long value */
+    /** Constructor set longtime by long value */
     public Longtime(long time)
         {
         set(time);
@@ -109,13 +109,13 @@ public class Longtime
         return this.part[ part ];
         }
 
-    /** TRUE if error was setStyle during the last setStyle method */
+    /** TRUE if error was set during the last set method */
     public boolean isError()
         {
         return error;
         }
 
-    /** TRUE if any value was setStyle automatically during the last setStyle method */
+    /** TRUE if any value was set automatically during the last set method */
     public boolean isAuto()
         {
         return auto;
@@ -131,7 +131,7 @@ public class Longtime
         convertLong2Parts();
         }
 
-    /** Sets parts as ints. Missing values setStyle to zero */
+    /** Sets parts as ints. Missing values set to zero */
     public boolean set(int... parts)
         {
         int size;

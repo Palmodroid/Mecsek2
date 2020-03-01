@@ -83,7 +83,6 @@ public class ExternKey implements Connection.Connectable
         projection.add( column(externKeyColumnIndex) );
         }
 
-
     /**
      * Adds an EDIT FIELD (any subclass) to an EXTERN COLUMN of the EXTERN TABLE. Value of the EXTERN COLUMN can
      * change, but EXTERN KEY will always remain the same, pointing to the same record of the EXTERN TABLE.

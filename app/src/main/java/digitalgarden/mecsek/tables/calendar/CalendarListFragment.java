@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.generic.GenericCombinedListFragment;
+import digitalgarden.mecsek.tables.category.CategoriesTable;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.tables.LibraryDatabase.CALENDAR;
@@ -48,7 +49,9 @@ public class CalendarListFragment extends GenericCombinedListFragment
         addField( R.id.date, CalendarTable.DATE );
         addField( R.id.note, CalendarTable.NOTE );
         addIdField();
-        }
+
+		addStyleField( CategoriesTable.STYLE );
+		}
 
 	@Override
 	protected void addExamples()

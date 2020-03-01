@@ -36,7 +36,7 @@ public int dayIndex;
 public MonthlyData monthlyData;
 
     /**
-     * These parameters are needed first to setStyle up a day.
+     * These parameters are needed first to set up a day.
      * Second, loader fill up data for the whole monthly view, and fills data for the days
      * @param longtime time of this day (no timeinfo)
      * @param month month of this monthly view

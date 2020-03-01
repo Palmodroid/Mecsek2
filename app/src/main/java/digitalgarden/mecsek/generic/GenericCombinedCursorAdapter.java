@@ -31,6 +31,13 @@ public class GenericCombinedCursorAdapter extends BaseAdapter
         listPart.setSelectedItem(selectedItem);
         }
 
+
+    public void setStyleColumnName( String styleColumnName )
+        {
+        listPart.setStyleColumnName( styleColumnName );
+        }
+
+
     public Context getContext()
         {
         return context;

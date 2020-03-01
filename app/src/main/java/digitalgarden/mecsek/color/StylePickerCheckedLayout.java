@@ -60,7 +60,7 @@ public class StylePickerCheckedLayout extends CheckedLayout
     @Override
     protected void init()
         {
-        // Rows and columns are setStyle programatically
+        // Rows and columns are set programatically
         rows = 8;
         columns = 8;
 

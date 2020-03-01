@@ -19,7 +19,7 @@ public final class RecordsTable extends GenericTable
 
     public static int NAME;
     public static int DATE;
-    public static int TYPE_ID;
+//     public static int CATEGORY_ID;
     public static int PATIENT_ID;
     public static int CALENDAR_ID;
     public static int SEARCH;
@@ -29,9 +29,12 @@ public final class RecordsTable extends GenericTable
         {
         NAME = addColumn( TYPE_TEXT, "name" );
         DATE = addColumn( TYPE_DATE, "date" );
-        TYPE_ID = addForeignKey( "title_id", CATEGORIES);
+//        CATEGORY_ID = addForeignKey( "title_id", CATEGORIES);
         PATIENT_ID = addForeignKey( "patient_id", PATIENTS );
+
         CALENDAR_ID = addExternKey( "calendar_id", CALENDAR );
+        addFarawayForeignQuery( CalendarTable.CATEGORY_ID, CATEGORIES );
+
         SEARCH = addSearchColumnFor( NAME );
 
         //addUniqueColumn
@@ -43,7 +46,7 @@ public final class RecordsTable extends GenericTable
         {
         exportImport().addColumnAllVersions( RecordsTable.NAME );
         exportImport().addColumnAllVersions( RecordsTable.DATE );
-        exportImport().addForeignKeyAllVersions(TYPE_ID, CATEGORIES, CategoriesTable.NAME);
+//        exportImport().addForeignKeyAllVersions(CATEGORY_ID, CATEGORIES, CategoriesTable.NAME);
         exportImport().addForeignKeyAllVersions( PATIENT_ID, PATIENTS, PatientsTable.NAME, PatientsTable.DOB, PatientsTable.TAJ );
         exportImport().addExternKeyAllVersions( CALENDAR_ID, CALENDAR, CalendarTable.NOTE);
         }

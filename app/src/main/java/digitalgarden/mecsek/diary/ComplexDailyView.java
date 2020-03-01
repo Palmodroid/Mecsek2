@@ -15,7 +15,7 @@ import static digitalgarden.mecsek.viewutils.TextPaint.millis;
 
 /**
  * Draws a complex diary View on the top of a backgroundView
- * Parameters to setStyle:
+ * Parameters to set:
  * setRowPaint() - paint used for data rows
  * setDayPaint() - paint used for day of the month
  * setDayOfMonth() - sets only day of the month
@@ -144,7 +144,7 @@ public class ComplexDailyView extends BoxView
         rowHeight = rowPaint.getMeasuredTextHeight() + millis(imageSize, 100);
         rowMaxWidth = millis( width, 900);
 
-/*        rectF.setStyle(
+/*        rectF.set(
                 millis(width, 520),
                 millis(width, 50),
                 millis(width, 520) + imageSize,

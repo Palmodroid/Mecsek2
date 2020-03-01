@@ -38,11 +38,10 @@
     <string name="hint_patient_phone">Phone:</string>
     <string name="hint_patient_note">Note:</string>
 
-    <string name="select_category">"Select category for record"</string>
+    <string name="select_category">"Select category!"</string>
     <string name="title_category_name">Category:</string>
     <string name="hint_category_name">records\'s category</string>
     <string name="title_category_style">Style:</string>
-    <string name="hint_category_style">style</string>
 
     <string name="select_patient">"Select patient for "</string>
     <string name="title_patient">Patient:</string>
