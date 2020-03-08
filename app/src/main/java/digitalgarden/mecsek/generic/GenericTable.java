@@ -285,6 +285,15 @@ public abstract class GenericTable
         return index;
         }
 
+    /**
+     * Foreign tables can join other foreign tables to the query. Columns of these "far away" tables are not part of
+     * the main column, they are connected through the foreign table (which contains other foreign keys).
+     * TODO! These joins are exactly the same of the joins of the foreign table. This method could be automated -
+     * TODO! just copy recursively {@link #createLeftOuterJoin} array of the joined (referenced by foreign key) tables
+     * @param farawayForeignKey index of the ForeignKey column in a previously joined Foreign table
+     * @param farawayReferenceTableIndex index of the Reference table of this ForeignColumn (next table). After this
+     *                                   join all columns of this reference table can be added to the projections
+     */
     protected void addFarawayForeignQuery(int farawayForeignKey, int farawayReferenceTableIndex)
         {
         createLeftOuterJoin.add(" LEFT OUTER JOIN " + table(farawayReferenceTableIndex).name() +

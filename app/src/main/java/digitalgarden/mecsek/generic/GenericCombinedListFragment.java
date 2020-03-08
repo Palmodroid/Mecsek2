@@ -3,6 +3,7 @@ package digitalgarden.mecsek.generic;
 import android.app.Activity;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -78,7 +79,10 @@ import static digitalgarden.mecsek.database.DatabaseMirror.table;
  *  
  */
 
-
+/**
+ * {@link GenericTable#buildQuery(Uri, int, SQLiteQueryBuilder)} creates query of tables joined by left outer joins,
+ * so all columns (defined by add... methods) can be reached.
+ */
 public abstract class GenericCombinedListFragment extends ListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemLongClickListener
     {

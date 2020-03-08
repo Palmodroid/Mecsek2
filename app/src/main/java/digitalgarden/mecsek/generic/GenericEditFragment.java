@@ -231,7 +231,7 @@ public abstract class GenericEditFragment extends Fragment
         connection.add( foreignKey );
 
         foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
-        usingSelectors.add( foreignKey );
+        addFieldUsingSelector( foreignKey );
 
         if (foreignKeyColumnIndex == getLimitedColumn())
             {
@@ -270,7 +270,7 @@ public abstract class GenericEditFragment extends Fragment
         StyleButton styleButton = (StyleButton) view.findViewById( styleButtonId );
         styleButton.connect( this, connection, columnIndex );
 
-        usingSelectors.add( styleButton );
+        addFieldUsingSelector( styleButton );
 
         return styleButton;
         }
@@ -491,6 +491,18 @@ public abstract class GenericEditFragment extends Fragment
             {
             checkReturningSelector( requestCode, data );
             }
+        }
+
+    /**
+     * Fields (like {@link ForeignKey} using selectors can be added to an EditFragment. Each of these fields are
+     * called by {@link #checkReturningSelector(int, Intent)} when selector returns and - depending on the request
+     * code - data can be set inside the calling field.
+     * <p>Fields connected to far away foreign tables also can be called</p>
+     * @param field field using selector
+     */
+    public void addFieldUsingSelector( UsingSelector field )
+        {
+        usingSelectors.add( field );
         }
 
     protected void checkReturningSelector(int requestCode, Intent data)

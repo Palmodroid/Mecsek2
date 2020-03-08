@@ -43,50 +43,60 @@ public class RecordsEditFragment extends GenericEditFragment
         {
         Scribe.note("RecordsEditFragment setupFormLayout");
 
+        /*
+        Fields used record_edit_fragment_form
+
+        <!-- DATA OF THE PATIENT (OWNER OF THE RECORD) -->
+        android:id="@+id/title_patient"
+			android:id="@+id/foreigntext_patient_name"
+			android:id="@+id/foreigntext_patient_dob"
+
+        <!-- CATEGORY OF THE DATE -->
+        android:id="@+id/title_record_category"
+            android:id="@+id/editfieldtext_category_name"
+
+        <!-- DATE OF THE RECORD -->
+        android:id="@+id/title_record_date"
+                android:id="@+id/externdate_calendar_date"
+                android:id="@+id/externtext_calendar_note"
+
+        <!-- DETAILS OF THE RECORD -->
+        android:id="@+id/title_record_details"
+            android:id="@+id/editfieldtext_record_details"
+         */
+
+
         ForeignKey patientKey;
 //        ForeignKey categoryKey;
         ExternKey calendarKey;
-        EditFieldText recordNameField;
+        EditFieldText recordDetailsField;
 
-        // EditTextField
-        recordNameField = (EditFieldText)addEditField( R.id.editfieldtext_record_details, RecordsTable.NAME );
+        // EditTextField - DETALIS
+        recordDetailsField = (EditFieldText)addEditField( R.id.editfieldtext_record_details, RecordsTable.NAME );
 
-        // ForeignKey
+        // ForeignKey - PATIENT
         patientKey = addForeignKey( RecordsTable.PATIENT_ID, PATIENTS,
                 PatientsControllActivity.class,
                 getActivity().getString( R.string.select_patient ),
-                recordNameField );
-
+                recordDetailsField );
         // ForeignTextField
         patientKey.addEditField( R.id.foreigntext_patient_name, PatientsTable.NAME );
         patientKey.addEditField( R.id.foreigntext_patient_dob, PatientsTable.DOB );
 
-        // ForeignKey
-//        categoryKey = addForeignKey( RecordsTable.CATEGORY_ID, CATEGORIES,
-//                CategoriesControllActivity.class,
-//                getActivity().getString( R.string.select_category),
-//                recordNameField );
-
-        // ForeignTextField
-//        editFieldCategoryName = categoryKey.addEditField( R.id.editfieldtext_category_name, CategoriesTable.NAME);
-
-        // ForeignStyleField - will call {@link #onColumnValueChanged(ContentValues)}
-//        categoryKey.addStyleField( CategoriesTable.STYLE );
-
-        // ExternKey
+        // ExternKey - DATE and...
         calendarKey = addExternKey( RecordsTable.CALENDAR_ID, CALENDAR);
-
         // ExternTextField
         calendarKey.addEditField( R.id.externtext_calendar_note, CalendarTable.NOTE );
-
         // ExternDateField
         calendarKey.addEditField( R.id.externdate_calendar_date, CalendarTable.DATE );
 
-        // calendarKey.addEditField( R.id.editfieldtext_category_name, CategoriesTable.NAME );
-
-
-        // EditFieldDate recordDateField = (EditFieldDate)addEditField( R.id.externdate_calendar_date,
-        //        RecordsTable.DATE );
+        // ForeignKey inside ExternKey ...DATE'S CATEGORY
+        ForeignKey categoryKey = calendarKey.addForeignKey( CalendarTable.CATEGORY_ID, CATEGORIES,
+                                CategoriesControllActivity.class,
+                                getActivity().getString( R.string.select_category),
+                                recordDetailsField );
+        // Foreign TextField
+        categoryKey.addEditField( R.id.editfieldtext_category_name, CategoriesTable.NAME );
 
         /*
         setupListButton( BooksControllActivity.class,

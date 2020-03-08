@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -98,6 +99,36 @@ public class ExternKey implements Connection.Connectable
 
         return editField;
         }
+
+
+    /**
+     * ForeignKey is a special "field" without an existing cell on the form. ForeignKey is tied to the column of the
+     * MAIN table (defined by foreignKeyColumnIndex) which value is the id of a record of the FOREIGN table (defined
+     * by foreignTableIndex).
+     * <p>As there is no field cell, connection of Form, Column (and foreignTableIndex) is performed inside
+     * ForeignKey constructor. ForeignKey should be added to {@link #connection} </p>
+     * <p>Value of ForeignKey (row id of the foreign table) is selected by the use of an external ControllActivity
+     * (Selector). Because of the use of the Selector ForeignKey should be added to {@link #usingSelectors} </p>
+     * !!! NOT READY !!!
+     * @param foreignKeyColumnIndex
+     * @param foreignTableIndex
+     * @param selectorActivity
+     * @param selectorTitle
+     * @param selectorTitleOwner
+     * @return
+     */
+    public ForeignKey addForeignKey( int foreignKeyColumnIndex, int foreignTableIndex,
+                                     Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
+        {
+        ForeignKey foreignKey = new ForeignKey( editFragment, foreignKeyColumnIndex, foreignTableIndex );
+        externConnection.add( foreignKey );
+
+        foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
+        editFragment.addFieldUsingSelector( foreignKey );
+
+        return foreignKey;
+        }
+
 
     /**
      * Extern record will be created during PUSH process if it does not yet exist

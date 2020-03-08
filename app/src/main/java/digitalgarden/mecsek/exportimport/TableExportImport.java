@@ -21,6 +21,7 @@ import static digitalgarden.mecsek.database.DatabaseMirror.columnType;
 import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.database;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
+import static digitalgarden.mecsek.generic.GenericTable.TYPE_COLOR;
 import static digitalgarden.mecsek.generic.GenericTable.TYPE_DATE;
 import static digitalgarden.mecsek.generic.GenericTable.TYPE_TEXT;
 
@@ -393,15 +394,21 @@ public class TableExportImport
 
         for ( Integer exportImportColumn : version().exportImportColumns )
             {
+            String column = column(exportImportColumn);
             if ( columnType(exportImportColumn) == TYPE_TEXT )
                 {
-                data.add(cursor.getString(cursor.getColumnIndexOrThrow( column(exportImportColumn))));
+                data.add(cursor.getString(cursor.getColumnIndexOrThrow( column )));
                 }
             else if ( columnType(exportImportColumn) == TYPE_DATE )
                 {
                 Longtime longtime = new Longtime();
-                longtime.set(cursor.getLong(cursor.getColumnIndexOrThrow( column(exportImportColumn))));
+                longtime.set( cursor.getLong(cursor.getColumnIndexOrThrow( column )));
                 data.add( longtime.toString(false));
+                // Ha hibás, akkor hol lesz jelzés??
+                }
+            else if ( columnType(exportImportColumn) == TYPE_COLOR )
+                {
+                data.add( Long.toString(cursor.getLong(cursor.getColumnIndexOrThrow( column ))) );
                 // Ha hibás, akkor hol lesz jelzés??
                 }
             }
@@ -540,10 +547,13 @@ public class TableExportImport
                 longtime.setDate( records[counter] );
                 values.put(column(columnIndex), longtime.get() );
                 }
+            else if ( columnType(columnIndex) == TYPE_COLOR )
+                {
+                values.put(column(columnIndex), Long.parseLong( records[counter]) );
+                }
 
             counter ++;
             }
-
         // extern key-ek előtt létrehozzuk a rekordot
         // extern key-ek hivatkozása még hiányzik belőle
         Uri uri = getContentResolver().insert(table.contentUri(), values);

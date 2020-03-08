@@ -77,6 +77,7 @@ public class ColorDefsTable extends GenericTable
     public void defineExportImportColumns()
         {
         exportImport().addColumnAllVersions( ColorDefsTable.COLOR );
+        exportImport().addColumnAllVersions( ColorDefsTable.VALUE );
         }
 
     }
