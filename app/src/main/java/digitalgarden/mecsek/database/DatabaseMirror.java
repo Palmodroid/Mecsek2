@@ -8,7 +8,7 @@ import android.net.Uri;
 import java.util.ArrayList;
 
 import android.provider.BaseColumns;
-import digitalgarden.mecsek.exportimport.TableExportImport;
+import digitalgarden.mecsek.port.PortTable;
 import digitalgarden.mecsek.tables.LibraryDatabase;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.generic.GenericDatabase;
@@ -45,12 +45,12 @@ public class DatabaseMirror
      * <li><em>start(Context)</em> </li>
      * <li>new {@link LibraryDatabase} mirror is created by {@link #defineDatabase()} </li>
      * <li>all table's mirror is created by {@link GenericDatabase#defineTables()} </li>
-     * <li>each table contains one {@link TableExportImport} instance, which needs <em>context</em> (?? Couldn't it be
+     * <li>each table contains one {@link PortTable} instance, which needs <em>context</em> (?? Couldn't it be
      * forwarded by defineTables() ??) </li>
      * <li>each table defines its columns by its {@link GenericTable#defineColumns()}</li>
      * <li>each table defines its URI matches by its {@link GenericTable#defineUriMatcher(UriMatcher)}</li>
      * <li>when all tables are ready - each table defines which of its columns should be exported by its
-     * {@link GenericTable#defineExportImportColumns()} </li>
+     * {@link GenericTable#definePortColumns()} </li>
      * <li>after returning to {@link DatabaseContentProvider#onCreate()} each
      * {@link GenericTable#create(SQLiteDatabase)} is called at the end</li>
      * And database is created!
@@ -67,14 +67,14 @@ public class DatabaseMirror
 
         for (GenericTable table : allTables())
             {
-            table.exportImport().setupContext( context );
+            table.port().setupContext( context );
             table.defineColumns();
             table.defineUriMatcher( uriMatcher );
             }
         // Ehhez az összes táblának készen kell lennie
         for (GenericTable table : allTables())
             {
-            table.defineExportImportColumns();
+            table.definePortColumns();
             }
         }
 
@@ -148,7 +148,7 @@ public class DatabaseMirror
      * Data stored for each column:
      * <li><em>columnName</em> - name + "_" + tableId format differences columns in different tables with similar
      * names (otherwise alias should be used)</li>
-     * <li><em>columnType</em> - GenericTable.TYPE_KEY, TYPE_TEXT, TYPE_DATE, TYPE_COLOR etc. Type needed by
+     * <li><em>columnType</em> - GenericTable.TYPE_KEY, TYPE_TEXT, TYPE_DATE, TYPE_STYLE etc. Type needed by
      * Export/Import</li>
      * <li><em>tableId</em> - index/id of the table. {@link #addTableToDatabase(GenericTable)} always return the same
      * index from the table list - that is the ID of the table.</li>
@@ -213,6 +213,13 @@ public class DatabaseMirror
     public static int columnType(int columnIndex )
         {
         return columns.get(columnIndex).columnType;
+        }
+
+    /** Convenience method to get column's TABLE ID by columnIndex
+     * (columnIndex is stored in {@link GenericTable} subclasses */
+    public static int getColumnTableId(int columnIndex)
+        {
+        return columns.get(columnIndex).tableId;
         }
 
     // Itt jobb lenne egy getColumn(), amin belül lehetne set... és getRefTableIndex

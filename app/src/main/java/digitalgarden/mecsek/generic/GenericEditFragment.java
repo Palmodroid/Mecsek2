@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.color.StylePickerActivity;
-import digitalgarden.mecsek.formtypes.*;
+import digitalgarden.mecsek.fieldtypes.*;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
@@ -75,18 +75,18 @@ public abstract class GenericEditFragment extends Fragment
     // SELECT mode-ban kiléphessünk. A többi -1L lesz
     public interface OnFinishedListener
         {
-        void onFinished( long rowId );
+        void onFinished(long rowId);
         }
 
     /**
-     * Some fields (eg. ForeignKey) calls external Activity (in most cases ControllActivity with ListFragment) to
-     * select its value. startActivityForResult will return to {@link #onActivityResult(int, int, Intent)}.
-     * Each Field can ask for a unique code from {@link #getCode()}. This code can be used as selector-code to decide
-     * which Field has called external Activity.
+     * Some fields (eg. ForeignKey) calls external Activity (in most cases ControllActivity with ListFragment) to select
+     * its value. startActivityForResult will return to {@link #onActivityResult(int, int, Intent)}. Each Field can ask
+     * for a unique code from {@link #getCode()}. This code can be used as selector-code to decide which Field has
+     * called external Activity.
      */
     public interface UsingSelector
         {
-        void checkReturningSelector( int requestCode, Intent data );
+        void checkReturningSelector(int requestCode, Intent data);
         }
 
 
@@ -129,7 +129,7 @@ public abstract class GenericEditFragment extends Fragment
     // Ld. fent
 
     // ForeignKey-eket kell végigellenőrizni, melyikhez tartozó ForeignTextField adta ki az Activity hívást
-//    protected abstract void checkReturningSelector( int requestCode, long selectedId );
+    //    protected abstract void checkReturningSelector( int requestCode, long selectedId );
 
     // edited: értéke true-ra vált, ha valamelyik column-et módosítottuk
     // setEdited beállítja, isEdited lekérdezi. Törlés szükségtelen, hiszen nem vonjuk vissza a módosításokat
@@ -179,34 +179,61 @@ public abstract class GenericEditFragment extends Fragment
         }
 
 
+    public <T extends View> T addField( int fieldID )
+        {
+        return addField( fieldID, -1, null );
+        }
+
+    public <T extends View> T addField( int fieldID, int columnIndex )
+        {
+        return addField( fieldID, columnIndex, null );
+        }
+
+
     /**
-     * Adds an EditField (any type) to this form (EditFragment) inside {@link #setupFormLayout()} (inside
-     * {@link #onActivityCreated(Bundle)}.
-     * <p>EditField is on the layout form (defined by {@link #defineFormLayout()} under id <em>editFieldId</em>. </p>
-     * <p>Column containing data for this EditField is defined by <em>columnIndex</em>. </p>
-     * <p><em>ColumnIndex</em> is stored inside EditField connected by
-     * ({@link EditField#connect(GenericEditFragment, Connection, int)}. {@link #connection} contains
-     * <em>tableIndex</em> for the whole table. EditField should be connected to the {@link #connection}  as well </p>
-     * @param editFieldId
-     * @param columnIndex
-     * @return
+     * Adds a Field (any type) to this form (EditFragment) inside {@link #setupFormLayout()} (inside {@link
+     * #onActivityCreated(Bundle)}.
+     * <p>Field is on the layout form (defined by {@link #defineFormLayout()} under id <em>fieldId</em>. </p>
+     * <p>Column containing data for this Field is defined by <em>columnIndex</em>. </p>
+     * <p><em>ColumnIndex</em> is stored inside Field connected by different <em>connect()</em> methods.
+     * {@link #connection} contains <em>tableIndex</em> for the whole table. Field should be connected to the
+     * {@link #connection} as well </p>
+     * @param fieldID id of the form widget (View)
+     * @param columnIndex database column represented by the widget (SOURCE BUTTON do not need this)
+     * @param hintKey hint (if needed) stored inside arguments
+     * @param <T> Any widget (View) shown by form
+     * @return the widget itself
      */
-    public EditField addEditField(int editFieldId, int columnIndex )
+    public <T extends View> T addField( int fieldID, int columnIndex, String hintKey )
         {
-        EditField editField = (EditField) view.findViewById( editFieldId );
-        editField.connect( this, connection, columnIndex );
-        // connection.add( editField ); added to connect, not needed any more
+        View fieldWidget = view.findViewById( fieldID );
 
-        return editField;
+        if ( fieldWidget instanceof EditField )
+            {
+            ((EditField)fieldWidget).connect(this, connection, columnIndex);
+            if ( hintKey != null )
+                ((EditField)fieldWidget).setHint( getArguments(), hintKey );
+            }
+        else if ( fieldWidget instanceof  FieldImage )
+            {
+            ((FieldImage) fieldWidget).connect(this, connection, columnIndex);
+            addFieldUsingSelector(((FieldImage) fieldWidget));
+            }
+        else if ( fieldWidget instanceof SourceButton )
+            {
+            // !!! Error can be sent, if columnIndex is given !!!
+            ((SourceButton)fieldWidget).connect(this, connection);
+            }
+        else if ( fieldWidget instanceof StyleButton )
+            {
+            // StyleButton clicks start {@link StylePickerActivity} to select style for Column defined by columnIndex.
+            ((StyleButton)fieldWidget).connect( this, connection, columnIndex );
+            addFieldUsingSelector( (StyleButton)fieldWidget );
+            }
+
+        return (T) fieldWidget;
         }
 
-    public EditField addEditField( int editFieldId, int columnIndex, String hintKey )
-        {
-        EditField editField = addEditField( editFieldId, columnIndex );
-        editField.setHint( getArguments(), hintKey );
-
-        return editField;
-        }
 
     /**
      * ForeignKey is a special "field" without an existing cell on the form. ForeignKey is tied to the column of the
@@ -218,20 +245,18 @@ public abstract class GenericEditFragment extends Fragment
      * (Selector). Because of the use of the Selector ForeignKey should be added to {@link #usingSelectors} </p>
      * !!! NOT READY !!!
      * @param foreignKeyColumnIndex
-     * @param foreignTableIndex
      * @param selectorActivity
      * @param selectorTitle
      * @param selectorTitleOwner
      * @return
      */
-    public ForeignKey addForeignKey( int foreignKeyColumnIndex, int foreignTableIndex,
+    public ForeignKey addForeignKey( int foreignKeyColumnIndex,
                                      Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
         {
-        ForeignKey foreignKey = new ForeignKey( this, foreignKeyColumnIndex, foreignTableIndex );
-        connection.add( foreignKey );
+        ForeignKey foreignKey = new ForeignKey();
+        foreignKey.connect(this, connection, foreignKeyColumnIndex);
 
         foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
-        addFieldUsingSelector( foreignKey );
 
         if (foreignKeyColumnIndex == getLimitedColumn())
             {
@@ -242,38 +267,14 @@ public abstract class GenericEditFragment extends Fragment
         }
 
 
-    public ExternKey addExternKey(int externKeyIndex, int externTableIndex )
+    public ExternKey addExternKey( int externKeyIndex )
         {
-        ExternKey externKey = new ExternKey( this, externKeyIndex, externTableIndex );
-        connection.add( externKey );
+        ExternKey externKey = new ExternKey();
+        externKey.connect( this, connection, externKeyIndex );
 
         return externKey;
         }
 
-
-    public SourceButton addSourceField(int sourceFieldId )
-        {
-        SourceButton sourceField = (SourceButton) view.findViewById( sourceFieldId );
-        sourceField.connect( this , connection);
-
-        return sourceField;
-        }
-
-    /**
-     * StyleButton clicks start {@link StylePickerActivity} to select style for Column defined by columnIndex.
-     * @param styleButtonId
-     * @param columnIndex
-     * @return
-     */
-    public StyleButton addStyleButton(int styleButtonId, int columnIndex )
-        {
-        StyleButton styleButton = (StyleButton) view.findViewById( styleButtonId );
-        styleButton.connect( this, connection, columnIndex );
-
-        addFieldUsingSelector( styleButton );
-
-        return styleButton;
-        }
 
     /**
      * onAttach()  onCreate()  onCreateView()  onActivityCreated()  onStart() onResume()

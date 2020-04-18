@@ -1,10 +1,8 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-
-import digitalgarden.mecsek.utils.Longtime;
 
 /**
  * ColorView shows colors as their hexadecimal values

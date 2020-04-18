@@ -1,9 +1,11 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import digitalgarden.mecsek.generic.GenericCombinedListFragment;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
+import static digitalgarden.mecsek.database.DatabaseMirror.getColumnReferenceTableId;
 
 
 /**
@@ -56,20 +59,28 @@ public class ForeignKey implements Connection.Connectable, GenericEditFragment.U
     /** TRUE if value of the Foreign Key was changed */
     private boolean edited = false;
 
+
     /**
-     * Constructor to create foreign key. Fields of the Foreign Table can be added later to this ForeignKey.
+     * Connect foreign key field with column (database).
+     * <p>Field should be added to Connection to be connected to database! Table Id is stored inside Connection.</p>
+     * <p>Empty constructor should be called to create foreign key. Fields of the Foreign Table can be added later to
+     * this ForeignKey.</p>
      * @param editFragment form of the fields
+     * @param connection Connection of the record (more connection can be on the same form)
      * @param foreignKeyColumnIndex index of the Foreign Key Column (inside MAIN table)
-     * @param foreignTableIndex index of the Foreign Table (stored inside foreignConnection)
      */
-    public ForeignKey(GenericEditFragment editFragment, int foreignKeyColumnIndex, int foreignTableIndex )
+    public void connect(GenericEditFragment editFragment, Connection connection, int foreignKeyColumnIndex)
         {
         this.editFragment = editFragment;
         this.foreignKeyColumnIndex = foreignKeyColumnIndex;
         selectorCode = editFragment.getCode();
+        connection.add( this );
 
-        foreignConnection = new Connection( editFragment.getContext(), foreignTableIndex );
+        // Foreign record inside foreign table
+        foreignConnection = new Connection( editFragment.getContext(),
+                getColumnReferenceTableId( foreignKeyColumnIndex ) );
         }
+
 
     /**
      * Selector activity will select one record from the foreign table and give back its row index
@@ -82,7 +93,10 @@ public class ForeignKey implements Connection.Connectable, GenericEditFragment.U
         this.selectorActivity = selectorActivity;
         this.selectorTitle = selectorTitle;
         this.selectorOwner = selectorOwner;
+
+        editFragment.addFieldUsingSelector( this );
         }
+
 
     /** Adds ForeignKey column to the Connection of the MAIN table. FOREIGN KEY is the only column needed from MAIN
      * TABLE. */
@@ -92,52 +106,92 @@ public class ForeignKey implements Connection.Connectable, GenericEditFragment.U
         projection.add( column(foreignKeyColumnIndex) );
         }
 
+
+    public <T extends View> T addField( int fieldID )
+        {
+        return addField(fieldID, -1);
+        }
+
+    /**
+     * Adds a Field (any type) to this form (EditFragment) inside {@link #setupFormLayout()} (inside {@link
+     * #onActivityCreated(Bundle)}.
+     * <p>Field is on the layout form (defined by {@link #defineFormLayout()} under id <em>fieldId</em>. </p>
+     * <p>Column containing data for this Field is defined by <em>columnIndex</em>. </p>
+     * <p><em>ColumnIndex</em> is stored inside Field connected by different <em>connect()</em> methods.
+     * {@link #connection} contains <em>tableIndex</em> for the whole table. Field should be connected to the
+     * {@link #connection} as well </p>
+     * @param fieldID id of the form widget (View)
+     * @param columnIndex database column represented by the widget (SOURCE BUTTON do not need this)
+     * @param hintKey hint (if needed) stored inside arguments
+     * @param <T> Any widget (View) shown by form
+     * @return the widget itself
+     */
     /**
      * Adds an EDIT FIELD (any subclass) to a FOREIGN COLUMN of the FOREIGN TABLE.
      * <p>On touch Selector Activity is started to select one record of the Foreign Table. {@link #selectorCode} is
      * unique to this Foreign Key, so Selector Activity can found it.</p>
      * ??? What happens with Selector Code on config changes ??? Maybe nothing, because foreign keys get selector
      * code in the same order. Selector code could be te index of the ForeignKeyArray, too !!!
-     * @param editFieldId id of the field
+     * @param fieldID id of the field
      * @param foreignColumnIndex index of the column (inside extern table)
      * @return the created, connected editField
      */
-    public EditField addEditField(int editFieldId, int foreignColumnIndex )
+    public <T extends View> T addField( int fieldID, int foreignColumnIndex )
         {
-        final EditField editField = (EditField) editFragment.getView().findViewById( editFieldId );
-        //editField.setBackground(null);
-        editField.connect( editFragment, foreignConnection, foreignColumnIndex );
-        //foreignConnection.add( editField ); added to connect, not needed any more
+        View fieldWidget = editFragment.getView().findViewById( fieldID );
 
-        // link csak akkor lehetséges, ha a ForeignKey már az űrlaphoz kötött!!
-        // és a selector-t beállítottuk
-        if (editFragment == null || selectorActivity == null)
+        if ( fieldWidget instanceof EditField )
             {
-            Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
-            throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
-            }
+            //editField.setBackground(null);
+            ((EditField)fieldWidget).connect( editFragment, foreignConnection, foreignColumnIndex );
+            //foreignConnection.add( editField ); added to connect, not needed any more
 
-        // Beállítjuk, hogy érintésre a megfelelő selectorActivity elinduljon
-        editField.setOnTouchListener( new View.OnTouchListener()
-            {
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
+            // link csak akkor lehetséges, ha a ForeignKey már az űrlaphoz kötött!!
+            // és a selector-t beállítottuk
+            if (editFragment == null || selectorActivity == null)
                 {
-                if (event.getAction() == MotionEvent.ACTION_UP)
-                    {
-                    Scribe.note("ForeignTextField: Selector started!");
-                    Intent intent = new Intent( editFragment.getActivity(), selectorActivity);
-                    intent.putExtra( GenericControllActivity.TITLE, selectorTitle + selectorOwner.getText() );
-                    intent.putExtra( GenericCombinedListFragment.SELECTED_ITEM, getValue() );
-                    editFragment.startActivityForResult( intent, selectorCode );
-                    }
-                return true; // nem engedjük mást sem csinálni
+                Scribe.error("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
+                throw new IllegalArgumentException("Foreign Key was not connected to GenericEditFragment or Selector was not set!");
                 }
-            });
 
-        return editField;
+            // Beállítjuk, hogy érintésre a megfelelő selectorActivity elinduljon
+            ((EditField)fieldWidget).setOnTouchListener( new View.OnTouchListener()
+                {
+                @Override
+                public boolean onTouch(View v, MotionEvent event)
+                    {
+                    if (event.getAction() == MotionEvent.ACTION_UP)
+                        {
+                        Scribe.note("ForeignTextField: Selector started!");
+                        Intent intent = new Intent( editFragment.getActivity(), selectorActivity);
+                        intent.putExtra( GenericControllActivity.TITLE, selectorTitle + selectorOwner.getText() );
+                        intent.putExtra( GenericCombinedListFragment.SELECTED_ITEM, getValue() );
+                        editFragment.startActivityForResult( intent, selectorCode );
+                        }
+                    return true; // nem engedjük mást sem csinálni
+                    }
+                });
+            }
+/* NOT YET IMPLEMENTED ONLY COPIED FROM GENERICEDITFRAGMENT !!!!
+        else if ( fieldWidget instanceof  FieldImage )
+            {
+            ((FieldImage) fieldWidget).connect(this, connection);
+            addFieldUsingSelector(((FieldImage) fieldWidget));
+            }
+        else if ( fieldWidget instanceof SourceButton )
+            {
+            // !!! Error can be sent, if columnIndex is given !!!
+            ((SourceButton)fieldWidget).connect(this, connection);
+            }
+        else if ( fieldWidget instanceof StyleButton )
+            {
+            // StyleButton clicks start {@link StylePickerActivity} to select style for Column defined by columnIndex.
+            ((StyleButton)fieldWidget).connect( this, connection, columnIndex );
+            addFieldUsingSelector( (StyleButton)fieldWidget );
+            }
+*/
+        return (T) fieldWidget;
         }
-
 
     /**
      * StyleField connects to a foreign style column. It has NOT got any field to show the value, but calls

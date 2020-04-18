@@ -14,7 +14,7 @@ import digitalgarden.mecsek.generic.GenericTable;
  * 3. name() should return unique name (name in prular)
  * 4. defineColumns() ...
  * 4a. - all addColumn() methods return column's unique index - store it in a PUBLIC STATIC INT VAR!
- * 5. defineExportImportColumns() ...
+ * 5. definePortColumns() ...
  * 5a. - add columns to export with their INDEX
  * GO TO ControllActivity!
  */
@@ -25,7 +25,7 @@ import digitalgarden.mecsek.generic.GenericTable;
  * are always read as 8-byte signed integer (java long).
  * 0. Increase LibraryDatabase.version() !!
  * 1. Introduce new type and corresponding datatype in GenericTable.java
- *     public static final int TYPE_COLOR = 3;
+ *     public static final int TYPE_STYLE = 3;
  *     private static final String[] COLUMN_TYPES = { (exactly 3 previous types), "INTEGER"};
  * !! At this time non-text columns cannot be part of search columns (other special columns?) !!
  * !! At this time no export-import is possible !!
@@ -70,14 +70,15 @@ public class ColorDefsTable extends GenericTable
     public void defineColumns()
         {
         COLOR = addColumn( TYPE_TEXT, "color" );
-        VALUE = addColumn( TYPE_COLOR, "value");
+        VALUE = addColumn(TYPE_STYLE, "value");
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addColumnAllVersions( ColorDefsTable.COLOR );
-        exportImport().addColumnAllVersions( ColorDefsTable.VALUE );
+        port().addIdColumnAllVersions();
+        port().addColumnAllVersions( ColorDefsTable.COLOR );
+        port().addColumnAllVersions( ColorDefsTable.VALUE );
         }
 
     }

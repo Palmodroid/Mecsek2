@@ -32,13 +32,13 @@ public final class PatientsTable extends GenericTable
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addColumnAllVersions( PatientsTable.NAME );
-        exportImport().addColumnAllVersions( PatientsTable.DOB );
-        exportImport().addColumnAllVersions( PatientsTable.TAJ );
-        exportImport().addColumnAllVersions( PatientsTable.PHONE );
-        exportImport().addColumnAllVersions( PatientsTable.NOTE );
+        port().addColumnAllVersions( PatientsTable.NAME );
+        port().addColumnAllVersions( PatientsTable.DOB );
+        port().addColumnAllVersions( PatientsTable.TAJ );
+        port().addColumnAllVersions( PatientsTable.PHONE );
+        port().addColumnAllVersions( PatientsTable.NOTE );
         }
 
     /*

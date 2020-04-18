@@ -11,6 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import digitalgarden.mecsek.fieldtypes.SourceButton;
 import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
@@ -44,7 +45,20 @@ import static digitalgarden.mecsek.database.DatabaseMirror.table;
 public class Connection
     {
 
-    /** Connectable interface should be implemented by each field - to connect it to the database */
+    /**
+     *  Connectable interface should be implemented by each field - to connect field to the database
+     *  <p>Since constructors of the widgets cannot be changed, each field should implement some kind of
+     *  <em>connect()</em> method.</p>
+     *  <ul>Parameters of connect() methods are different, but each connect method should get:
+     *  <li>{@link GenericEditFragment} which is the root form</li>
+     *  <li>{@link Connection} which is the record to connect to (ONE form can contain MORE connections: eg.
+     *  ForeignKey's foreign record</li>
+     *  <li>KEY Column's index (eg. {@link SourceButton} already knows it)</li>
+     *  <li>Foreign/Extern table (only ExternKey and ForeignKey needs this - !!! What about referenced table stored
+     *  inside column list ???)
+     *  </li>
+     * </ul>
+     */
     public interface Connectable
         {
         /** add column(s) to projection to pull data */

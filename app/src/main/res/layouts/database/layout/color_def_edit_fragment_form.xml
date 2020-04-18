@@ -13,7 +13,7 @@
         android:text="@string/title_color"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
         android:id="@+id/edittext_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
 		android:text="@string/title_value"
 		android:textAppearance="?android:attr/textAppearanceMedium" />
 
-	<digitalgarden.mecsek.formtypes.EditFieldColor
+	<digitalgarden.mecsek.fieldtypes.EditFieldColor
 		android:id="@+id/edittext_value"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

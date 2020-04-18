@@ -23,14 +23,14 @@
 		android:background="@drawable/border"
 		android:layout_margin="5dp" >
 
-		<digitalgarden.mecsek.formtypes.EditFieldText
+		<digitalgarden.mecsek.fieldtypes.EditFieldText
 			android:id="@+id/foreigntext_patient_name"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/hint_patient"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-		<digitalgarden.mecsek.formtypes.EditFieldText
+		<digitalgarden.mecsek.fieldtypes.EditFieldText
 			android:id="@+id/foreigntext_patient_dob"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -43,13 +43,13 @@
     <!-- CATEGORY (TYPE OF THE RECORD) -->
 
     <TextView
-            android:id="@+id/title_record_category"
+            android:id="@+id/title_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_record_category"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
             android:id="@+id/editfieldtext_category_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,13 +77,13 @@
 			android:background="@drawable/border"
 			android:layout_margin="5dp" >
 
-        <digitalgarden.mecsek.formtypes.EditFieldDate
+        <digitalgarden.mecsek.fieldtypes.EditFieldDate
                 android:id="@+id/externdate_calendar_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_record_calendar_date" />
 
-        <digitalgarden.mecsek.formtypes.EditFieldText
+        <digitalgarden.mecsek.fieldtypes.EditFieldText
                 android:id="@+id/externtext_calendar_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
         android:text="@string/title_record_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
         android:id="@+id/editfieldtext_record_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

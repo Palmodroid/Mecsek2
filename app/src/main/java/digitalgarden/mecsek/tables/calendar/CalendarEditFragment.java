@@ -2,14 +2,11 @@ package digitalgarden.mecsek.tables.calendar;
 
 import android.content.ContentValues;
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.formtypes.EditField;
-import digitalgarden.mecsek.formtypes.EditFieldText;
-import digitalgarden.mecsek.formtypes.ExternKey;
-import digitalgarden.mecsek.formtypes.ForeignKey;
+import digitalgarden.mecsek.fieldtypes.EditField;
+import digitalgarden.mecsek.fieldtypes.ForeignKey;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.tables.category.CategoriesControllActivity;
 import digitalgarden.mecsek.tables.category.CategoriesTable;
-import digitalgarden.mecsek.tables.records.RecordsTable;
 import digitalgarden.mecsek.viewutils.Longstyle;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
@@ -40,20 +37,20 @@ public class CalendarEditFragment extends GenericEditFragment
 		{
         ForeignKey calendarCategoryKey;
 
-        EditField calendarNote = addEditField( R.id.edittextfield_calendar_note, CalendarTable.NOTE );
-        addEditField( R.id.editdatefield_calendar_date, CalendarTable.DATE, DATE_HINT );
+        EditField calendarNote = addField( R.id.edittextfield_calendar_note, CalendarTable.NOTE );
+        addField( R.id.editdatefield_calendar_date, CalendarTable.DATE, DATE_HINT );
         //addEditField( R.id.calendar_source_table, table(CALENDAR).SOURCE_TABLE );
         //addEditField( R.id.calendar_source_row, table(CALENDAR).SOURCE_ROW );
-        addSourceField( R.id.calendar_source_button );
+        addField( R.id.calendar_source_button );
 
         // ForeignKey
-        calendarCategoryKey = addForeignKey( CalendarTable.CATEGORY_ID, CATEGORIES,
+        calendarCategoryKey = addForeignKey( CalendarTable.CATEGORY_ID,
                 CategoriesControllActivity.class,
                 getActivity().getString( R.string.select_category),
                 calendarNote );
 
         // ForeignTextField
-        editFieldCategoryName = calendarCategoryKey.addEditField( R.id.editfieldtext_category_name, CategoriesTable.NAME);
+        editFieldCategoryName = calendarCategoryKey.addField( R.id.editfieldtext_category_name, CategoriesTable.NAME);
 
         // ForeignStyleField - will call {@link #onColumnValueChanged(ContentValues)}
         calendarCategoryKey.addStyleField( CategoriesTable.STYLE );

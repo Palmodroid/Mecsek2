@@ -12,6 +12,7 @@ import android.view.View;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
+import digitalgarden.mecsek.utils.Utils;
 
 import static digitalgarden.mecsek.Debug.initScribe;
 

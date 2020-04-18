@@ -41,7 +41,7 @@
         android:text="- record -"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.DateView
+    <digitalgarden.mecsek.fieldtypes.DateView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

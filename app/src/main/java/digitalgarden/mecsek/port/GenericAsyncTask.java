@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.exportimport;
+package digitalgarden.mecsek.port;
 
 import android.content.Context;
 import android.os.AsyncTask;

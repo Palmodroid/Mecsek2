@@ -1,7 +1,7 @@
 package digitalgarden.mecsek.tables.patients;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.formtypes.EditField;
+import digitalgarden.mecsek.fieldtypes.EditField;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.tables.records.RecordsControllActivity;
@@ -28,11 +28,11 @@ public class PatientsEditFragment extends GenericEditFragment
 		{
 		Scribe.note("PatientsEditFragment setupFormLayout");
 		
-        EditField nameField = addEditField( R.id.edittext_patient_name, PatientsTable.NAME );
-        addEditField( R.id.edittext_patient_dob, PatientsTable.DOB );
-        addEditField( R.id.edittext_patient_taj, PatientsTable.TAJ );
-        addEditField( R.id.edittext_patient_phone, PatientsTable.PHONE );
-        addEditField( R.id.edittext_patient_note, PatientsTable.NOTE );
+        EditField nameField = addField( R.id.edittext_patient_name, PatientsTable.NAME );
+        addField( R.id.edittext_patient_dob, PatientsTable.DOB );
+        addField( R.id.edittext_patient_taj, PatientsTable.TAJ );
+        addField( R.id.edittext_patient_phone, PatientsTable.PHONE );
+        addField( R.id.edittext_patient_note, PatientsTable.NOTE );
 
 		setupListButton( RecordsControllActivity.class,
 				getActivity().getString( R.string.button_books_list ),

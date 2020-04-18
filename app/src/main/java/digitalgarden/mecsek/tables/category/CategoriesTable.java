@@ -8,26 +8,29 @@ public final class CategoriesTable extends GenericTable
     @Override
     public String name()
         {
-        return "category";
+        return "categories";
         }
 
     public static int NAME;
-    public static int SEARCH;
     public static int STYLE;
+
+    public static int SEARCH;
 
 
     @Override
     public void defineColumns()
         {
-        NAME = addColumn( TYPE_TEXT, "name" );
-        STYLE = addColumn( TYPE_COLOR, "style");
+        NAME = addUniqueColumn( TYPE_TEXT, "name" );
+        STYLE = addColumn(TYPE_STYLE, "style");
+
         SEARCH = addSearchColumnFor(NAME);
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addColumnAllVersions( CategoriesTable.NAME);
+        port().addColumnAllVersions( CategoriesTable.NAME );
+        port().addColumnAllVersions( CategoriesTable.STYLE );
         }
 
     /*

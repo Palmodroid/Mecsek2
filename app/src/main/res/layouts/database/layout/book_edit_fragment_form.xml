@@ -5,15 +5,23 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content" 
 	android:orientation="vertical" >
-	
-	<TextView
+
+	<digitalgarden.mecsek.fieldtypes.FieldImage
+        android:id="@+id/image_book"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="right"
+        android:scaleType="centerInside"
+        android:src="@drawable/smallballoons" />
+
+    <TextView
         android:id="@+id/title_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_author"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
         android:id="@+id/edittext_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,14 +33,14 @@
         android:layout_margin="2dp"/>
 
     <TextView
-        android:id="@+id/title_record_category"
+        android:id="@+id/title_book"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_title"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
-        android:id="@+id/edittext_title"
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
+        android:id="@+id/edittext_book"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_title" />

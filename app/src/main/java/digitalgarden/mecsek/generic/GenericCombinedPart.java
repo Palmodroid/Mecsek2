@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import digitalgarden.mecsek.formtypes.ColorView;
-import digitalgarden.mecsek.formtypes.DateView;
+import digitalgarden.mecsek.fieldtypes.ColorView;
+import digitalgarden.mecsek.fieldtypes.DateView;
 import digitalgarden.mecsek.viewutils.Longstyle;
 
 public class GenericCombinedPart

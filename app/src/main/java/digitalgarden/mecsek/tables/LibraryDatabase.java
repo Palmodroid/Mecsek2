@@ -20,7 +20,7 @@ public class LibraryDatabase extends GenericDatabase
     @Override
     public int version()
         {
-        return 1;
+        return 2;
         }
 
     @Override
@@ -36,22 +36,29 @@ public class LibraryDatabase extends GenericDatabase
     public static int AUTHORS;
     public static int BOOKS;
 
+    public static int CATEGORIES;
     public static int CALENDAR;
     public static int PATIENTS;
-    public static int CATEGORIES;
     public static int RECORDS;
 
 
     @Override
     public void defineTables()
         {
+        // App tables
         COLOR_DEFS = addTable( new ColorDefsTable() );
+
+        // User tables
         AUTHORS = addTable( new AuthorsTable() );
         BOOKS = addTable( new BooksTable() );
 
-        CALENDAR = addTable( new CalendarTable() );
-        PATIENTS = addTable( new PatientsTable() );
+        // NAME(SEARCH), STYLE
         CATEGORIES = addTable( new CategoriesTable() );
+        // DATE, NOTE, Source, Foreign: CATEGORY_ID
+        CALENDAR = addTable( new CalendarTable() );
+        // Unique{NAME(SEARCH), DOB, TAJ} PHONE NOTE
+        PATIENTS = addTable( new PatientsTable() );
+        // NAME(SEARCH), DATE, Foreign: PATIENTS_ID, Extern: CALENDAR_ID Faraway: CATEGORY_ID
         RECORDS = addTable( new RecordsTable() );
         }
     }

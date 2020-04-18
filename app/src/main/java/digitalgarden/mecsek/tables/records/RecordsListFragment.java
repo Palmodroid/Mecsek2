@@ -29,7 +29,7 @@ public class RecordsListFragment extends GenericCombinedListFragment
 
         args.putLong( LIMITED_ITEM, limit );
         args.putInt( LIMITED_COLUMN, RecordsTable.PATIENT_ID );
-        args.putString( ORDERED_COLUMN, columnFull( RecordsTable.NAME ));
+        args.putString( ORDERED_COLUMN, columnFull( RecordsTable.DETAILS));
         // args.putString( FILTERED_COLUMN, BooksTable.FULL_SEARCH);
         args.putStringArray( FILTERED_COLUMN, new String[] { columnFull(CategoriesTable.SEARCH), columnFull(RecordsTable.SEARCH)});
 
@@ -53,12 +53,12 @@ public class RecordsListFragment extends GenericCombinedListFragment
     @Override
     protected void setupRowLayout()
         {
-        addField( R.id.category, CategoriesTable.NAME);
+        addField( R.id.category, CategoriesTable.NAME );
         addField( R.id.patient, PatientsTable.NAME );
         addField( R.id.patient_dob, PatientsTable.DOB );
-        addField( R.id.record, RecordsTable.NAME );
-        addField( R.id.date, RecordsTable.DATE );
-        addField( R.id.note, CalendarTable.NOTE);
+        addField( R.id.record, RecordsTable.DETAILS );
+        addField( R.id.date, CalendarTable.DATE );
+        addField( R.id.note, CalendarTable.NOTE );
         addIdField();
 
         addStyleField( CategoriesTable.STYLE );
@@ -69,13 +69,13 @@ public class RecordsListFragment extends GenericCombinedListFragment
 		{
 		ContentValues values = new ContentValues();
 
-		values.put( column(RecordsTable.NAME), "2003.01.02");
+		values.put( column(RecordsTable.DETAILS), "2003.01.02");
 		getActivity().getContentResolver().insert( table(RECORDS).contentUri(), values);
 
-		values.put( column(RecordsTable.NAME), "2017.12.20");
+		values.put( column(RecordsTable.DETAILS), "2017.12.20");
 		getActivity().getContentResolver().insert( table(RECORDS).contentUri(), values);
 
-		values.put( column(RecordsTable.NAME), "2018.05.01");
+		values.put( column(RecordsTable.DETAILS), "2018.05.01");
 		getActivity().getContentResolver().insert( table(RECORDS).contentUri(), values);
 
 		}

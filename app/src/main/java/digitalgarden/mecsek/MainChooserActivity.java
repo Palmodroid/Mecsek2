@@ -18,11 +18,12 @@ import digitalgarden.mecsek.tables.calendar.CalendarControllActivity;
 import digitalgarden.mecsek.tables.records.RecordsControllActivity;
 import digitalgarden.mecsek.tables.patients.PatientsControllActivity;
 import digitalgarden.mecsek.tables.category.CategoriesControllActivity;
-import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
+import digitalgarden.mecsek.port.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.selectfile.SelectFileActivity;
 import digitalgarden.mecsek.selectfile.SelectFileActivity.Mode;
+import digitalgarden.mecsek.utils.Utils;
 
 import static digitalgarden.mecsek.Debug.initScribe;
 import static digitalgarden.mecsek.MainChooserDialogFragment.Type.CONFIRM_IMPORT;
@@ -142,7 +143,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
         if (permissionsGranted)
             {
             initScribe(this);
-            Scribe.title("Database started");
+			Scribe.title("Database started");
 
             setContentView(R.layout.main_chooser_activity);
 

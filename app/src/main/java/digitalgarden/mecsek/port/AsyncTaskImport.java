@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.exportimport;
+package digitalgarden.mecsek.port;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -145,7 +145,7 @@ class AsyncTaskImport extends GenericAsyncTask
                         {
                         if ( records[0].equals( table.name() ))
                             {
-                            table.exportImport().importRow( version, records );
+                            table.port().importRow( version, records );
                             rowMissing = false;
                             break;
                             }

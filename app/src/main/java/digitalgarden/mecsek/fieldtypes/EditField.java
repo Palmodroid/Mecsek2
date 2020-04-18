@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;

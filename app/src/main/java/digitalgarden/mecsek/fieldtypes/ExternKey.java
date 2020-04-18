@@ -1,19 +1,22 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
-import digitalgarden.mecsek.generic.Connection;
-import digitalgarden.mecsek.generic.GenericEditFragment;
-import digitalgarden.mecsek.generic.GenericTable;
+import digitalgarden.mecsek.generic.*;
+import digitalgarden.mecsek.scribe.Scribe;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
+import static digitalgarden.mecsek.database.DatabaseMirror.getColumnReferenceTableId;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
 
 
@@ -58,17 +61,22 @@ public class ExternKey implements Connection.Connectable
 
 
     /**
-     * Creates an ExternKey. Fields of the ExternTable can be added later to this ExternKey.
-     * @param editFragment form containing fields (fields are added later to ExternKey)
+     * Connect extern key field with column (database). Fields of the ExternTable can be added later to this ExternKey.
+     * <p>Field should be added to Connection to be connected to database! Table Id is stored inside Connection.</p>
+     * <p>Empty constructor should be called to create foreign key. Fields of the Foreign Table can be added later to
+     * this ForeignKey.</p>
+     * @param editFragment form of the fields (fields are added later to ExternKey)
+     * @param connection Connection of the record (more connection can be on the same form)
      * @param externKeyColumnIndex index of the extern key column (inside main table) - value will never change!
-     * @param externTableIndex index of the extern table
      */
-    public ExternKey(GenericEditFragment editFragment, int externKeyColumnIndex, int externTableIndex )
+    public void connect(GenericEditFragment editFragment, Connection connection, int externKeyColumnIndex)
         {
-        this.externTableIndex = externTableIndex;
-        this.externKeyColumnIndex = externKeyColumnIndex;
         this.editFragment = editFragment;
+        this.externKeyColumnIndex = externKeyColumnIndex;
+        connection.add( this );
 
+        // Foreign record inside foreign table
+        this.externTableIndex = getColumnReferenceTableId( externKeyColumnIndex );
         externConnection = new Connection( editFragment.getContext(), this.externTableIndex);
 
         // !!! EZT KI KELL INNEN VENNI, HA NEM AKARJUK, HOGY MINDIG KÉSZÍTSEN EGY EXTERNKEY-T !!!
@@ -87,18 +95,39 @@ public class ExternKey implements Connection.Connectable
     /**
      * Adds an EDIT FIELD (any subclass) to an EXTERN COLUMN of the EXTERN TABLE. Value of the EXTERN COLUMN can
      * change, but EXTERN KEY will always remain the same, pointing to the same record of the EXTERN TABLE.
-     * @param editFieldId id of the field
+     * @param fieldID id of the field
      * @param externColumnIndex index of the column (inside extern table)
      * @return the created, connected editField
      */
-    public EditField addEditField(int editFieldId, int externColumnIndex )
+    public <T extends View> T addField(int fieldID, int externColumnIndex )
         {
-        EditField editField = (EditField) editFragment.getView().findViewById( editFieldId );
-        editField.connect( editFragment, externConnection, externColumnIndex );
-        // externConnection.add( editField ); added to connect, not needed any more
+        View fieldWidget = editFragment.getView().findViewById( fieldID );
 
-        return editField;
+        if ( fieldWidget instanceof EditField )
+            {
+            ((EditField)fieldWidget).connect( editFragment, externConnection, externColumnIndex );
+            }
+/* NOT YET IMPLEMENTED ONLY COPIED FROM GENERICEDITFRAGMENT !!!!
+        else if ( fieldWidget instanceof  FieldImage )
+            {
+            ((FieldImage) fieldWidget).connect(this, connection);
+            addFieldUsingSelector(((FieldImage) fieldWidget));
+            }
+        else if ( fieldWidget instanceof SourceButton )
+            {
+            // !!! Error can be sent, if columnIndex is given !!!
+            ((SourceButton)fieldWidget).connect(this, connection);
+            }
+        else if ( fieldWidget instanceof StyleButton )
+            {
+            // StyleButton clicks start {@link StylePickerActivity} to select style for Column defined by columnIndex.
+            ((StyleButton)fieldWidget).connect( this, connection, columnIndex );
+            addFieldUsingSelector( (StyleButton)fieldWidget );
+            }
+*/
+        return (T) fieldWidget;
         }
+
 
 
     /**
@@ -106,10 +135,10 @@ public class ExternKey implements Connection.Connectable
      * MAIN table (defined by foreignKeyColumnIndex) which value is the id of a record of the FOREIGN table (defined
      * by foreignTableIndex).
      * <p>As there is no field cell, connection of Form, Column (and foreignTableIndex) is performed inside
-     * ForeignKey constructor. ForeignKey should be added to {@link #connection} </p>
+     * ForeignKey constructor. ForeignKey should be added to {@link #externConnection} </p>
      * <p>Value of ForeignKey (row id of the foreign table) is selected by the use of an external ControllActivity
-     * (Selector). Because of the use of the Selector ForeignKey should be added to {@link #usingSelectors} </p>
-     * !!! NOT READY !!!
+     * (Selector). Because of the use of the Selector ForeignKey should be added to
+     * {@link GenericEditFragment#usingSelectors} </p>
      * @param foreignKeyColumnIndex
      * @param foreignTableIndex
      * @param selectorActivity
@@ -120,11 +149,10 @@ public class ExternKey implements Connection.Connectable
     public ForeignKey addForeignKey( int foreignKeyColumnIndex, int foreignTableIndex,
                                      Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
         {
-        ForeignKey foreignKey = new ForeignKey( editFragment, foreignKeyColumnIndex, foreignTableIndex );
-        externConnection.add( foreignKey );
+        ForeignKey foreignKey = new ForeignKey();
+        foreignKey.connect( editFragment, externConnection, foreignKeyColumnIndex);
 
         foreignKey.setupSelector( selectorActivity, selectorTitle, selectorTitleOwner );
-        editFragment.addFieldUsingSelector( foreignKey );
 
         return foreignKey;
         }

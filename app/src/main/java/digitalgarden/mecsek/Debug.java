@@ -21,6 +21,7 @@ public class Debug
     public static final int SELECTOR = 0x0080;
     public static final int BIDICT = 0x0100;
     public static final int TEACHER = 0x0200;
+    public static final int PORT = 0x0400;
         
     
     // Constants for PRIMARY configuration
@@ -42,7 +43,7 @@ public class Debug
 
         Scribe.title("Mecsek has started");
         
-        Scribe.setMask( DB | CP ); //VIEW | TEXT | BIDICT);
+        Scribe.setMask(  PORT ); //DB | CP | VIEW | TEXT | BIDICT);
         }
 
     }

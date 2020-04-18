@@ -22,9 +22,9 @@ public final class AuthorsTable extends GenericTable
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addColumnAllVersions( AuthorsTable.NAME );
+        port().addColumnAllVersions( AuthorsTable.NAME );
         }
 
     /*

@@ -33,7 +33,7 @@ public class ColorDefsEditFragment extends GenericEditFragment
     @Override
     protected void setupFormLayout()
         {
-        addEditField( R.id.edittext_color, ColorDefsTable.COLOR );
-        addEditField( R.id.edittext_value, ColorDefsTable.VALUE );
+        addField( R.id.edittext_color, ColorDefsTable.COLOR );
+        addField( R.id.edittext_value, ColorDefsTable.VALUE );
         }
     }

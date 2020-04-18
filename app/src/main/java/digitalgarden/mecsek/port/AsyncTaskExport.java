@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.exportimport;
+package digitalgarden.mecsek.port;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,11 +19,11 @@ import static digitalgarden.mecsek.database.DatabaseMirror.database;
 
 /**
  * Az exportálási folyamatot egy AsyncTask végzi, melyet az AsyncTaskDialogFragment hív majd meg.
- * A collateRows() rész minden egyes táblát lekérdez, és a lekérdezés eredményét a tábla saját
- * exportImport osztályában tárolja el. Ennek során az is kiderül, hogy hány sort kell exportálnunk.
+ * A collateRowsToExport() rész minden egyes táblát lekérdez, és a lekérdezés eredményét a tábla saját
+ * portTable osztályában tárolja el. Ennek során az is kiderül, hogy hány sort kell exportálnunk.
  * !! Lehet, hogy ez is nagyon hosszú lesz, ha igen, majd gondolkodunk a megjelnítésen.
  * A következő lépésben minden egyes tábla minden egyes - már eltárolt - sorát elkérjük szövegesen
- * (getNextRow()), és kiírjuk a tábla nevével együtt egy file-ba.
+ * (getNextRowToExport()), és kiírjuk a tábla nevével együtt egy file-ba.
  * Végül minden egyes tábla cursor-át be kell zárnunk.
  */
 class AsyncTaskExport extends GenericAsyncTask
@@ -56,7 +56,7 @@ class AsyncTaskExport extends GenericAsyncTask
         int count = 0;
         for ( GenericTable table : allTables() )
             {
-            count += table.exportImport().collateRows();
+            count += table.port().collateRowsToExport();
             }
 
 		// Itt állítjuk be a progress végértékét a 2. paraméter használatával
@@ -90,7 +90,7 @@ class AsyncTaskExport extends GenericAsyncTask
             loopOfTables:
             for ( GenericTable table : allTables() )
                 {
-                while ( (data=table.exportImport().getNextRow()) != null )
+                while ( (data=table.port().getNextRowToExport()) != null )
                     {
                     Scribe.note("AsyncTaskEXPORT exporting: " + data);
                     // http://stackoverflow.com/questions/5949926/what-is-the-difference-between-append-and-write-methods-of-java-io-writer
@@ -114,7 +114,7 @@ class AsyncTaskExport extends GenericAsyncTask
             // Always close the cursor
             for ( GenericTable table : allTables() )
                 {
-                table.exportImport().close();
+                table.port().closeCursorToExport();
                 }
 
 			if (bufferedWriter != null) 

@@ -11,7 +11,7 @@ public final class CalendarTable extends GenericTable
     @Override
     public String name()
         {
-        return "cal";
+        return "calendars";
         }
 
     public static int DATE;
@@ -28,12 +28,11 @@ public final class CalendarTable extends GenericTable
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addNoSourceOnlyAllVersions();
-        exportImport().addColumnAllVersions( CalendarTable.NOTE );
-        exportImport().addColumnAllVersions( CalendarTable.DATE );
-        exportImport().addForeignKeyAllVersions(CATEGORY_ID, CATEGORIES, CategoriesTable.NAME);
+        port().addColumnAllVersions( CalendarTable.NOTE );
+        port().addColumnAllVersions( CalendarTable.DATE );
+        port().addForeignKeyAllVersions(CATEGORY_ID, CATEGORIES, CategoriesTable.NAME, CategoriesTable.STYLE);
         }
 
     }

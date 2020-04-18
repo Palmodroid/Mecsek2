@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import digitalgarden.mecsek.database.DatabaseContentProvider;
 import digitalgarden.mecsek.database.DatabaseMirror;
 import digitalgarden.mecsek.database.DatabaseOpenHelper;
-import digitalgarden.mecsek.exportimport.TableExportImport;
+import digitalgarden.mecsek.port.PortTable;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.tables.LibraryDatabase;
 import digitalgarden.mecsek.utils.StringUtils;
@@ -84,13 +84,13 @@ public abstract class GenericTable
      *  (These will not change if {@link LibraryDatabase#defineTables()} does not change) */
     private int tableId;
 
-    /** Every GenericTable subclass contains exactly one TableExportImport class to separate export/import */
-    private TableExportImport tableExportImport;
+    /** Every GenericTable subclass contains exactly one PortTable class to separate export/import */
+    private PortTable portTable;
 
-    /** Constructor just creates separated TableExportImport */
+    /** Constructor just creates separated PortTable */
     public GenericTable( )
         {
-        this.tableExportImport = new TableExportImport( this );
+        this.portTable = new PortTable( this );
         }
 
     /** id (index) is available (and therefore set) after table instantiation
@@ -106,19 +106,23 @@ public abstract class GenericTable
         return tableId;
         }
 
-    /** Gets separated export/import class for this table */
-    public TableExportImport exportImport()
+    /**
+     *  Gets separated export/import class for this table
+     *  ((It should be called <em>getPortTable()</em> or something, but it is very important, so shorter name seems to
+     *  be appropriate))
+     */
+    public PortTable port()
         {
-        return tableExportImport;
+        return portTable;
         }
 
     /**
      * Define data to export. Import is available for different versions.
-     * <p>Get separated {@link TableExportImport} by {@link #exportImport()} and use <em>add...</em> methods to add
-     * different columns and versions. For available methods check {@link TableExportImport} class!</p>
-     * <p>Ex.: <code>exportImport().addColumnAllVersions( BooksTable.TITLE );</code></p>
+     * <p>Get separated {@link PortTable} by {@link #port()} and use <em>add...</em> methods to add
+     * different columns and versions. For available methods check {@link PortTable} class!</p>
+     * <p>Ex.: <code>port().addColumnAllVersions( BooksTable.TITLE );</code></p>
      */
-    public abstract void defineExportImportColumns();
+    public abstract void definePortColumns();
 
     /** Extern records could know their "SOURCE" MAIN Record */
     private static final String SOURCE_TABLE_COLUMN_NAME = "srctbl";
@@ -171,15 +175,16 @@ public abstract class GenericTable
 
     /**
      * Column types used by app. Every type has got a database-type pair in COLUMN_TYPES
-     * <p>App uses more specific types: like TYPE_COLOR, which is stored inside database as simple "INTEGER" type</p>
+     * <p>App uses more specific types: like TYPE_STYLE, which is stored inside database as simple "INTEGER" type</p>
      */
     public static final int TYPE_KEY = 0;
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_DATE = 2;
-    public static final int TYPE_COLOR = 3;
+    public static final int TYPE_STYLE = 3;
+    public static final int TYPE_IMAGE = 4;
 
     /** Corresponding database column types. */
-    private static final String[] COLUMN_TYPES = {"INTEGER", "TEXT", "INTEGER", "INTEGER"};
+    private static final String[] COLUMN_TYPES = {"INTEGER", "TEXT", "INTEGER", "INTEGER", "BLOB"};
 
 
     public static final int COUNTID = 0x100000;

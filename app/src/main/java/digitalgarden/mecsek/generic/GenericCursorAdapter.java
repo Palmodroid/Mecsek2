@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.formtypes.DateView;
+import digitalgarden.mecsek.fieldtypes.DateView;
 
 
 public class GenericCursorAdapter extends SimpleCursorAdapter

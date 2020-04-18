@@ -20,7 +20,7 @@
             android:text="@string/title_category_name"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <digitalgarden.mecsek.formtypes.EditFieldText
+        <digitalgarden.mecsek.fieldtypes.EditFieldText
             android:id="@+id/editfieldtext_category_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:text="@string/title_category_style"
         android:textAppearance="?android:attr/textAppearanceMedium" /-->
 
-	<digitalgarden.mecsek.formtypes.StyleButton
+	<digitalgarden.mecsek.fieldtypes.StyleButton
         android:id="@+id/stylebutton_category_style"
         android:src="@drawable/color"
         android:layout_width="48dp"

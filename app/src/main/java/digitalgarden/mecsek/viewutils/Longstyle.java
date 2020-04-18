@@ -316,6 +316,7 @@ public class Longstyle
 
         values.put(column_id(), (long) (cacheIndex + 1));
 
+        // UPSERT - updata + Column_id among values
         if (context.getContentResolver().update(
                 table(COLOR_DEFS).contentUri(), values, null, null) != 1)
             {

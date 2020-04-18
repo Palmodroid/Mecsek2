@@ -5,7 +5,7 @@
     android:background="@drawable/border_translucent"
     android:padding="6dip" >
 
-    <digitalgarden.mecsek.formtypes.DateView
+    <digitalgarden.mecsek.fieldtypes.DateView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -2,15 +2,15 @@ package digitalgarden.mecsek.tables.records;
 
 import android.content.ContentValues;
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.formtypes.EditField;
+import digitalgarden.mecsek.fieldtypes.EditField;
 import digitalgarden.mecsek.tables.calendar.CalendarTable;
 import digitalgarden.mecsek.tables.category.CategoriesTable;
 import digitalgarden.mecsek.tables.patients.PatientsControllActivity;
 import digitalgarden.mecsek.tables.patients.PatientsTable;
 import digitalgarden.mecsek.tables.category.CategoriesControllActivity;
-import digitalgarden.mecsek.formtypes.EditFieldText;
-import digitalgarden.mecsek.formtypes.ExternKey;
-import digitalgarden.mecsek.formtypes.ForeignKey;
+import digitalgarden.mecsek.fieldtypes.EditFieldText;
+import digitalgarden.mecsek.fieldtypes.ExternKey;
+import digitalgarden.mecsek.fieldtypes.ForeignKey;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.viewutils.Longstyle;
@@ -66,29 +66,28 @@ public class RecordsEditFragment extends GenericEditFragment
          */
 
 
-        ForeignKey patientKey;
-//        ForeignKey categoryKey;
-        ExternKey calendarKey;
         EditFieldText recordDetailsField;
+        ForeignKey patientKey;
+        ExternKey calendarKey;
 
         // EditTextField - DETALIS
-        recordDetailsField = (EditFieldText)addEditField( R.id.editfieldtext_record_details, RecordsTable.NAME );
+        recordDetailsField = addField( R.id.editfieldtext_record_details, RecordsTable.DETAILS);
 
         // ForeignKey - PATIENT
-        patientKey = addForeignKey( RecordsTable.PATIENT_ID, PATIENTS,
+        patientKey = addForeignKey( RecordsTable.PATIENT_ID,
                 PatientsControllActivity.class,
                 getActivity().getString( R.string.select_patient ),
                 recordDetailsField );
         // ForeignTextField
-        patientKey.addEditField( R.id.foreigntext_patient_name, PatientsTable.NAME );
-        patientKey.addEditField( R.id.foreigntext_patient_dob, PatientsTable.DOB );
+        patientKey.addField( R.id.foreigntext_patient_name, PatientsTable.NAME );
+        patientKey.addField( R.id.foreigntext_patient_dob, PatientsTable.DOB );
 
         // ExternKey - DATE and...
-        calendarKey = addExternKey( RecordsTable.CALENDAR_ID, CALENDAR);
+        calendarKey = addExternKey( RecordsTable.CALENDAR_ID );
         // ExternTextField
-        calendarKey.addEditField( R.id.externtext_calendar_note, CalendarTable.NOTE );
+        calendarKey.addField( R.id.externtext_calendar_note, CalendarTable.NOTE );
         // ExternDateField
-        calendarKey.addEditField( R.id.externdate_calendar_date, CalendarTable.DATE );
+        calendarKey.addField( R.id.externdate_calendar_date, CalendarTable.DATE );
 
         // ForeignKey inside ExternKey ...DATE'S CATEGORY
         ForeignKey categoryKey = calendarKey.addForeignKey( CalendarTable.CATEGORY_ID, CATEGORIES,
@@ -96,14 +95,7 @@ public class RecordsEditFragment extends GenericEditFragment
                                 getActivity().getString( R.string.select_category),
                                 recordDetailsField );
         // Foreign TextField
-        categoryKey.addEditField( R.id.editfieldtext_category_name, CategoriesTable.NAME );
-
-        /*
-        setupListButton( BooksControllActivity.class,
-                getActivity().getString( R.string.button_books_list ),
-                getActivity().getString( R.string.books_of ),
-                nameField );
-        */
+        categoryKey.addField( R.id.editfieldtext_category_name, CategoriesTable.NAME );
         }
 
     @Override

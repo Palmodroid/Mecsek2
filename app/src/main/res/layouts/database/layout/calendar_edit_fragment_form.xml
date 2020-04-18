@@ -7,13 +7,13 @@
     android:orientation="vertical" >
 
     <TextView
-            android:id="@+id/title_record_category"
+            android:id="@+id/title_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_record_category"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
             android:id="@+id/editfieldtext_category_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:text="@string/title_calendar_date"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldDate
+    <digitalgarden.mecsek.fieldtypes.EditFieldDate
         android:id="@+id/editdatefield_calendar_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         android:text="@string/title_calendar_note"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <digitalgarden.mecsek.formtypes.EditFieldText
+    <digitalgarden.mecsek.fieldtypes.EditFieldText
         android:id="@+id/edittextfield_calendar_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium" /-->
 
-    <digitalgarden.mecsek.formtypes.SourceButton
+    <digitalgarden.mecsek.fieldtypes.SourceButton
         android:id="@+id/calendar_source_button"
         android:text="SOURCE"
         android:layout_width="wrap_content"

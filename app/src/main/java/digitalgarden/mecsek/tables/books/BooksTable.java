@@ -16,6 +16,7 @@ public final class BooksTable extends GenericTable
         }
 
     public static int TITLE;
+    public static int IMAGE;
     public static int AUTHOR_ID;
     public static int NOTE;
     public static int SEARCH;
@@ -24,15 +25,16 @@ public final class BooksTable extends GenericTable
     public void defineColumns()
         {
         TITLE = addColumn( TYPE_TEXT, "title" );
+        IMAGE = addColumn( TYPE_IMAGE, "image");
         NOTE = addColumn( TYPE_TEXT, "note" );
         SEARCH = addSearchColumnFor(TITLE);
         AUTHOR_ID = addForeignKey("author_id", AUTHORS);
         }
 
     @Override
-    public void defineExportImportColumns()
+    public void definePortColumns()
         {
-        exportImport().addColumnAllVersions( BooksTable.TITLE );
-        exportImport().addForeignKeyAllVersions( AUTHOR_ID, AUTHORS, AuthorsTable.NAME );
+        port().addColumnAllVersions( BooksTable.TITLE );
+        port().addForeignKeyAllVersions( AUTHOR_ID, AUTHORS, AuthorsTable.NAME );
         }
     }

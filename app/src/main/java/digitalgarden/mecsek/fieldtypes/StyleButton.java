@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.formtypes;
+package digitalgarden.mecsek.fieldtypes;
 
 
 import android.content.ContentValues;
@@ -17,7 +17,6 @@ import digitalgarden.mecsek.scribe.Scribe;
 import java.util.List;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
-import static digitalgarden.mecsek.viewutils.Longstyle.SELECTOR_BLUE;
 
 
 /**
