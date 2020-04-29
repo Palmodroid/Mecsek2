@@ -165,8 +165,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
                 if (fabExpanded == true)
                     {
                     closeSubMenusFab();
-                    }
-                else
+                    } else
                     {
                     openSubMenusFab();
                     }
@@ -209,10 +208,10 @@ public abstract class GenericControllActivity extends AppCompatActivity
 
     public void showActionButtonByList(boolean show)
         {
-        if ( show )
-            fab.show( BY_LIST );
+        if (show)
+            fab.show(BY_LIST);
         else
-            fab.hide( BY_LIST );
+            fab.hide(BY_LIST);
         }
 
 
@@ -239,7 +238,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
             listFrag = createListFragment();
 
             // !!!!!!!!!!!!!!! EZ VAJON IDE KELL ???????????????
-            ((GenericCombinedListFragment)listFrag).rollToSelectedItem();
+            ((GenericCombinedListFragment) listFrag).rollToSelectedItem();
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.list_frame, listFrag, "LIST");
@@ -253,10 +252,10 @@ public abstract class GenericControllActivity extends AppCompatActivity
         Fragment editFrag = fragmentManager.findFragmentById(R.id.edit_frame);
         if (editFrag == null)
             {
-            long editedItem = getIntent().getLongExtra(GenericEditFragment.EDITED_ITEM,-1L);
+            long editedItem = getIntent().getLongExtra(GenericEditFragment.EDITED_ITEM, -1L);
 
             // Van EDITÁLANDÓ értékünk - EZ ONITEMEDITINGBŐL JÖTT NEM LEHET KÉT ILYEN !!!!!!!!!!!!!!!!!!!!!!!!
-            if ( editedItem >= -0L )
+            if (editedItem >= -0L)
                 {
                 editFrag = createEditFragment();
                 Bundle args = new Bundle();
@@ -275,12 +274,12 @@ public abstract class GenericControllActivity extends AppCompatActivity
 
                 findViewById(R.id.edit_frame).setVisibility(View.VISIBLE);
                 Scribe.note("EDIT Frame VISIBLE");
-// ListFragment van, de elrejtjük
-//                if (findViewById(R.id.landscape) == null)
-//                    {
-                    findViewById(R.id.list_frame).setVisibility(View.GONE);
-//                    Scribe.note("PORTRAIT MODE: LIST Frame GONE");
-//                    }
+                // ListFragment van, de elrejtjük
+                //                if (findViewById(R.id.landscape) == null)
+                //                    {
+                findViewById(R.id.list_frame).setVisibility(View.GONE);
+                //                    Scribe.note("PORTRAIT MODE: LIST Frame GONE");
+                //                    }
                 }
             // Nincs editálandó elem
             else
@@ -288,18 +287,33 @@ public abstract class GenericControllActivity extends AppCompatActivity
                 findViewById(R.id.edit_frame).setVisibility(View.GONE);
                 Scribe.note("EDIT Fragment not found, EDIT Frame GONE");
                 }
-            }
-        else if (findViewById(R.id.landscape) == null) // editFrag létezik!
+            } else if (findViewById(R.id.landscape) == null) // editFrag létezik!
             {
             findViewById(R.id.list_frame).setVisibility(View.GONE);
             Scribe.note("EDIT Fragment found in PORTRAIT mode, LIST Frame GONE");
-            fab.hide( HidingActionButton.BY_FRAGMENT );
-            }
-        else // editFrag létezik, és landscape-ben vagyunk.
+            fab.hide(HidingActionButton.BY_FRAGMENT);
+            } else // editFrag létezik, és landscape-ben vagyunk.
             {
             Scribe.note("EDIT Fragment found in LANDSCAPE mode, LIST and EDIT visible");
-            fab.hide( HidingActionButton.BY_FRAGMENT );
+            fab.hide(HidingActionButton.BY_FRAGMENT);
             }
+        }
+
+
+    /** "STORE" {@link GenericStorageFragment} is a retained fragment to store large data (like blob or bitmap)
+     *  during config changes. GetStorage() is part of the {@link GenericEditFragment.OnFinishedListener} interface to
+     *  reach it {@link GenericEditFragment}. */
+    public GenericStorageFragment getStorage()
+        {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        GenericStorageFragment storageFrag = (GenericStorageFragment)fragmentManager.findFragmentByTag("STORE");
+        if ( storageFrag == null)
+            {
+            storageFrag = new GenericStorageFragment();
+            fragmentManager.beginTransaction().add(storageFrag, "STORE").commit();
+            }
+        return  storageFrag;
         }
 
 

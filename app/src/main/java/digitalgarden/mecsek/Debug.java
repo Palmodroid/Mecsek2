@@ -22,6 +22,7 @@ public class Debug
     public static final int BIDICT = 0x0100;
     public static final int TEACHER = 0x0200;
     public static final int PORT = 0x0400;
+    public static final int IMAGE = 0x0800;
         
     
     // Constants for PRIMARY configuration
@@ -43,7 +44,7 @@ public class Debug
 
         Scribe.title("Mecsek has started");
         
-        Scribe.setMask(  PORT ); //DB | CP | VIEW | TEXT | BIDICT);
+        Scribe.setMask(  IMAGE ); //DB | CP | VIEW | TEXT | BIDICT);
         }
 
     }

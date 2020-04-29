@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
 
+import digitalgarden.mecsek.generic.GenericStorageFragment;
 import digitalgarden.mecsek.tables.calendar.CalendarEditFragment;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.scribe.Scribe;
@@ -351,6 +352,16 @@ public class DiaryActivity extends AppCompatActivity
         {
         getSupportFragmentManager().popBackStack();
         findViewById(R.id.edit_frame).setVisibility(View.GONE);
+        }
+
+
+    @Override
+    public GenericStorageFragment getStorage()
+        {
+        Scribe.error("getStorage() is implemented only in GenericControllActivity. If needed new Activity " +
+                "children should be implementented, which contains getStorage().");
+
+        return null;
         }
 
 

@@ -23,7 +23,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.color.StylePickerActivity;
 import digitalgarden.mecsek.fieldtypes.*;
 import digitalgarden.mecsek.scribe.Scribe;
 
@@ -76,6 +75,9 @@ public abstract class GenericEditFragment extends Fragment
     public interface OnFinishedListener
         {
         void onFinished(long rowId);
+
+        // This should be reached from GenericEditFragmnet to store Bitmaps
+        GenericStorageFragment getStorage();
         }
 
     /**
@@ -107,7 +109,7 @@ public abstract class GenericEditFragment extends Fragment
     private View view;
 
     // A szerkesztés végén ide térünk vissza
-    OnFinishedListener onFinishedListener;
+    public OnFinishedListener onFinishedListener;
 
     // Az egyes UI elemeket tartalmazó változók
     private Button buttonAdd;
@@ -285,6 +287,8 @@ public abstract class GenericEditFragment extends Fragment
     @Override
     public void onAttach(Context context)
         {
+        Scribe.locus();
+
         super.onAttach(context);
 
         try
@@ -438,6 +442,8 @@ public abstract class GenericEditFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState)
         {
+        Scribe.locus();
+
         super.onSaveInstanceState(outState);
 
         // Ez elvileg eredeti módon is jó, de így jobban összhangban van a párjával
@@ -508,6 +514,8 @@ public abstract class GenericEditFragment extends Fragment
 
     protected void checkReturningSelector(int requestCode, Intent data)
         {
+        Scribe.locus();
+
         for (UsingSelector field : usingSelectors)
             {
             field.checkReturningSelector( requestCode, data );

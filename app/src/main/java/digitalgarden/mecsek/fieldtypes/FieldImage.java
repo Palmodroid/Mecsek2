@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageView;
@@ -13,11 +14,13 @@ import android.view.View;
 import digitalgarden.mecsek.generic.Connection;
 import digitalgarden.mecsek.generic.GenericEditFragment;
 import digitalgarden.mecsek.generic.GenericTable;
+import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.tables.LibraryDatabase;
-import digitalgarden.mecsek.utils.BitmapUtils;
+import digitalgarden.mecsek.utils.BitmapHost;
 
 import java.util.List;
 
+import static digitalgarden.mecsek.Debug.IMAGE;
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
 
 
@@ -37,7 +40,7 @@ import static digitalgarden.mecsek.database.DatabaseMirror.column;
  *
  * <li>Implement {@link Connection.Connectable} </li>
  *
- * <li>Implement {@link GenericEditFragment.UsingSelector} {@link #selectorCode} is set (and sent) by
+ * <li>Implement {@link GenericEditFragment.UsingSelector} selectorCode is set (and sent) by
  * {@link #connect(GenericEditFragment, Connection, int)}, is checked by {@link #checkReturningSelector(int, Intent)}
  * Edited flag should be changed, if selector returns.</li>
  *
@@ -60,15 +63,14 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
     /** Form of the widget */
     private GenericEditFragment editFragment;
 
-    /** Common CODE between widget and selectorActivity Request Code provided by {@link GenericEditFragment#getCode()}
-     *  With this common code selectorActivity can identify its calling widget */
-    private int selectorCode = -1;
-
     /** Field's column - field shows/sets data of this column */
     protected int columnIndex;
 
-    /** Field's actual value (not yet stored) */
-    private byte[] value = null;
+    /** Field's actual value (not yet stored) - handled by a BitmapHost
+     *  <p>selector code is inside value!</p>
+     *  <p>Common CODE between widget and selectorActivity Request Code provided by {@link GenericEditFragment#getCode()}
+     *  With this common code selectorActivity can identify its calling widget</p>*/
+    private BitmapHost value;
 
     /** TRUE if value of the field was changed */
     private boolean edited = false;
@@ -92,8 +94,9 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
 
     public void connect(final GenericEditFragment editFragment, Connection connection, int columnIndex )
         {
+        Scribe.locus(IMAGE);
+
         this.editFragment = editFragment;
-        this.selectorCode = editFragment.getCode();
 
         // column index (or indices) are stored inside field
         // table index (only one) is stored inside connection
@@ -101,14 +104,17 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
         this.columnIndex = columnIndex;
         connection.add( this );
 
-        // SELECTOR starts when widget is tapped, and RETURNS in cehckReturningSelector()
+        // IMPORTANT! selector code is needed, but it is stored inside BitmapHost
+        this.value = new BitmapHost( this.editFragment, this, 100, 100 );
+
+        // SELECTOR starts when widget is tapped, and RETURNS in checkReturningSelector()
         // selectorCode should be used
         setOnClickListener(new View.OnClickListener()
             {
             public void onClick(View view)
                 {
-                // BitmapUtils.pickImage( FieldImage.this.editFragment, selectorCode );
-                BitmapUtils.captureImage( FieldImage.this.editFragment, selectorCode );
+                value.captureImage( true );
+                // value.pickImage();
                 }
             });
         }
@@ -117,19 +123,13 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
     @Override
     public void checkReturningSelector(int requestCode, Intent data)
         {
-        if (this.selectorCode == requestCode)
-            {
-            //data.getData returns the content URI for the selected Image
-            //if ( setValue (data.getData()) )
-            //    {
-            //    edited = true;
-            //    }
+        Scribe.locus( IMAGE );
 
-            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-            if ( setValue ( imageBitmap ))
-                {
-                edited = true;
-                }
+        // True if new image was provided
+        if ( value.checkReturningSelector( requestCode, data ))
+            {
+            Scribe.debug( IMAGE, "New image was provided");
+            edited = true;
             }
         }
 
@@ -138,7 +138,7 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
      *  refresh field
      *  <p>IMPORTANT! Some widget stores value (like EditText), but in other cases (like ImageView) data should be
      *  stored outside the original widget</p>
-     *  Returns TRUE if data was changed */
+     *  Returns TRUE if data was changed
     public boolean setValue( Uri imageUri )
         {
         if ( imageUri != null )
@@ -172,12 +172,13 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
         {
         setImageBitmap( bitmap );
         value = imageByteArray;
-        }
+        }*/
 
     /** Column index of image (type BLOB) is added to projection */
     @Override
     public void addColumnToProjection(List<String> projection)
         {
+        Scribe.locus(IMAGE);
         projection.add( column( columnIndex ));
         }
 
@@ -185,14 +186,18 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
     @Override
     public void getDataFromPull(Cursor cursor)
         {
-        setValue( cursor.getBlob( cursor.getColumnIndexOrThrow( column( columnIndex ))));
+        Scribe.locus(IMAGE);
+
+        value.setBlob( cursor.getBlob( cursor.getColumnIndexOrThrow( column( columnIndex ))));
         }
 
     /** Pushes value from widget to database */
     @Override
     public void addDataToPush(ContentValues values)
         {
-        values.put(column( columnIndex ), value );
+        Scribe.locus(IMAGE);
+
+        values.put(column( columnIndex ), value.getBlob() );
         }
 
     @Override
@@ -205,14 +210,20 @@ public class FieldImage extends AppCompatImageView implements Connection.Connect
     @Override
     public void saveData(Bundle data)
         {
-        data.putByteArray( column(columnIndex), value );
+        Scribe.locus(IMAGE);
+        // data.putByteArray( column(columnIndex), value.getBlob() );
+
+        value.saveData( data );
         }
 
     /** Retrieve value AND sets image from value after config changes */
     @Override
     public void retrieveData(Bundle data)
         {
-        setValue( data.getByteArray( column(columnIndex) ));
+        Scribe.locus(IMAGE);
+        // value.setBlob( data.getByteArray( column(columnIndex) ));
+
+        value.retrieveData( data );
         }
 
     @Override
